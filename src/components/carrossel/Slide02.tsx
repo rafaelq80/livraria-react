@@ -1,48 +1,28 @@
-﻿
-function Carroussel02() {
-    return (
+﻿function Slide02() {
+	return (
+		<div className="flex justify-center items-center max-h-[70vh] bg-gradient-to-r from-purple-900 to-purple-500">
+			<div className="grid grid-cols-3 text-white">
+				<div className="col-span-2 flex flex-col gap-6 items-center justify-center py-4">
+					<h2 className="text-6xl font-bold">PRÉ VENDA</h2>
+					<h3 className="text-4xl font-bold text-yellow-600 text-center text-pretty">
+						O QUINTO LIVRO DA SAGA JOGOS VORAZES
+					</h3>
+					<p className="text-2xl font-bold text-white text-center">
+						LANÇAMENTO MUNDIAL 18 DE MARÇO
+					</p>
+				</div>
 
-        <div className="
-                flex 
-                justify-center
-                bg-[url('https://ik.imagekit.io/vzr6ryejm/games/bg_slide_02.png?updatedAt=1714810179695')]
-                bg-repeat
-                "
-                >
-            <div className='
-                    container 
-                    grid 
-                    grid-cols-2 
-                    text-white
-                    '>
-                <div className="
-                        flex 
-                        flex-col 
-                        gap-4 
-                        items-center 
-                        justify-center 
-                        py-4
-                        ">
-                    <h2 className='
-                            text-5xl 
-                            font-bold
-                            '>
-                        Promoções Imperdíveis!
-                    </h2>
-                    <p className='text-3xl'>É na Madrugada dos Games!</p>
+				<div className="col-span-1 flex justify-center items-center">
+					<img
+						src="https://ik.imagekit.io/vzr6ryejm/livraria/livro_01.png?updatedAt=1740638889617"
+						alt="Imagem Página Home"
+						className="h-2/4"
+					/>
+				</div>
 
-                </div>
-
-                <div className="flex justify-center ">
-                    <img
-                        src="https://ik.imagekit.io/vzr6ryejm/games/logo_promocao.png?updatedAt=1714810126717"
-                        alt="Imagem Página Home"
-                        className='w-3/4'
-                    />
-                </div>
-            </div>
-        </div>
-    )
+			</div>
+		</div>
+	)
 }
 
-export default Carroussel02
+export default Slide02
