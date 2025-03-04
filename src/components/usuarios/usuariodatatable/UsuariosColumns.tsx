@@ -6,7 +6,7 @@ import Usuario from '../../../models/Usuario'
 
 const columnHelper = createColumnHelper<Usuario>()
 
-export function createDepartamentoColumns() {
+export function createUsuarioColumns() {
 	const navigate = useNavigate()
 
 	return [
@@ -41,6 +41,11 @@ export function createDepartamentoColumns() {
 			header: 'Usuário',
 			cell: (info) => info.getValue(),
 		}),
+		columnHelper.accessor('roles', {
+			header: 'Permissões',
+			cell: (info) => info.getValue().map(role => role.nome).join(" | "),
+		}),
+		
 		columnHelper.display({
 			id: 'actions',
 			header: 'Ações',

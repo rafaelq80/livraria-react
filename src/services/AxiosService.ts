@@ -1,7 +1,8 @@
 import axios from "axios"
 
 export const api = axios.create({
-  baseURL: 'http://localhost:4000'
+  baseURL: 'https://livraria-nest.onrender.com'
+  //baseURL: 'http://localhost:4000'
   })
 
   export const login = async(url: string, dados: Object, setDados: Function) => {

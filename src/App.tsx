@@ -11,6 +11,11 @@ import FormProduto from "./pages/produtos/formproduto/FormProdutos"
 import ListarProdutos from "./pages/produtos/listarprodutos/ListarProdutos"
 import ListarUsuarios from "./pages/usuarios/listarusuarios/ListarUsuarios"
 import PrivateRoute from "./routes/PrivateRoute"
+import ListarProdutosPorNome from "./pages/produtos/listarprodutospornome/ListarProdutosPorNome"
+import ListarRoles from "./pages/roles/listarroles/ListarRoles"
+import ListarCategorias from "./pages/categorias/listarcategorias/ListarCategorias"
+import ListarEditoras from "./pages/editoras/listareditoras/ListarEditoras"
+import ListarAutores from "./pages/autores/listarautores/ListarAutores"
 
 
 function App() {
@@ -25,11 +30,16 @@ function App() {
 							<Route path="/" element={<Home />} />
 							<Route path="/login" element={<Login />} />
 							<Route path="/produtos" element={<ListarProdutos />} />
+							<Route path="/consultarnome/:titulo" element={<ListarProdutosPorNome />} />
 
 							<Route element={<PrivateRoute />}>
 								<Route path="/cadastrarproduto" element={<FormProduto />} />
 								<Route path="/atualizarproduto/:id" element={<FormProduto />} />
 								<Route path="/usuarios" element={<ListarUsuarios />} />
+								<Route path="/roles" element={<ListarRoles />} />
+								<Route path="/categorias" element={<ListarCategorias />} />
+								<Route path="/editoras" element={<ListarEditoras />} />
+								<Route path="/autores" element={<ListarAutores />} />
 							</Route>
 						</Routes>
 					</div>

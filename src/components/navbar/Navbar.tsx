@@ -1,5 +1,5 @@
 import { MagnifyingGlass, ShoppingCart, SignOut, User, List, X } from "@phosphor-icons/react"
-import { useContext, useState } from "react"
+import { ChangeEvent, FormEvent, useContext, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import AuthContext from "../../contexts/AuthContext"
 import { ToastAlerta } from "../../utils/ToastAlerta"
@@ -13,6 +13,9 @@ type DropdownState = {
 
 function Navbar() {
 	const navigate = useNavigate()
+
+	const [titulo, setTitulo] = useState<string>("")
+
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 	const [dropdownOpen, setDropdownOpen] = useState<DropdownState>({
 		ecommerce: false,
@@ -20,6 +23,16 @@ function Navbar() {
 	})
 
 	const { usuario, isAuthenticated, handleLogout } = useContext(AuthContext)
+
+	function handleBuscarProdutos(e: ChangeEvent<HTMLInputElement>) {
+		setTitulo(e.target.value)
+	}
+
+	function buscarProdutos(e: FormEvent<HTMLFormElement>) {
+		e.preventDefault()
+		navigate(`/consultarnome/${titulo}`)
+		setTitulo("")
+	}
 
 	function logout() {
 		handleLogout()
@@ -64,20 +77,16 @@ function Navbar() {
 
 				{/* Barra de pesquisa mobile - posicionada abaixo do logo */}
 				<div className="md:hidden mt-4 text-black w-full">
-					<form
-						className="w-full flex justify-center"
-						onSubmit={(e) => {
-							e.preventDefault()
-							console.log("Envio do formulário impedido!")
-						}}
-					>
+					<form className="w-full flex justify-center" onSubmit={buscarProdutos}>
 						<input
 							className="w-10/12 h-9 rounded-lg px-4 py-4 focus:outline-none"
 							type="search"
-							placeholder="Pesquisar produto"
+							placeholder="Informe o título do livro"
 							id="busca-mobile"
-							name="busca"
+							name="titulo"
 							required
+							value={titulo}
+							onChange={(e: ChangeEvent<HTMLInputElement>) => handleBuscarProdutos(e)}
 						/>
 						<button
 							type="submit"
@@ -90,20 +99,16 @@ function Navbar() {
 
 				{/* Barra de pesquisa desktop - original entre logo e ícones */}
 				<div className="hidden md:flex flex-1 justify-center items-center relative w-30 text-black">
-					<form
-						className="w-3/4 flex justify-center"
-						onSubmit={(e) => {
-							e.preventDefault() // Impede o envio padrão do formulário
-							console.log("Envio do formulário impedido!")
-						}}
-					>
+					<form className="w-3/4 flex justify-center" onSubmit={buscarProdutos}>
 						<input
 							className="w-10/12 h-9 rounded-lg px-4 py-4 focus:outline-none"
 							type="search"
-							placeholder="Pesquisar produto"
+							placeholder="Informe o título do livro"
 							id="busca-desktop"
-							name="busca"
+							name="titulo"
 							required
+							value={titulo}
+							onChange={(e: ChangeEvent<HTMLInputElement>) => handleBuscarProdutos(e)}
 						/>
 						<button
 							type="submit"
@@ -186,9 +191,11 @@ function Navbar() {
 						<ShoppingCart size={32} weight="bold" />
 					</Link>
 
-					<Link to="" onClick={logout} className="hover:underline">
-						<SignOut size={32} weight="bold" />
-					</Link>
+					{isAuthenticated && (
+						<Link to="" onClick={logout} className="hover:underline">
+							<SignOut size={32} weight="bold" />
+						</Link>
+					)}
 				</div>
 
 				{/* Menu mobile - vertical */}
@@ -304,14 +311,16 @@ function Navbar() {
 						<span>Carrinho</span>
 					</Link>
 
-					<Link
-						to=""
-						onClick={logout}
-						className="flex items-center py-2 hover:bg-indigo-800 px-2 rounded"
-					>
-						<SignOut size={24} weight="bold" className="mr-2" />
-						<span>Sair</span>
-					</Link>
+					{isAuthenticated && (
+						<Link
+							to=""
+							onClick={logout}
+							className="flex items-center py-2 hover:bg-indigo-800 px-2 rounded"
+						>
+							<SignOut size={24} weight="bold" className="mr-2" />
+							<span>Sair</span>
+						</Link>
+					)}
 				</div>
 			</div>
 		</div>

@@ -15,21 +15,21 @@ import {
   } from '@tanstack/react-table'
   import { useState } from 'react'
   import { useNavigate } from 'react-router-dom'
-import Usuario from '../../../models/Usuario'
-import { createUsuarioColumns } from './UsuariosColumns'
+import Editora from '../../../models/Editora'
+import { createEditoraColumns } from './EditorasColumns'
   
-  interface UsuarioDataTableProps {
-	usuarios: Usuario[]
+  interface EditoraDataTableProps {
+	editoras: Editora[]
   }
   
-  function UsuarioDataTable({ usuarios }: UsuarioDataTableProps) {
+  function EditoraDataTable({ editoras }: EditoraDataTableProps) {
 	const navigate = useNavigate()
 	const [sorting, setSorting] = useState<SortingState>([])
 	const [globalFilter, setGlobalFilter] = useState('')
-	const columns = createUsuarioColumns()
+	const columns = createEditoraColumns()
   
 	const table = useReactTable({
-	  data: usuarios,
+	  data: editoras,
 	  columns,
 	  state: {
 		sorting,
@@ -50,8 +50,7 @@ import { createUsuarioColumns } from './UsuariosColumns'
   
 	const getColumnSpan = (index: number, isSmallScreen: boolean) => {
 	  if (isSmallScreen) return 'col-span-12'
-	  if (index === 1 || index == 2)  return 'col-span-4'
-	   if (index === 3)  return 'col-span-2'
+	  if (index === 0 )  return 'col-span-11'
 	  return 'col-span-1'
 	}
   
@@ -70,18 +69,18 @@ import { createUsuarioColumns } from './UsuariosColumns'
 			  className="absolute left-2 top-1.5 h-4 w-4 text-gray-500"
 			/>
 			<input
-			  placeholder="Pesquisar usuarios..."
+			  placeholder="Pesquisar editoras..."
 			  value={globalFilter}
 			  onChange={(e) => setGlobalFilter(e.target.value)}
 			  className="w-full pl-8 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:border-transparent"
 			/>
 		  </div>
 		  <button
-			onClick={() => navigate('/cadastrarusuario')}
+			onClick={() => navigate('/cadastrareditora')}
 			className="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-500 hover:bg-green-700 px-4 py-2 text-white font-bold rounded-xl"
 		  >
 			<Plus size={32} className="h-4 w-4" />
-			Novo Usuario
+			Nova Editora
 		  </button>
 		</div>
   
@@ -112,7 +111,7 @@ import { createUsuarioColumns } from './UsuariosColumns'
 						index,
 						false
 					  )} ${
-						index === 0 || index === 2 || index === 3
+						index === 1
 						  ? 'justify-center'
 						  : 'justify-start'
 					  }`}
@@ -187,4 +186,4 @@ import { createUsuarioColumns } from './UsuariosColumns'
 	)
   }
   
-  export default UsuarioDataTable
+  export default EditoraDataTable

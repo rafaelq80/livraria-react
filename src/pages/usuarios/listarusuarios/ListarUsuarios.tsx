@@ -16,7 +16,7 @@ function ListarUsuarios() {
 	const [isLoading, setIsLoading] = useState(true)
   const [showButton, setShowButton] = useState(false)
 
-	async function buscarDepartamentos() {
+	async function buscarUsuarios() {
 		setIsLoading(true)
 		try {
 			await listar('/usuarios/all', setUsuarios, {
@@ -41,7 +41,7 @@ function ListarUsuarios() {
 	}, [token])
 
 	useEffect(() => {
-		buscarDepartamentos()
+		buscarUsuarios()
 	}, [])
 
   useEffect(() => {
@@ -57,7 +57,7 @@ function ListarUsuarios() {
 				<div className="flex justify-end">
 					<button
 						onClick={() => navigate('/cadastrarusuario')}
-						className="flex items-center gap-2 bg-teal-400 hover:bg-teal-600 px-4 py-2 text-white font-bold rounded-xl"
+						className="flex items-center gap-2 bg-green-500 hover:bg-green-700 px-4 py-2 text-white font-bold rounded-xl"
 					>
 						<Plus size={32} className="h-4 w-4" />
 						Novo Usuario
