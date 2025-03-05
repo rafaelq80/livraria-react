@@ -112,7 +112,7 @@ import { createUsuarioColumns } from './UsuariosColumns'
 						index,
 						false
 					  )} ${
-						index === 0 || index === 2 || index === 3
+						index !== 2
 						  ? 'justify-center'
 						  : 'justify-start'
 					  }`}
@@ -126,7 +126,7 @@ import { createUsuarioColumns } from './UsuariosColumns'
 		  </div>
   
 		  {/* Mobile View */}
-		  <div className="md:hidden">
+		  <div className="md:hidden bg-white">
 			{table.getRowModel().rows.map((row) => (
 			  <div key={row.id} className="p-4 border-b">
 				{row.getVisibleCells().map((cell, index) => {
