@@ -1,63 +1,20 @@
-import { useContext, useEffect, useState } from 'react'
-import { DNA } from 'react-loader-spinner'
-import Usuario from '../../../models/Usuario'
-import { useNavigate } from 'react-router-dom'
-import AuthContext from '../../../contexts/AuthContext'
-import { ToastAlerta } from '../../../utils/ToastAlerta'
-import { Plus } from '@phosphor-icons/react'
-import UsuarioDataTable from '../../../components/usuarios/usuariodatatable/UsuarioDataTable'
-import { listar } from '../../../services/AxiosService'
+import { Plus } from "@phosphor-icons/react"
+import { DNA } from "react-loader-spinner"
+import DataTable from "../../../components/datatable/DataTable"
+import { useListarUsuarios } from "../../../hooks/usuarios/useListarUsuarios"
+import { createUsuarioColumns } from "./UsuarioColumns"
 
 function ListarUsuarios() {
-	const navigate = useNavigate()
-	const [usuarios, setUsuarios] = useState<Usuario[]>([])
-	const { usuario, handleLogout } = useContext(AuthContext)
-	const token = usuario.token
-	const [isLoading, setIsLoading] = useState(true)
-  const [showButton, setShowButton] = useState(false)
-
-	async function buscarUsuarios() {
-		setIsLoading(true)
-		try {
-			await listar('/usuarios/all', setUsuarios, {
-				headers: {
-					Authorization: token,
-				},
-			})
-		} catch (error: any) {
-			if (error.toString().includes('401')) {
-				handleLogout()
-			}
-		} finally {
-			setIsLoading(false)
-		}
-	}
-
-	useEffect(() => {
-		if (token === '') {
-			ToastAlerta('Você precisa estar logado', 'info')
-			navigate('/')
-		}
-	}, [token])
-
-	useEffect(() => {
-		buscarUsuarios()
-	}, [])
-
-  useEffect(() => {
-		if(usuarios.length === 0)
-      setShowButton(true)
-    else
-      setShowButton(false)
-	}, [usuarios])
+	const { usuarios, isLoading, showButton, navigate } = useListarUsuarios()
+	const columns = createUsuarioColumns()
 
 	return (
 		<div className="p-4">
 			{showButton && (
 				<div className="flex justify-end">
 					<button
-						onClick={() => navigate('/cadastrarusuario')}
-						className="flex items-center gap-2 bg-green-500 hover:bg-green-700 px-4 py-2 text-white font-bold rounded-xl"
+						onClick={() => navigate("/cadastrarusuario")}
+						className="flex items-center gap-2 bg-green-500 hover:bg-green-700 px-4 py-2 m-4 text-white font-bold rounded-xl"
 					>
 						<Plus size={32} className="h-4 w-4" />
 						Novo Usuario
@@ -65,7 +22,6 @@ function ListarUsuarios() {
 				</div>
 			)}
 			{isLoading ? (
-				// Loader enquanto busca dados
 				<DNA
 					visible={true}
 					height="200"
@@ -75,14 +31,24 @@ function ListarUsuarios() {
 					wrapperClass="dna-wrapper mx-auto"
 				/>
 			) : usuarios.length === 0 ? (
-				// Mensagem de "Nenhum Usuario encontrado"
 				<div className="text-center text-gray-500 mt-6">
 					<p className="text-lg">Nenhum Usuario encontrado.</p>
 				</div>
 			) : (
-				// Renderiza a tabela se houver dados
 				<div>
-					<UsuarioDataTable usuarios={usuarios} />
+					<DataTable
+						data={usuarios}
+						columns={columns}
+						title="Usuario"
+						onAddNew={() => navigate("/cadastrarusuario")}
+						columnSpans={[
+							"col-span-1",
+							"col-span-4",
+							"col-span-3",
+							"col-span-3",
+							"col-span-1",
+						]}
+					/>
 				</div>
 			)}
 		</div>

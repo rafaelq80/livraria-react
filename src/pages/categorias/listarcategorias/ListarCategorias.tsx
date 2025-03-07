@@ -1,71 +1,27 @@
-import { useContext, useEffect, useState } from 'react'
-import { DNA } from 'react-loader-spinner'
-import Categoria from '../../../models/Categoria'
-import { useNavigate } from 'react-router-dom'
-import AuthContext from '../../../contexts/AuthContext'
-import { ToastAlerta } from '../../../utils/ToastAlerta'
-import { Plus } from '@phosphor-icons/react'
-import CategoriaDataTable from '../../../components/categorias/categoriadatatable/CategoriaDataTable'
-import { listar } from '../../../services/AxiosService'
+import { Plus } from "@phosphor-icons/react"
+import { DNA } from "react-loader-spinner"
+import { createCategoriaColumns } from "./CategoriaColumns"
+import DataTable from "../../../components/datatable/DataTable"
+import { useListarCategorias } from "../../../hooks/categorias/useListarCategorias"
 
 function ListarCategorias() {
-	const navigate = useNavigate()
-	const [categorias, setCategorias] = useState<Categoria[]>([])
-	const { usuario, handleLogout } = useContext(AuthContext)
-	const token = usuario.token
-	const [isLoading, setIsLoading] = useState(true)
-  const [showButton, setShowButton] = useState(false)
-
-	async function buscarCategorias() {
-		setIsLoading(true)
-		try {
-			await listar('/categorias', setCategorias, {
-				headers: {
-					Authorization: token,
-				},
-			})
-		} catch (error: any) {
-			if (error.toString().includes('401')) {
-				handleLogout()
-			}
-		} finally {
-			setIsLoading(false)
-		}
-	}
-
-	useEffect(() => {
-		if (token === '') {
-			ToastAlerta('Você precisa estar logado', 'info')
-			navigate('/')
-		}
-	}, [token])
-
-	useEffect(() => {
-		buscarCategorias()
-	}, [])
-
-  useEffect(() => {
-		if(categorias.length === 0)
-      setShowButton(true)
-    else
-      setShowButton(false)
-	}, [categorias])
+	const { categorias, isLoading, showButton, navigate } = useListarCategorias()
+	const columns = createCategoriaColumns()
 
 	return (
 		<div className="p-4">
 			{showButton && (
 				<div className="flex justify-end">
 					<button
-						onClick={() => navigate('/cadastrarcategoria')}
-						className="flex items-center gap-2 bg-green-500 hover:bg-green-700 px-4 py-2 text-white font-bold rounded-xl"
+						onClick={() => navigate("/cadastrarcategoria")}
+						className="flex items-center gap-2 bg-green-500 hover:bg-green-700 px-4 py-2 m-4 text-white font-bold rounded-xl"
 					>
 						<Plus size={32} className="h-4 w-4" />
-						Nova Categoria
+						Adicionar Categoria
 					</button>
 				</div>
 			)}
 			{isLoading ? (
-				// Loader enquanto busca dados
 				<DNA
 					visible={true}
 					height="200"
@@ -75,14 +31,18 @@ function ListarCategorias() {
 					wrapperClass="dna-wrapper mx-auto"
 				/>
 			) : categorias.length === 0 ? (
-				// Mensagem de "Nenhum Categoria encontrada"
 				<div className="text-center text-gray-500 mt-6">
-					<p className="text-lg">Nenhum Categoria encontrado.</p>
+					<p className="text-lg">Nenhuma Categoria encontrada.</p>
 				</div>
 			) : (
-				// Renderiza a tabela se houver dados
 				<div>
-					<CategoriaDataTable categorias={categorias} />
+					<DataTable
+						data={categorias}
+						columns={columns}
+						title="Categoria"
+						onAddNew={() => navigate("/cadastrarcategoria")}
+						columnSpans={["col-span-11", "col-span-1"]}
+					/>
 				</div>
 			)}
 		</div>
