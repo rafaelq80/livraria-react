@@ -115,7 +115,7 @@ function Login() {
         </form>
         <div
           style={{
-            backgroundImage: `url("https://ik.imagekit.io/vzr6ryejm/food/fundo08_2.jpeg?updatedAt=1729748791215")`,
+            backgroundImage: `url("https://ik.imagekit.io/vzr6ryejm/livraria/fundo_05.jpg?updatedAt=1741417938523")`,
           }}
           className="lg:block hidden bg-no-repeat w-full min-h-screen bg-cover bg-center"
         ></div>

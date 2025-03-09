@@ -10,9 +10,9 @@ export const api = axios.create({
     setDados(resposta.data)
   }
 
-  export const cadastrarUsuario = async(url: string, dados: Object, setDados: Function) => {
+  export const cadastrarUsuario = async(url: string, dados: Object) => {
     const resposta = await api.post(url, dados)
-    setDados(resposta.data)
+    return resposta.data
   }
 
   export const listarProdutos = async(url: string, setDados: Function) => {

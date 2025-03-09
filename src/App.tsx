@@ -16,6 +16,7 @@ import ListarRoles from "./pages/roles/listarroles/ListarRoles"
 import ListarCategorias from "./pages/categorias/listarcategorias/ListarCategorias"
 import ListarEditoras from "./pages/editoras/listareditoras/ListarEditoras"
 import ListarAutores from "./pages/autores/listarautores/ListarAutores"
+import FormUsuario from "./pages/usuarios/cadastrarusuario/CadastrarUsuario"
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
 						<Routes>
 							<Route path="/" element={<Home />} />
 							<Route path="/login" element={<Login />} />
+							<Route path="/cadastro" element={<FormUsuario />} />
 							<Route path="/produtos" element={<ListarProdutos />} />
 							<Route path="/consultarnome/:titulo" element={<ListarProdutosPorNome />} />
 
