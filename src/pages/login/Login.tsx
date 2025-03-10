@@ -1,95 +1,67 @@
-import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { RotatingLines } from "react-loader-spinner";
-import { Link, useNavigate } from "react-router-dom";
-import UsuarioLogin from "../../models/UsuarioLogin";
-import AuthContext from "../../contexts/AuthContext";
-import { EyeSlash, Eye } from "@phosphor-icons/react";
+// components/Login.tsx
+import { RotatingLines } from "react-loader-spinner"
+import { Link } from "react-router-dom"
+import { EyeSlash, Eye } from "@phosphor-icons/react"
+import { useLogin } from "../../hooks/login/useLogin"
+
 
 function Login() {
-  const navigate = useNavigate();
-  const { usuario, handleLogin, isLoading } = useContext(AuthContext);
-
-  const [usuarioLogin, setUsuarioLogin] = useState<UsuarioLogin>({
-    id: 0,
-    nome: '',
-    usuario: '',
-    foto: '', 
-    senha: '',
-    token: '', 
-  });
-
-  const [showPassword, setShowPassword] = useState(false);
-
-  // Verifica se o usuário já está logado e redireciona
-  useEffect(() => {
-    if (usuario.token !== "") {
-      navigate("/");
-    }
-  }, [usuario, navigate]);
-
-  // Atualiza o estado do formulário de login
-  function atualizarEstado(e: ChangeEvent<HTMLInputElement>) {
-    setUsuarioLogin({
-      ...usuarioLogin,
-      [e.target.name]: e.target.value,
-    });
-  }
-
-  // Função para realizar o login ao submeter o formulário
-  async function login(e: ChangeEvent<HTMLFormElement>) {
-    e.preventDefault();
-    await handleLogin(usuarioLogin);  // Chama a função de login do contexto
-  }
+  const { 
+    register, 
+    handleSubmit, 
+    errors, 
+    isLoading, 
+    showPassword, 
+    toggleShowPassword 
+  } = useLogin()
 
   return (
-    <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 h-screen place-items-center font-bold ">
-        <form
-          className="flex justify-center items-center flex-col w-1/2 gap-4"
-          onSubmit={login}
-        >
-          <h2 className="text-slate-900 text-5xl ">Entrar</h2>
-          <div className="flex flex-col w-full">
-            <label htmlFor="usuario">Usuário</label>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white shadow-lg rounded-lg p-8 w-96">
+        <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Login</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label htmlFor="usuario" className="block text-gray-700 font-medium">
+              E-mail
+            </label>
             <input
-              type="text"
               id="usuario"
-              name="usuario"
-              placeholder="Usuário"
-              autoComplete="usuario"
-              className="border-2 border-slate-700 rounded p-2"
-              value={usuarioLogin.usuario}
-              onChange={atualizarEstado}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              {...register("usuario")}
             />
+            {errors.usuario && (
+              <p className="text-red-500 text-sm mt-1">{errors.usuario.message}</p>
+            )}
           </div>
-          <div className="relative flex flex-col w-full">
-            <label htmlFor="senha">Senha</label>
+          <div className="relative mb-4">
+            <label htmlFor="senha" className="block text-gray-700 font-medium">
+              Senha
+            </label>
             <input
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               id="senha"
-              name="senha"
-              placeholder="Senha"
-              autoComplete="senha"
-              className="border-2 border-slate-700 rounded p-2"
-              value={usuarioLogin.senha}
-              onChange={atualizarEstado}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              {...register("senha")}
             />
+            {errors.senha && (
+              <p className="text-red-500 text-sm mt-1">{errors.senha.message}</p>
+            )}
             <button
               type="button"
               className="top-9 right-2 absolute text-slate-700"
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={toggleShowPassword}
             >
-              {showPassword ? (
-                <Eye size={20} />
-              ) : (
-                <EyeSlash size={20} />
-              )}
+              {showPassword ? <Eye size={20} /> : <EyeSlash size={20} />}
             </button>
+          </div>
+          <div className="flex justify-between items-center mb-4">
+            <Link to="#" className="text-blue-500 text-sm hover:underline">
+              Esqueceu a senha?
+            </Link>
           </div>
           <button
             type="submit"
-            className="rounded bg-indigo-900 flex justify-center
-                                   hover:bg-indigo-600 text-white w-1/2 py-2"
+            className="w-full bg-indigo-900 text-white py-2 rounded-lg hover:bg-indigo-400 transition flex justify-center"
           >
             {isLoading ? (
               <RotatingLines
@@ -103,25 +75,16 @@ function Login() {
               <span>Entrar</span>
             )}
           </button>
-
-          <hr className="border-slate-800 w-full" />
-
-          <p>
-            Ainda não tem uma conta?{" "}
-            <Link to="/cadastro" className="text-indigo-800 hover:underline">
-              Cadastre-se
-            </Link>
-          </p>
         </form>
-        <div
-          style={{
-            backgroundImage: `url("https://ik.imagekit.io/vzr6ryejm/livraria/fundo_05.jpg?updatedAt=1741417938523")`,
-          }}
-          className="lg:block hidden bg-no-repeat w-full min-h-screen bg-cover bg-center"
-        ></div>
+        <p className="text-center text-gray-600 text-sm mt-4">
+          Não tem uma conta?{" "}
+          <Link to="/cadastro" className="text-blue-500 hover:underline">
+            Cadastre-se
+          </Link>
+        </p>
       </div>
-    </>
-  );
+    </div>
+  )
 }
 
-export default Login;
+export default Login
