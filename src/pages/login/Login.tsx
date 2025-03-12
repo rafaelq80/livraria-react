@@ -55,7 +55,7 @@ function Login() {
             </button>
           </div>
           <div className="flex justify-between items-center mb-4">
-            <Link to="#" className="text-blue-500 text-sm hover:underline">
+            <Link to="/recuperarsenha" className="text-blue-500 text-sm hover:underline">
               Esqueceu a senha?
             </Link>
           </div>

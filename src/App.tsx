@@ -17,6 +17,8 @@ import ListarUsuarios from "./pages/usuarios/listarusuarios/ListarUsuarios"
 import PrivateRoute from "./routes/PrivateRoute"
 import Footer from "./templates/footer/Footer"
 import Navbar from "./templates/navbar/Navbar"
+import RecuperarSenha from "./pages/usuarios/recuperarsenha/RecuperarSenha"
+import AtualizarSenha from "./pages/usuarios/atualizarsenha/AtualizarSenha"
 
 
 function App() {
@@ -33,6 +35,8 @@ function App() {
 							<Route path="/cadastro" element={<FormUsuario />} />
 							<Route path="/produtos" element={<ListarProdutos />} />
 							<Route path="/consultarnome/:titulo" element={<ListarProdutosPorNome />} />
+							<Route path="/recuperarsenha" element={<RecuperarSenha />} />
+							<Route path="/atualizarsenha" element={<AtualizarSenha />} />
 
 							<Route element={<PrivateRoute />}>
 								<Route path="/cadastrarproduto" element={<FormProduto />} />
