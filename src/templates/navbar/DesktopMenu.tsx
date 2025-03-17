@@ -28,7 +28,7 @@ function DesktopMenu() {
 			{isAuthenticated && (
 				<>
 					<div className="relative group">
-						<button className="hover:underline">E-Commerce</button>
+						<button className="hover:underline cursor-pointer">E-Commerce</button>
 						<div className="absolute left-0 hidden mt-2 space-y-2 bg-white text-black rounded-lg shadow-lg group-hover:block w-36 z-40">
 							<Link
 								to="/cadastrarproduto"
@@ -70,7 +70,7 @@ function DesktopMenu() {
 					</div>
 
 					<div className="relative group">
-						<button className="hover:underline">Configurações</button>
+						<button className="hover:underline cursor-pointer">Configurações</button>
 						<div className="absolute left-0 hidden mt-2 space-y-2 bg-white text-black rounded-lg shadow-lg group-hover:block w-36 z-50">
 							<Link
 								to="/usuarios"

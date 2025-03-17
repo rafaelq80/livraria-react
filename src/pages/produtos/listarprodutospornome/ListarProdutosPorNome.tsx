@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom"
 import CardProdutos from "../../../components/produtos/cardprodutos/CardProdutos"
 import Produto from "../../../models/Produto"
 import { listarProdutos } from "../../../services/AxiosService"
+import { ToastAlerta } from "../../../utils/ToastAlerta"
 
 function ListarProdutosPorNome() {
 	const [produtos, setProdutos] = useState<Produto[]>([]) // Todos os Produtos
@@ -17,8 +18,9 @@ function ListarProdutosPorNome() {
 		try {
 			setIsLoading(true)
 			await listarProdutos("/produtos", setProdutos)
-		} catch (error) {
-			alert("Erro ao carregar produtos!")
+		} catch (error: unknown) {
+			console.error("Erro: ", error)
+			ToastAlerta("Erro ao carregar produtos!", "erro")
 		} finally {
 			setIsLoading(false)
 		}

@@ -9,7 +9,7 @@ import {
 } from "@phosphor-icons/react"
 
 function Footer() {
-	let data = new Date().getFullYear()
+	const data = new Date().getFullYear()
 
 	return (
 		<footer className="bg-indigo-900 text-white py-8">

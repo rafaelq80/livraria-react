@@ -16,8 +16,9 @@ function Carrossel() {
 		[Autoplay({ delay: 5000, stopOnInteraction: false })]
 	)
 
-  const [selectedIndex, setSelectedIndex] = useState(0)
+	const [selectedIndex, setSelectedIndex] = useState(0)
 	const [slidesCount, setSlidesCount] = useState(0)
+	const [showButtons, setShowButtons] = useState(false) // Estado para mostrar/ocultar botões
 
 	// Atualiza os dots quando o slide muda
 	useEffect(() => {
@@ -41,18 +42,22 @@ function Carrossel() {
 		emblaApi?.scrollTo(index)
 	}
 
-  // Função para ir para o slide anterior em relação ao atual
+	// Função para ir para o slide anterior em relação ao atual
 	function scrollPrev() {
 		emblaApi?.scrollPrev()
 	}
 
-  // Função para ir para o próximo slide em relação ao atual
+	// Função para ir para o próximo slide em relação ao atual
 	function scrollNext() {
 		emblaApi?.scrollNext()
 	}
 
 	return (
-		<section className="relative md:max-h-[70vh] max-h-[50vh]">
+		<section
+			className="relative md:max-h-[70vh] max-h-[50vh]"
+			onMouseEnter={() => setShowButtons(true)}
+			onMouseLeave={() => setShowButtons(false)}
+		>
 			<div className="overflow-hidden" ref={emblaRef}>
 				<div className="flex flex-cols">
 					<div className="flex-[0_0_100%]">
@@ -65,7 +70,7 @@ function Carrossel() {
 							<Slide02 />
 						</article>
 					</div>
-                    <div className="flex-[0_0_100%]">
+					<div className="flex-[0_0_100%]">
 						<article className="overflow-hidden max-h-[70vh] flex flex-col">
 							<Slide03 />
 						</article>
@@ -74,30 +79,35 @@ function Carrossel() {
 			</div>
 
 			<button
-				className="flex items-center justify-center w-16 h-16 absolute left-3 top-1/2 -translate-y-1/2 z-10"
-				onClick={scrollPrev}>
+				className={`cursor-pointer hidden md:flex items-center justify-center w-16 h-16 absolute left-3 top-1/2 -translate-y-1/2 z-10 transition-opacity ${
+					showButtons ? "opacity-100" : "opacity-0"
+				}`}
+				onClick={scrollPrev}
+			>
 				<CaretLeft size={48} className="fill-white stroke-slate-900 drop-shadow-xl" />
 			</button>
 
 			<button
-				className="flex items-center justify-center w-16 h-16 absolute right-3 top-1/2 -translate-y-1/2 z-10"
-				onClick={scrollNext}>
+				className={`cursor-pointer hidden md:flex items-center justify-center w-16 h-16 absolute right-3 top-1/2 -translate-y-1/2 z-10 transition-opacity ${
+					showButtons ? "opacity-100" : "opacity-0"
+				}`}
+				onClick={scrollNext}
+			>
 				<CaretRight size={48} className="fill-white stroke-slate-900 drop-shadow-xl" />
 			</button>
 
-      {/* Paginação (Dots) */}
-			<div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+			{/* Paginação (Dots) */}
+			<div className="absolute flex gap-2 -translate-x-1/2 bottom-4 left-1/2">
 				{Array.from({ length: slidesCount }).map((_, index) => (
 					<button
 						key={index}
-						className={`w-3 h-3 rounded-full transition-all ${
+						className={`cursor-pointer w-2 h-2 md:w-3 md:h-3 rounded-full transition-all ${
 							selectedIndex === index ? "bg-white scale-125" : "bg-gray-400"
 						}`}
 						onClick={() => scrollTo(index)}
 					/>
 				))}
 			</div>
-
 		</section>
 	)
 }

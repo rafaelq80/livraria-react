@@ -40,8 +40,8 @@ function FormProduto() {
 	const { usuario, handleLogout } = useContext(AuthContext)
 	const token = usuario.token
 
-	const handleError = (error: any) => {
-		if (error.toString().includes("401")) handleLogout()
+	const handleError = (error: unknown) => {
+		if (typeof error === "string" && error.includes("401")) handleLogout()
 		else ToastAlerta("Erro ao carregar dados!", "erro")
 	}
 
@@ -63,10 +63,10 @@ function FormProduto() {
   }
   
 
-	const fetchData = async (url: string, setter: Function) => {
+	const fetchData = async (url: string, setter: (data: never) => void) => {
 		try {
 			await listar(url, setter, { headers: { Authorization: token } })
-		} catch (error: any) {
+		} catch (error: unknown) {
 			handleError(error)
 		}
 	}
@@ -85,7 +85,7 @@ function FormProduto() {
 					headers: { Authorization: token },
 				}
 			)
-		} catch (error: any) {
+		} catch (error: unknown) {
 			handleError(error)
 		}
 	}
@@ -106,10 +106,8 @@ function FormProduto() {
 				}
 			)
 			return buscaAutor
-		} catch (error: any) {
-			if (error.toString().includes("401")) {
-				handleLogout()
-			}
+		} catch (error: unknown) {
+			if (typeof error === "string" && error.includes("401")) handleLogout()
 			return null
 		}
 	}
@@ -224,14 +222,18 @@ function FormProduto() {
 	const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		setIsLoading(true)
+	
 		try {
-			id
-				? await atualizar("/produtos", produto, setProduto, {
-						headers: { Authorization: token },
-				  })
-				: await cadastrar("/produtos", produto, setProduto, {
-						headers: { Authorization: token },
-				  })
+			if (id) {
+				await atualizar("/produtos", produto, setProduto, {
+					headers: { Authorization: token },
+				})
+			} else {
+				await cadastrar("/produtos", produto, setProduto, {
+					headers: { Authorization: token },
+				})
+			}
+	
 			ToastAlerta(`Produto ${id ? "atualizado" : "cadastrado"} com sucesso`, "sucesso")
 			navigate("/")
 		} catch (error) {
@@ -240,6 +242,7 @@ function FormProduto() {
 			setIsLoading(false)
 		}
 	}
+	
 
 	const categoriaSelecionado = produto.categoria?.id > 0
 	const editoraSelecionada = produto.editora?.id > 0
@@ -264,7 +267,7 @@ function FormProduto() {
 						id="titulo"
 						name="titulo"
 						required
-						className="border-2 border-slate-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+						className="bg-white border-2 border-slate-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-zinc-400"
 					/>
 				</div>
 
@@ -279,7 +282,7 @@ function FormProduto() {
 						id="preco"
 						name="preco"
 						required
-						className="border-2 border-slate-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+						className="bg-white border-2 border-slate-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-zinc-400"
 					/>
 				</div>
 
@@ -294,7 +297,7 @@ function FormProduto() {
 							id="isbn10"
 							name="isbn10"
 							required
-							className="border-2 border-slate-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+							className="bg-white border-2 border-slate-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-zinc-400"
 						/>
 					</div>
 
@@ -308,7 +311,7 @@ function FormProduto() {
 							id="isbn13"
 							name="isbn13"
 							required
-							className="border-2 border-slate-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+							className="bg-white border-2 border-slate-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-zinc-400"
 						/>
 					</div>
 				</div>
@@ -319,7 +322,7 @@ function FormProduto() {
 						placeholder="Insira o link da foto"
 						id="foto"
 						name="foto"
-						className="border-2 border-slate-700 rounded p-2 utral-800"
+						className="bg-white border-2 border-slate-700 rounded p-2 utral-800"
 						required
 						value={produto.foto}
 						onChange={(e: ChangeEvent<HTMLInputElement>) => atualizarEstado(e)}
@@ -333,7 +336,7 @@ function FormProduto() {
 							type="text"
 							id="search-author"
 							placeholder="Digite o nome do autor"
-							className="border-2 border-slate-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+							className="bg-white border-2 border-slate-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-zinc-400"
 							value={filtrarAutor}
 							onChange={handleFiltrarAutor}
 						/>
@@ -341,12 +344,12 @@ function FormProduto() {
 
 					<div className="flex gap-4">
 						<div className="flex flex-col flex-1">
-							<label htmlFor="available-authors" className="text-sm mb-1">
+							<label htmlFor="available-authors" className="mb-1">
 								Lista de Autores
 							</label>
 							<select
 								id="available-authors"
-								className="border p-2 border-slate-800 rounded focus:outline-none focus:ring-2 focus:ring-zinc-400 h-32"
+								className="bg-white border p-2 border-slate-800 rounded focus:outline-none focus:ring-2 focus:ring-zinc-400 h-32"
 								value={selectedAutorToAdd}
 								onChange={handleSelectAutorToAdd}
 								size={5}
@@ -365,7 +368,7 @@ function FormProduto() {
 								type="button"
 								onClick={handleAddAutor}
 								disabled={!selectedAutorToAdd}
-								className="px-2 py-1 bg-green-600 text-white rounded disabled:bg-gray-300"
+								className="px-2 py-1 bg-green-600 text-white rounded disabled:bg-gray-400"
 							>
 								<ArrowFatRight size={16} weight="bold" />
 							</button>
@@ -373,19 +376,19 @@ function FormProduto() {
 								type="button"
 								onClick={handleRemoveAutor}
 								disabled={!selectedAutorToRemove}
-								className="px-2 py-1 bg-red-600 text-white rounded disabled:bg-gray-300"
+								className="px-2 py-1 bg-red-600 text-white rounded disabled:bg-gray-400"
 							>
 								<ArrowFatLeft size={16} weight="bold" />
 							</button>
 						</div>
 
 						<div className="flex flex-col flex-1">
-							<label htmlFor="selected-authors" className="text-sm mb-1">
+							<label htmlFor="selected-authors" className="mb-1">
 								Autores do Livro
 							</label>
 							<select
 								id="selected-authors"
-								className="border p-2 border-slate-800 rounded focus:outline-none focus:ring-2 focus:ring-zinc-400 h-32"
+								className="bg-white border p-2 border-slate-800 rounded focus:outline-none focus:ring-2 focus:ring-zinc-400 h-32"
 								value={selectedAutorToRemove}
 								onChange={handleSelectAutorToRemove}
 								size={5}
@@ -406,7 +409,7 @@ function FormProduto() {
 					<select
 						name="categoria"
 						id="categoria"
-						className="border p-2 border-slate-800 rounded focus:outline-none focus:ring-2 focus:ring-zinc-400"
+						className="bg-white border p-2 border-slate-800 rounded focus:outline-none focus:ring-2 focus:ring-zinc-400"
 						onChange={handleCategoriaChange}
 						value={produto.categoria?.id || ""}
 					>
@@ -426,7 +429,7 @@ function FormProduto() {
 					<select
 						name="editora"
 						id="editora"
-						className="border p-2 border-slate-800 rounded focus:outline-none focus:ring-2 focus:ring-zinc-400"
+						className="bg-white border p-2 border-slate-800 rounded focus:outline-none focus:ring-2 focus:ring-zinc-400"
 						onChange={handleEditoraChange}
 						value={produto.editora?.id || ""}
 					>
@@ -449,7 +452,7 @@ function FormProduto() {
 						!autorSelecionado ||
 						isLoading
 					}
-					className="flex justify-center rounded disabled:bg-slate-200 bg-indigo-900 
+					className="flex justify-center rounded disabled:bg-gray-400 bg-indigo-900 
                     hover:bg-indigo-600 text-white font-bold w-1/2 mx-auto py-2 mb-8"
 				>
 					{isLoading ? (

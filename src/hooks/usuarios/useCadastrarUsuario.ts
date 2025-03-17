@@ -59,7 +59,8 @@ export function useCadastrarUsuario() {
 			ToastAlerta("Usuário cadastrado com sucesso!", "sucesso")
 			reset()
 			navigate("/login")
-		} catch (error) {
+		} catch (error: unknown) {
+			console.error("Erro: ", error)
 			ToastAlerta("Erro ao cadastrar o usuário!", "erro")
 		} finally {
 			setIsLoading(false)

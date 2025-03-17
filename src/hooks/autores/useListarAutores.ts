@@ -22,10 +22,8 @@ export const useListarAutores = () => {
                     Authorization: token,
                 },
             })
-        } catch (error: any) {
-            if (error.toString().includes("401")) {
-                handleLogout()
-            }
+        } catch (error: unknown) {
+            if (typeof error === "string" && error.includes("401")) handleLogout()
         } finally {
             setIsLoading(false)
         }

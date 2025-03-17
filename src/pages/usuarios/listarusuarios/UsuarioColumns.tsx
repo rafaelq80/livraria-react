@@ -45,7 +45,7 @@ export function createUsuarioColumns(): ColumnDef<Usuario>[] {
 		{
 			accessorKey: "roles",
 			header: "Permissões",
-			cell: ({ getValue }: CellContext<Usuario, any>) => {
+			cell: ({ getValue }: CellContext<Usuario, unknown>) => {
 				const roles = getValue() as Role[] // Garantir que 'roles' seja tratado como um array de Role
 				return roles.map((role) => role.nome).join(" | ")
 			},

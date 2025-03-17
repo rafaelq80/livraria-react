@@ -16,7 +16,7 @@
 					<img
 						src="https://ik.imagekit.io/vzr6ryejm/livraria/livro_01.png?updatedAt=1740638889617"
 						alt="Imagem Página Home"
-						className="md:h-2/4 h-[28vh] object-contain"
+						className="md:h-2/4 h-[24vh] object-contain"
 					/>
 				</div>
 

@@ -30,8 +30,9 @@ export const useRecuperarSenha = () => {
       await recuperarSenha('/usuarios/recuperarsenha', { usuario: data.usuario }, setMessage);
       reset();
 
-    } catch (error: any) {
-      if (error.response) {
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Erro: ", error);
         setMessage("Não foi possível conectar ao servidor. Tente novamente mais tarde.");
       }
     } finally {

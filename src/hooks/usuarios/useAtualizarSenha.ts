@@ -58,9 +58,9 @@ export const useAtualizarSenha = () => {
         navigate("/login");
       }, 3000);
 
-    } catch (error: any) {
-      if (error.response && error.response.data) {
-        setMessage(error.response.data.message || "Erro ao atualizar senha");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setMessage(error.message || "Erro ao atualizar senha");
       } else {
         setMessage("Não foi possível conectar ao servidor. Tente novamente mais tarde.");
       }

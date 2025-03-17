@@ -7,7 +7,7 @@ function ListarProdutos() {
 	const { produtos, isLoading } = useListarProdutos()
 
 	return (
-		<div className="p-4">
+		<div className="p-2 md:p-4">
 			
 			{isLoading ? (
 				<DNA
@@ -23,7 +23,7 @@ function ListarProdutos() {
 					<p className="text-lg">Nenhum Usuario encontrado.</p>
 				</div>
 			) : (
-				<div className="container mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+				<div className="container mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-6">
 					{produtos.map((produto) => (
 						<CardProdutos key={produto.id} produto={produto} />
 					))}

@@ -21,7 +21,7 @@
 					<img
 						src="https://ik.imagekit.io/vzr6ryejm/livraria/livro_02.png?updatedAt=1740641041819"
 						alt="Imagem Página Home"
-						className="md:h-2/3 h-[28vh] object-contain"
+						className="md:h-2/3 h-[26vh] object-contain"
 					/>
 				</div>
 			</div>

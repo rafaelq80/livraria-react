@@ -13,7 +13,8 @@ export const useListarProdutos = () => {
         setIsLoading(true)
         try {
             await listarProdutos("/produtos", setProdutos)
-        } catch (error: any) {
+        } catch (error: unknown) {
+            console.error("Erro: ", error)
            ToastAlerta("Erro ao Listar Produtos", 'error')
         } finally {
             setIsLoading(false)
