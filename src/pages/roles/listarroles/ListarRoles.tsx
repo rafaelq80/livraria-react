@@ -5,7 +5,7 @@ import { useListarRoles } from "../../../hooks/roles/useListarRoles"
 import { createRoleColumns } from "./RoleColumns"
 
 function ListarRoles() {
-	const { roles, isLoading, showButton, navigate } = useListarRoles()
+	const { roles, isLoading, showButton, message, navigate } = useListarRoles()
 	const columns = createRoleColumns()
 
 	return (
@@ -32,7 +32,7 @@ function ListarRoles() {
 				/>
 			) : roles.length === 0 ? (
 				<div className="text-center text-gray-500 mt-6">
-					<p className="text-lg">Nenhum Role encontrado.</p>
+					<p className="text-lg">{message ? message : 'Nenhum Role encontrado.'}</p>
 				</div>
 			) : (
 				<div>

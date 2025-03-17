@@ -52,7 +52,7 @@ function Carrossel() {
 	}
 
 	return (
-		<section className="relative max-h-[70vh]">
+		<section className="relative md:max-h-[70vh] max-h-[50vh]">
 			<div className="overflow-hidden" ref={emblaRef}>
 				<div className="flex flex-cols">
 					<div className="flex-[0_0_100%]">

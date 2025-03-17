@@ -2,7 +2,7 @@ import { RotatingLines } from "react-loader-spinner"
 import { useAtualizarSenha } from "../../../hooks/usuarios/useAtualizarSenha"
 
 function AtualizarSenha() {
-	const { tokenError, message, isLoading, register, errors, onSubmit, redirectToRecovery } =
+	const { tokenError, message, isLoading, register, errors, onSubmit, voltar } =
 		useAtualizarSenha()
 
 	if (tokenError) {
@@ -14,7 +14,7 @@ function AtualizarSenha() {
 						Por favor, solicite um novo link de recuperação.
 					</div>
 					<button
-						onClick={redirectToRecovery}
+						onClick={voltar}
 						className="mt-4 w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-400"
 					>
 						Voltar

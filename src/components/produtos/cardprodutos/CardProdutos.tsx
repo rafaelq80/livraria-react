@@ -34,7 +34,7 @@ function CardProdutos({ produto }: CardProdutoProps) {
       </div>
 
       {/* Detalhes do produto */}
-      <div className="flex flex-col justify-center items-center py-2">
+      <div className="flex flex-col justify-start items-center py-2 h-full">
         <Link to={`/produtodetalhes/${produto.id}`}>
           <img
             src={produto.foto}
@@ -42,15 +42,8 @@ function CardProdutos({ produto }: CardProdutoProps) {
             className="mt-1 w-40 h-auto m-2 object-cover rounded-lg"
           />
         </Link>
-        <div className="p-4">
+        <div className="p-4 min-h-[25vh] flex flex-col justify-between">
           <p className="py-2 text-sm text-center uppercase">{produto.titulo}</p>
-          <div className="flex flex-col gap-1">
-            {produto.autores.map((autor) => (
-              <p key={autor.id} className="text-xs">
-                {autor.nome}
-              </p>
-            ))}
-          </div>
           <h3 className="py-1 text-xl text-center font-bold uppercase">
             {formatarMoeda(produto.preco)}
           </h3>

@@ -61,7 +61,7 @@ function DataTable<TData = unknown>({
         onGlobalFilterChange={setGlobalFilter}
         onAddNew={onAddNew}
       />
-      <div className="border rounded-lg overflow-hidden">
+      <div className="border-none rounded-lg overflow-hidden">
         <DataTableDesktopView
           table={table}
           columns={columns}

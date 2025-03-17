@@ -53,10 +53,11 @@ export const useAtualizarSenha = () => {
       // Limpar formulário após sucesso
       reset();
       
-      // Opcionalmente, redirecionar após alguns segundos
+      // Redireciona para a tela de login após alguns segundos
       setTimeout(() => {
         navigate("/login");
       }, 3000);
+
     } catch (error: any) {
       if (error.response && error.response.data) {
         setMessage(error.response.data.message || "Erro ao atualizar senha");
@@ -68,7 +69,7 @@ export const useAtualizarSenha = () => {
     }
   };
 
-  const redirectToRecovery = () => {
+  const voltar = () => {
     navigate("/recuperarsenha");
   };
 
@@ -80,6 +81,6 @@ export const useAtualizarSenha = () => {
     register,
     errors,
     onSubmit: handleSubmit(onSubmit),
-    redirectToRecovery
+    voltar
   };
 };

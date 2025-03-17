@@ -13,6 +13,7 @@ export const useListarRoles = () => {
     const token = usuario.token
     const [isLoading, setIsLoading] = useState(true)
     const [showButton, setShowButton] = useState(false)
+    const [message, setSMessage] = useState<string>('')
 
     const buscarRoles = async () => {
         setIsLoading(true)
@@ -25,6 +26,9 @@ export const useListarRoles = () => {
         } catch (error: any) {
             if (error.toString().includes("401")) {
                 handleLogout()
+            } if (error.toString().includes("403")) {
+                setShowButton(false)
+                setSMessage("Acesso Negado!")
             }
         } finally {
             setIsLoading(false)
@@ -50,6 +54,7 @@ export const useListarRoles = () => {
         roles,
         isLoading,
         showButton,
+        message,
         navigate,
         buscarRoles
     }

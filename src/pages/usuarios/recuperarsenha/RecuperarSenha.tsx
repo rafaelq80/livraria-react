@@ -8,7 +8,7 @@ function RecuperarSenha() {
     register,
     errors,
     onSubmit,
-    handleBackToLogin,
+    voltar,
   } = useRecuperarSenha();
 
   return (
@@ -44,8 +44,8 @@ function RecuperarSenha() {
           <div className="flex justify-around gap-4 w-full">
             <button
               type="button"
-              className="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-400 transition flex justify-center"
-              onClick={handleBackToLogin}
+              className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-400 transition flex justify-center"
+              onClick={voltar}
             >
               Voltar
             </button>

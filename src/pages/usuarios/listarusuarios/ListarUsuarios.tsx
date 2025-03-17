@@ -13,7 +13,7 @@ function ListarUsuarios() {
 			{showButton && (
 				<div className="flex justify-end">
 					<button
-						onClick={() => navigate("/cadastrarusuario")}
+						onClick={() => navigate("/cadastro")}
 						className="flex items-center gap-2 bg-green-500 hover:bg-green-700 px-4 py-2 m-4 text-white font-bold rounded-xl"
 					>
 						<Plus size={32} className="h-4 w-4" />
@@ -40,7 +40,7 @@ function ListarUsuarios() {
 						data={usuarios}
 						columns={columns}
 						title="Usuario"
-						onAddNew={() => navigate("/cadastrarusuario")}
+						onAddNew={() => navigate("/cadastro")}
 						columnSpans={[
 							"col-span-1",
 							"col-span-4",

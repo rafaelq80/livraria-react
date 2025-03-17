@@ -1,22 +1,22 @@
 ﻿function Slide02() {
 	return (
-		<div className="flex justify-center items-center max-h-[70vh] bg-gradient-to-r from-purple-900 to-purple-500">
-			<div className="grid grid-cols-3 text-white">
-				<div className="col-span-2 flex flex-col gap-6 items-center justify-center py-4">
-					<h2 className="text-6xl font-bold">PRÉ VENDA</h2>
-					<h3 className="text-4xl font-bold text-yellow-600 text-center text-pretty">
+		<div className="flex justify-center items-center md:max-h-[70vh] min-h-[50vh] bg-gradient-to-r from-purple-900 to-purple-500">
+			<div className="flex flex-col text-white md:grid md:grid-cols-3">
+				<div className="flex flex-col items-center justify-center col-span-2 gap-2 py-2 md:gap-6 md:py-4">
+					<h2 className="hidden font-bold md:text-6xl">PRÉ VENDA</h2>
+					<h3 className="text-2xl font-bold text-center text-yellow-600 md:text-4xl text-pretty">
 						O QUINTO LIVRO DA SAGA JOGOS VORAZES
 					</h3>
-					<p className="text-2xl font-bold text-white text-center">
+					<p className="text-base font-bold text-center text-white md:text-2xl">
 						LANÇAMENTO MUNDIAL 18 DE MARÇO
 					</p>
 				</div>
 
-				<div className="col-span-1 flex justify-center items-center">
+				<div className="flex items-center justify-center col-span-1">
 					<img
 						src="https://ik.imagekit.io/vzr6ryejm/livraria/livro_01.png?updatedAt=1740638889617"
 						alt="Imagem Página Home"
-						className="h-2/4"
+						className="md:h-2/4 h-[28vh] object-contain"
 					/>
 				</div>
 

@@ -3,7 +3,7 @@ import { useCadastrarUsuario } from "../../../hooks/usuarios/useCadastrarUsuario
 
 function CadastrarUsuario() {
 	const { isLoading, register, handleSubmit, errors, onSubmit, retornar } = useCadastrarUsuario()
-
+	
 	return (
 		<>
 			<div className="flex items-center justify-center min-h-screen bg-gray-100 py-8">
@@ -13,7 +13,9 @@ function CadastrarUsuario() {
 					</h2>
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<div className="flex flex-col w-full mb-4">
-							<label htmlFor="nome" className="block text-gray-700 font-medium">Nome</label>
+							<label htmlFor="nome" className="block text-gray-700 font-medium">
+								Nome
+							</label>
 							<input
 								type="text"
 								id="nome"
@@ -26,7 +28,9 @@ function CadastrarUsuario() {
 							)}
 						</div>
 						<div className="flex flex-col w-full mb-4">
-							<label htmlFor="usuario" className="block text-gray-700 font-medium">Usuario</label>
+							<label htmlFor="usuario" className="block text-gray-700 font-medium">
+								Usuario
+							</label>
 							<input
 								type="text"
 								id="usuario"
@@ -41,7 +45,9 @@ function CadastrarUsuario() {
 							)}
 						</div>
 						<div className="flex flex-col w-full mb-4">
-							<label htmlFor="foto" className="block text-gray-700 font-medium">Foto</label>
+							<label htmlFor="foto" className="block text-gray-700 font-medium">
+								Foto
+							</label>
 							<input
 								type="text"
 								id="foto"
@@ -54,7 +60,9 @@ function CadastrarUsuario() {
 							)}
 						</div>
 						<div className="flex flex-col w-full mb-4">
-							<label htmlFor="senha" className="block text-gray-700 font-medium">Senha</label>
+							<label htmlFor="senha" className="block text-gray-700 font-medium">
+								Senha
+							</label>
 							<input
 								type="password"
 								id="senha"
@@ -67,7 +75,12 @@ function CadastrarUsuario() {
 							)}
 						</div>
 						<div className="flex flex-col w-full mb-4">
-							<label htmlFor="confirmarSenha" className="block text-gray-700 font-medium">Confirmar Senha</label>
+							<label
+								htmlFor="confirmarSenha"
+								className="block text-gray-700 font-medium"
+							>
+								Confirmar Senha
+							</label>
 							<input
 								type="password"
 								id="confirmarSenha"
@@ -84,14 +97,15 @@ function CadastrarUsuario() {
 						<div className="flex justify-around gap-8 w-full">
 							<button
 								type="button"
-								className="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-400 transition flex justify-center"
+								className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-400 transition flex justify-center"
 								onClick={retornar}
 							>
 								Cancelar
 							</button>
+
 							<button
 								type="submit"
-								className="w-full bg-indigo-900 text-white py-2 rounded-lg hover:bg-indigo-400 transition flex justify-center"
+								className="w-full bg-indigo-900 text-white py-2 rounded hover:bg-indigo-400 transition flex justify-center"
 								disabled={isLoading}
 							>
 								{isLoading ? (

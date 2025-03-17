@@ -26,8 +26,10 @@ export const useRecuperarSenha = () => {
     setMessage("");
     
     try {
+
       await recuperarSenha('/usuarios/recuperarsenha', { usuario: data.usuario }, setMessage);
-      reset(); // Limpa o formulário após o envio bem-sucedido
+      reset();
+
     } catch (error: any) {
       if (error.response) {
         setMessage("Não foi possível conectar ao servidor. Tente novamente mais tarde.");
@@ -37,7 +39,7 @@ export const useRecuperarSenha = () => {
     }
   };
 
-  const handleBackToLogin = () => {
+  const voltar = () => {
     navigate("/login");
   };
 
@@ -47,6 +49,6 @@ export const useRecuperarSenha = () => {
     register,
     errors,
     onSubmit: handleSubmit(onSubmit),
-    handleBackToLogin,
+    voltar,
   };
 };
