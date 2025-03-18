@@ -1,5 +1,6 @@
-import axios from "axios"
+import axios from "axios";
 import Produto from "../models/Produto";
+import Usuario from "../models/Usuario";
 
 export const api = axios.create({
 	baseURL: import.meta.env.VITE_API_URL
@@ -31,10 +32,19 @@ export const resetarSenha = async <T> (url: string, dados: object, setDados: (up
 	setDados(resposta.data.message)
 }
 
-export const cadastrarUsuario = async (url: string, dados: object) => {
-	const resposta = await api.post(url, dados)
-	return resposta.data
-}
+// export const cadastrarUsuario = async (url: string, dados: object) => {
+// 	const resposta = await api.post(url, dados)
+// 	return resposta.data
+// }
+
+export const cadastrarUsuario = async(url: string, dados: object, setDados: (dados: Usuario) => void) => {
+    const resposta = await api.post(url, dados, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    setDados(resposta.data)
+  }
 
 export const listarProdutos = async (url: string, setDados: (dados: Produto[]) => void) => {
 	const resposta = await api.get<Produto[]>(url)
