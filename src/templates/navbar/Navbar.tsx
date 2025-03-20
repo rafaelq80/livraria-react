@@ -1,9 +1,9 @@
 import { List, X } from "@phosphor-icons/react"
 import { Link } from "react-router-dom"
 import { useSearchBar } from "../../hooks/searchbar/useSearchBar"
-import DesktopMenu from "./DesktopMenu"
-import MobileMenu from "./MobileMenu"
-import SearchBar from "./SearchBar"
+import DesktopMenu from "./desktopmenu/DesktopMenu"
+import MobileMenu from "./mobilemenu/MobileMenu"
+import SearchBar from "../searchbar/SearchBar"
 
 function Navbar() {
 	const {
