@@ -37,7 +37,7 @@ export const resetarSenha = async <T> (url: string, dados: object, setDados: (up
 // 	return resposta.data
 // }
 
-export const cadastrarUsuario = async(url: string, dados: object, setDados: (dados: Usuario) => void) => {
+export const cadastrarUsuario = async(url: string, dados: FormData, setDados: (dados: Usuario) => void) => {
     const resposta = await api.post(url, dados, {
       headers: {
         'Content-Type': 'multipart/form-data',

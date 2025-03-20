@@ -18,7 +18,7 @@ export function DataTableHeader({
           placeholder={`Pesquisar ${title}...`}
           value={globalFilter}
           onChange={(e) => onGlobalFilterChange(e.target.value)}
-          className="w-full pl-8 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:border-transparent"
+          className="w-full pl-8 border rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:border-transparent"
         />
       </div>
       {onAddNew && (

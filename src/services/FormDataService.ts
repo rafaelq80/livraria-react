@@ -45,8 +45,8 @@ export function createUsuarioFormData(user: Usuario, foto: File | null) {
     formData.append("senha", user.senha)
     formData.append("foto", user.foto || "")
 
-    // Convertendo a lista de roles para JSON antes de enviar
-    formData.append("roles", JSON.stringify(user.roles))
+    const rolesString = JSON.stringify(user.roles)
+    formData.set("roles", rolesString)
 
     if (foto) {
         formData.append("foto", foto)
@@ -54,4 +54,3 @@ export function createUsuarioFormData(user: Usuario, foto: File | null) {
 
     return formData
 }
-

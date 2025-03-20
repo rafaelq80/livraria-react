@@ -1,6 +1,8 @@
+import { Camera, UploadSimple, UserFocus } from "@phosphor-icons/react"
+import { Controller } from "react-hook-form"
 import { RotatingLines } from "react-loader-spinner"
+import WebCamModal from "../../../components/webcam/webcammodal/WebCamModal"
 import { useCadastrarUsuario } from "../../../hooks/usuarios/useCadastrarUsuario"
-import { UserFocus, UploadSimple, Camera } from "@phosphor-icons/react"
 
 function CadastrarUsuario() {
 	const {
@@ -9,6 +11,7 @@ function CadastrarUsuario() {
 		handleSubmit,
 		errors,
 		onSubmit,
+		control,
 		retornar,
 		fotoPreview,
 		setFotoPreview,
@@ -16,14 +19,16 @@ function CadastrarUsuario() {
 		cameraInputRef,
 		handleFileChange,
 		handleFileSelect,
-		handleCameraCapture,
+		capturePhoto,
+		openCamera,
+		setOpenCamera,
 	} = useCadastrarUsuario()
 
 	return (
 		<>
 			<div className="flex items-center justify-center min-h-screen bg-gray-100 py-8">
 				<div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-6xl lg:w-[90%]">
-					<h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">
+					<h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">
 						Cadastrar Usuário
 					</h2>
 					<div className="flex flex-col lg:flex-row gap-8">
@@ -48,42 +53,98 @@ function CadastrarUsuario() {
 								</div>
 
 								<div className="mb-4 flex gap-4 justify-center">
-									<button
-										type="button"
-										onClick={handleFileSelect}
-										className="px-8 py-2 bg-indigo-900 text-white rounded hover:bg-indigo-700 transition flex items-center justify-center gap-2"
-									>
-										<UploadSimple size={24} color="#ffffff" />
-									</button>
-
-									<input
-										type="file"
-										accept="image/*"
-										ref={fileInputRef}
-										onChange={handleFileChange}
-										className="hidden"
+									<Controller
+										name="fotoFile"
+										control={control}
+										render={({ field }) => (
+											<>
+												<button
+													type="button"
+													onClick={handleFileSelect}
+													className="px-8 py-2 bg-indigo-900 text-white rounded hover:bg-indigo-700 transition flex items-center justify-center gap-2"
+												>
+													<UploadSimple size={24} color="#ffffff" />
+												</button>
+												<input
+													id="fotoUpload"
+													type="file"
+													accept="image/*"
+													className="hidden"
+													onChange={(e) => {
+														field.onChange(e)
+														handleFileChange(e)
+													}}
+													ref={(e) => {
+														field.ref(e)
+														if (
+															fileInputRef.current !== e &&
+															e !== null
+														) {
+															fileInputRef.current = e
+														}
+													}}
+												/>
+											</>
+										)}
 									/>
 
-									{/* Hidden input for storing the base64 string */}
-									<input type="hidden" {...register("foto")} />
-
-									<button
-										type="button"
-										onClick={handleCameraCapture}
-										className="lg:hidden px-8 py-2 bg-green-600 text-white rounded hover:bg-green-500 transition flex items-center justify-center gap-2"
-									>
-										<Camera size={24} color="#ffffff" />
-									</button>
-
-									<input
-										type="file"
-										accept="image/*"
-										capture="environment"
-										ref={cameraInputRef}
-										onChange={handleFileChange}
-										className="hidden"
+									<Controller
+										name="fotoCamera"
+										control={control}
+										render={({ field }) => (
+											<>
+												<button
+													type="button"
+													onClick={() => setOpenCamera(true)}
+													className="px-8 py-2 bg-green-600 text-white rounded hover:bg-green-500 transition flex items-center justify-center gap-2"
+												>
+													<Camera size={24} color="#ffffff" />
+												</button>
+												<input
+													id="fotoCamera"
+													type="file"
+													accept="image/*"
+													capture="environment"
+													className="hidden"
+													onChange={(e) => {
+														field.onChange(e)
+														handleFileChange(e)
+													}}
+													ref={(e) => {
+														field.ref(e)
+														if (
+															cameraInputRef.current !== e &&
+															e !== null
+														) {
+															cameraInputRef.current = e
+														}
+													}}
+												/>
+											</>
+										)}
 									/>
 								</div>
+
+								{/* Popup para a webcam */}
+								<WebCamModal
+									openCamera={openCamera}
+									setOpenCamera={setOpenCamera}
+									capturePhoto={capturePhoto}
+								/>
+
+								{/* Campo oculto para armazenar o base64 da imagem */}
+								<input type="hidden" {...register("foto")} />
+
+								{errors.fotoFile && (
+									<span className="text-red-500 text-sm block text-center">
+										{errors.fotoFile.message}
+									</span>
+								)}
+								{errors.foto && (
+									<span className="text-red-500 text-sm block text-center">
+										{errors.foto.message}
+									</span>
+								)}
 							</div>
 						</div>
 
