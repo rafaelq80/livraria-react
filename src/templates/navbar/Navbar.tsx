@@ -6,72 +6,65 @@ import MobileMenu from "./MobileMenu"
 import SearchBar from "./SearchBar"
 
 function Navbar() {
-  const {
-    titulo,
-    setTitulo,
-    mobileMenuOpen,
-    setMobileMenuOpen,
-    buscarProdutos,
-    toggleMobileMenu
-  } = useSearchBar()
+	const {
+		titulo,
+		setTitulo,
+		mobileMenuOpen,
+		setMobileMenuOpen,
+		buscarProdutos,
+		toggleMobileMenu,
+	} = useSearchBar()
 
-  return (
-    <nav className="w-full bg-indigo-900 text-white">
-      <div className="w-full flex justify-center">
-        <div className="container">
-          {/* Cabeçalho com logo, barra de pesquisa e menu */}
-          <div className="flex flex-wrap md:flex-nowrap justify-between items-center p-2">
-            {/* Logo */}
-            <Link to="/" onClick={() => setMobileMenuOpen(false)} className="flex-shrink-0">
-              <img
-                src="https://ik.imagekit.io/vzr6ryejm/livraria/logo_livraria.png?updatedAt=1737603351362"
-                alt="Logo"
-                className="w-48"
-              />
-            </Link>
-            
-            {/* Barra de pesquisa no desktop - entre logo e menu */}
-            <div className="hidden md:block flex-grow mx-4">
-              <SearchBar 
-                titulo={titulo} 
-                setTitulo={setTitulo} 
-                buscarProdutos={buscarProdutos} 
-              />
-            </div>
-            
-            {/* Menu desktop */}
-            <DesktopMenu />
-            
-            {/* Botão de menu hambúrguer - visível apenas em mobile */}
-            <button className="md:hidden text-white" onClick={toggleMobileMenu}>
-              {mobileMenuOpen ? (
-                <X size={32} weight="bold" />
-              ) : (
-                <List size={32} weight="bold" />
-              )}
-            </button>
-          </div>
-          
-          {/* Menu Mobile - desliza abaixo do cabeçalho */}
-          <MobileMenu 
-            mobileMenuOpen={mobileMenuOpen} 
-            setMobileMenuOpen={setMobileMenuOpen} 
-          />
-          
-          {/* Barra de pesquisa - visível apenas no mobile */}
-          <div className="p-2 flex justify-center md:hidden">
-            <div className="w-full">
-              <SearchBar 
-                titulo={titulo} 
-                setTitulo={setTitulo} 
-                buscarProdutos={buscarProdutos} 
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </nav>
-  )
+	return (
+		<nav className="w-full bg-indigo-900 text-white">
+			<div className="w-full flex justify-center">
+				<div className="container">
+					{/* Cabeçalho com logo, barra de pesquisa e menu */}
+					<div className="flex flex-wrap md:flex-nowrap justify-between items-center p-2">
+						{/* Logo */}
+						<Link
+							to="/"
+							onClick={() => setMobileMenuOpen(false)}
+							className="flex-shrink-0"
+						>
+							<img
+								src="https://ik.imagekit.io/vzr6ryejm/livraria/logo_livraria.png?updatedAt=1737603351362"
+								alt="Logo"
+								className="w-48"
+							/>
+						</Link>
+
+						{/* Barra de pesquisa no desktop - entre logo e menu */}
+						<div className="hidden md:block flex-grow mx-4">
+							<SearchBar
+								titulo={titulo}
+								setTitulo={setTitulo}
+								buscarProdutos={buscarProdutos}
+							/>
+						</div>
+
+						{/* Menu desktop */}
+						<DesktopMenu />
+
+						{/* Botão de menu hambúrguer - visível apenas em mobile */}
+						<button className="md:hidden text-white" onClick={toggleMobileMenu}>
+							{mobileMenuOpen ? (
+								<X size={32} weight="bold" />
+							) : (
+								<List size={32} weight="bold" />
+							)}
+						</button>
+					</div>
+
+					{/* Menu Mobile - desliza abaixo do cabeçalho */}
+					<MobileMenu
+						mobileMenuOpen={mobileMenuOpen}
+						setMobileMenuOpen={setMobileMenuOpen}
+					/>
+				</div>
+			</div>
+		</nav>
+	)
 }
 
 export default Navbar
