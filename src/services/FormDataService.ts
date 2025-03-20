@@ -8,48 +8,40 @@ type FormDataCompatible<T> = Partial<{
 	[K in keyof T]: FormDataValue
 }>
 
-// Função genérica para criar FormData
-export function createFormData<T extends FormDataCompatible<T>>(
-	data: T, // Objeto que contém os dados extraídos do input
-	fileKey?: string, // Nome da chave que aramazenará o arquivo
-	file?: File | null // Arquivo
-): FormData {
+/**
+ * Função genérica para criar FormData a partir de um objeto
+ */
+export function createFormData<T extends FormDataCompatible<T>>(data: T): FormData {
 	const formData = new FormData()
 
 	Object.entries(data).forEach(([key, value]) => {
-		if (value) {
+		if (value !== null && value !== undefined) {
 			// Adiciona um valor para a chave como um arquivo ou como uma string
 			formData.append(key, value instanceof File || value instanceof Blob ? value : String(value))
 		}
 	})
-
-	// Adiciona arquivo separado, se ele foi enviado
-	if (fileKey && file) {
-		formData.append(fileKey, file)
-	}
 
 	return formData
 }
 
 /** 
  * Função Específica para criar FormData do tipo Usuario
- * 
- * Se precisar, você pode criar funções semelhantes a esta
- * para outros Recursos que trabalharão com envio de imagens 
  **/ 
 export function createUsuarioFormData(user: Usuario, foto: File | null) {
-    const formData = new FormData()
-    formData.append("id", user.id.toString())
-    formData.append("nome", user.nome)
-    formData.append("usuario", user.usuario)
-    formData.append("senha", user.senha)
-    formData.append("foto", user.foto || "")
-
-    const rolesString = JSON.stringify(user.roles)
-    formData.set("roles", rolesString)
-
+    // Usar a função genérica para simplificar
+    const formData = createFormData({
+        id: user.id,
+        nome: user.nome,
+        usuario: user.usuario,
+        senha: user.senha,
+        roles: JSON.stringify(user.roles)
+    })
+    
+    // Adicionar a foto apenas uma vez, de acordo com sua disponibilidade
     if (foto) {
         formData.append("foto", foto)
+    } else if (user.foto) {
+        formData.append("foto", user.foto)
     }
 
     return formData

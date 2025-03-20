@@ -26,8 +26,12 @@ export function createUsuarioColumns(): ColumnDef<Usuario>[] {
 					   />
 				   </div>
 			   ) : (
-				   <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-					   <span className="text-gray-500 text-xs">Sem foto</span>
+				   <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center">
+					   <img
+						   src="https://ik.imagekit.io/vzr6ryejm/profile/usuario.svg?updatedAt=1729485119852"
+						   alt="Foto do Usuário"
+						   className="w-full h-full object-cover rounded-full"
+					   />
 				   </div>
 			   )
 		   }

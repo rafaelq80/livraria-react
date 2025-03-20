@@ -20,7 +20,7 @@ function ListarProdutos() {
 				/>
 			) : produtos.length === 0 ? (
 				<div className="text-center text-gray-500 mt-6">
-					<p className="text-lg">Nenhum Usuario encontrado.</p>
+					<p className="text-lg">Nenhum Produto encontrado.</p>
 				</div>
 			) : (
 				<div className="container mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-6">

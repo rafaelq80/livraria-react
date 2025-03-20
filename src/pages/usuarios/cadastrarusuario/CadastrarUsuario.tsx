@@ -27,7 +27,7 @@ function CadastrarUsuario() {
 	return (
 		<>
 			<div className="flex items-center justify-center min-h-screen bg-gray-100 py-8">
-				<div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-6xl lg:w-[90%]">
+				<div className="bg-white shadow-lg rounded-lg mx-2 p-8 w-full max-w-6xl lg:w-[90%]">
 					<h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">
 						Cadastrar Usuário
 					</h2>
@@ -132,17 +132,9 @@ function CadastrarUsuario() {
 									capturePhoto={capturePhoto}
 								/>
 
-								{/* Campo oculto para armazenar o base64 da imagem */}
-								<input type="hidden" {...register("foto")} />
-
 								{errors.fotoFile && (
 									<span className="text-red-500 text-sm block text-center">
 										{errors.fotoFile.message}
-									</span>
-								)}
-								{errors.foto && (
-									<span className="text-red-500 text-sm block text-center">
-										{errors.foto.message}
 									</span>
 								)}
 							</div>

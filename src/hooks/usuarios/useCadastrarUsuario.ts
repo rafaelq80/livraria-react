@@ -45,51 +45,46 @@ export function useCadastrarUsuario() {
 	})
 
 	function retornar() {
-		if (!token) navigate("/login")
-		else navigate("/usuarios")
+		navigate(token ? "/usuarios" : "/login")
 	}
 
-	const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0]
-		if (file) {
+	// Função única para lidar com ambas as fontes de imagem (arquivo ou webcam)
+	const handleImageUpdate = (imageSource: string | File) => {
+		if (imageSource instanceof File) {
+			// Caso 1: É um arquivo
 			const reader = new FileReader()
 			reader.onloadend = () => {
 				const result = reader.result
 				if (typeof result === "string") {
 					setFotoPreview(result)
-					setValue("foto", result)  // Apenas preview
-	
-					// Aqui adicionamos o arquivo real ao react-hook-form
-					setValue("fotoFile", file, { shouldValidate: true })  
+					setValue("fotoFile", imageSource, { shouldValidate: true })
 				}
 			}
-			reader.readAsDataURL(file)
+			reader.readAsDataURL(imageSource)
+		} else {
+			// Caso 2: É uma string base64 (da webcam)
+			setFotoPreview(imageSource)
+			
+			// Converter base64 para arquivo
+			fetch(imageSource)
+				.then(res => res.blob())
+				.then(blob => {
+					const file = new File([blob], "webcam-photo.jpg", { type: "image/jpeg" })
+					setValue("fotoFile", file, { shouldValidate: true })
+				})
 		}
+	}
+
+	const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0]
+		if (file) handleImageUpdate(file)
 	}
 
 	const handleFileSelect = () => fileInputRef.current?.click()
 	
-	// Nova função para capturar a foto da webcam
 	const capturePhoto = (imageSrc: string) => {
-		setFotoPreview(imageSrc)
-		setValue("foto", imageSrc)
+		handleImageUpdate(imageSrc)
 		setOpenCamera(false)
-		
-		// Converter base64 para arquivo (opcional - caso precise do arquivo)
-		fetch(imageSrc)
-			.then(res => res.blob())
-			.then(blob => {
-				const file = new File([blob], "webcam-photo.jpg", { type: "image/jpeg" })
-				
-				// Criar um objeto DataTransfer para simular um evento de arquivo
-				const dataTransfer = new DataTransfer()
-				dataTransfer.items.add(file)
-				
-				// Se precisar atualizar o fileInputRef
-				if (fileInputRef.current) {
-					fileInputRef.current.files = dataTransfer.files
-				}
-			})
 	}
 
 	async function onSubmit(data: UsuarioSchemaType) {
@@ -104,13 +99,8 @@ export function useCadastrarUsuario() {
 				roles: [rolePadrao],
 			}
 
-			const foto = fileInputRef.current?.files?.[0] || null
-			const formData = createUsuarioFormData(user, foto)
-					
-			//Se temos uma foto em base64 mas não em arquivo
-			if (data.foto && (!foto || foto.size === 0)) {
-				formData.set("foto", data.foto)
-			}
+			// Usar o arquivo do formulário diretamente
+			const formData = createUsuarioFormData(user, data.fotoFile || null)
 
 			await cadastrarUsuario(`/usuarios/cadastrar`, formData, () => {
 				ToastAlerta("Usuário cadastrado com sucesso!", "sucesso")

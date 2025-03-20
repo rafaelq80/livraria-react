@@ -31,11 +31,13 @@ function Navbar() {
             </Link>
             
             {/* Barra de pesquisa no desktop - entre logo e menu */}
-            <SearchBar 
-              titulo={titulo} 
-              setTitulo={setTitulo} 
-              buscarProdutos={buscarProdutos} 
-            />
+            <div className="hidden md:block flex-grow mx-4">
+              <SearchBar 
+                titulo={titulo} 
+                setTitulo={setTitulo} 
+                buscarProdutos={buscarProdutos} 
+              />
+            </div>
             
             {/* Menu desktop */}
             <DesktopMenu />
@@ -50,14 +52,22 @@ function Navbar() {
             </button>
           </div>
           
-          {/* Menu Mobile - agora incluindo a barra de pesquisa */}
+          {/* Menu Mobile - desliza abaixo do cabeçalho */}
           <MobileMenu 
             mobileMenuOpen={mobileMenuOpen} 
-            setMobileMenuOpen={setMobileMenuOpen}
-            titulo={titulo}
-            setTitulo={setTitulo}
-            buscarProdutos={buscarProdutos}
+            setMobileMenuOpen={setMobileMenuOpen} 
           />
+          
+          {/* Barra de pesquisa - visível apenas no mobile */}
+          <div className="p-2 flex justify-center md:hidden">
+            <div className="w-full">
+              <SearchBar 
+                titulo={titulo} 
+                setTitulo={setTitulo} 
+                buscarProdutos={buscarProdutos} 
+              />
+            </div>
+          </div>
         </div>
       </div>
     </nav>

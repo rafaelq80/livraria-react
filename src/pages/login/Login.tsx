@@ -1,4 +1,3 @@
-// components/Login.tsx
 import { RotatingLines } from "react-loader-spinner"
 import { Link } from "react-router-dom"
 import { EyeSlash, Eye } from "@phosphor-icons/react"
@@ -17,7 +16,7 @@ function Login() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-lg rounded-lg p-8 w-96">
+      <div className="bg-white shadow-lg rounded-lg mx-2 p-8 w-96">
         <h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
