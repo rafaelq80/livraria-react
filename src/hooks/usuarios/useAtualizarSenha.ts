@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react"
-import { useLocation, useNavigate } from "react-router-dom"
-import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import axios from "axios"
+import { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
+import { useLocation, useNavigate } from "react-router-dom"
+import { resetarSenha } from "../../services/AxiosService"
 import {
 	atualizarSenhaSchema,
 	AtualizarSenhaSchemaType,
 } from "../../validations/AtualizarSenhaSchema"
-import { resetarSenha } from "../../services/AxiosService"
 
 export const useAtualizarSenha = () => {
 	const [token, setToken] = useState<string | null>(null)
@@ -65,10 +66,14 @@ export const useAtualizarSenha = () => {
 				navigate("/login")
 			}, 3000)
 		} catch (error: unknown) {
-			if (error instanceof Response && error.status === 401) {
-				setMessage("Sessão expirada. Faça login novamente para continuar.")
+			if (axios.isAxiosError(error)) {
+				if (error.response?.status === 401) {
+					setMessage("Link expirado. Solicite um novo link de Recuperação de Senha.")
+				} else {
+					setMessage(error.response?.data?.message || "Erro ao atualizar senha.")
+				}
 			} else if (error instanceof Error) {
-				setMessage(error.message || "Erro ao atualizar senha")
+				setMessage(error.message || "Erro ao atualizar senha.")
 			} else {
 				setMessage("Não foi possível conectar ao servidor. Tente novamente mais tarde.")
 			}
