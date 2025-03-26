@@ -26,7 +26,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         usuario: '',
         senha: '',
         foto: '',
-        token: ''
+        token: '',
+        roles: [],
     });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -57,6 +58,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             senha: '',
             foto: '',
             token: '',
+            roles: [],
         })
         setIsLogout(true);
     }
