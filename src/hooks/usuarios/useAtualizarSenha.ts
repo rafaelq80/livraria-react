@@ -65,8 +65,10 @@ export const useAtualizarSenha = () => {
 				navigate("/login")
 			}, 3000)
 		} catch (error: unknown) {
-			if (typeof error === "string" && error.includes("401")) {
-				setMessage("O link expirou! Solicite um novo link de Recuperação de Senha.")
+			if (error instanceof Response && error.status === 401) {
+				setMessage("Sessão expirada. Faça login novamente para continuar.")
+			} else if (error instanceof Error) {
+				setMessage(error.message || "Erro ao atualizar senha")
 			} else {
 				setMessage("Não foi possível conectar ao servidor. Tente novamente mais tarde.")
 			}
