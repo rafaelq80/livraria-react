@@ -19,6 +19,7 @@ import Footer from "./templates/footer/Footer"
 import Navbar from "./templates/navbar/Navbar"
 import RecuperarSenha from "./pages/usuarios/recuperarsenha/RecuperarSenha"
 import AtualizarSenha from "./pages/usuarios/atualizarsenha/AtualizarSenha"
+import Perfil from "./pages/usuarios/perfil/Perfil"
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
 							<Route path="/consultarnome/:titulo" element={<ListarProdutosPorNome />} />
 							<Route path="/recuperarsenha" element={<RecuperarSenha />} />
 							<Route path="/atualizarsenha" element={<AtualizarSenha />} />
+							<Route path="/perfil" element={<Perfil />} />
 
 							<Route element={<PrivateRoute />}>
 								<Route path="/cadastrarproduto" element={<FormProduto />} />

@@ -13,6 +13,11 @@ export function createRoleColumns(): ColumnDef<Role>[] {
 			cell: (props) => props.getValue(),
 		},
 		{
+			accessorKey: "descricao",
+			header: "Descrição",
+			cell: (props) => props.getValue(),
+		},
+		{
 			id: "actions",
 			header: "",
 			cell: ({ row }) => (
