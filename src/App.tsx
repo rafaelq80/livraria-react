@@ -20,6 +20,7 @@ import Navbar from "./templates/navbar/Navbar"
 import RecuperarSenha from "./pages/usuarios/recuperarsenha/RecuperarSenha"
 import AtualizarSenha from "./pages/usuarios/atualizarsenha/AtualizarSenha"
 import Perfil from "./pages/usuarios/perfil/Perfil"
+import NotFound from "./templates/notfound/NotFound"
 
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
 					<div className="min-h-[80vh] bg-slate-200">
 						<Routes>
 							<Route path="/" element={<Home />} />
+							<Route path="*" element={<NotFound />} />
 							<Route path="/login" element={<Login />} />
 							<Route path="/cadastro" element={<FormUsuario />} />
 							<Route path="/produtos" element={<ListarProdutos />} />
