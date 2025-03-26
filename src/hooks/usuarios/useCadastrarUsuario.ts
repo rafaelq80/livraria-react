@@ -23,6 +23,7 @@ export function useCadastrarUsuario() {
 	const rolePadrao: Role = {
 		id: 2,
 		nome: "user",
+		descricao: "Usuário"
 	}
 
 	const {
