@@ -40,7 +40,6 @@ function App() {
 							<Route path="/consultarnome/:titulo" element={<ListarProdutosPorNome />} />
 							<Route path="/recuperarsenha" element={<RecuperarSenha />} />
 							<Route path="/atualizarsenha" element={<AtualizarSenha />} />
-							<Route path="/perfil" element={<Perfil />} />
 
 							<Route element={<PrivateRoute />}>
 								<Route path="/cadastrarproduto" element={<FormProduto />} />
@@ -50,6 +49,7 @@ function App() {
 								<Route path="/categorias" element={<ListarCategorias />} />
 								<Route path="/editoras" element={<ListarEditoras />} />
 								<Route path="/autores" element={<ListarAutores />} />
+								<Route path="/perfil" element={<Perfil />} />
 							</Route>
 						</Routes>
 					</div>

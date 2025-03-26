@@ -72,8 +72,6 @@ export const useAtualizarSenha = () => {
 				} else {
 					setMessage(error.response?.data?.message || "Erro ao atualizar senha.")
 				}
-			} else if (error instanceof Error) {
-				setMessage(error.message || "Erro ao atualizar senha.")
 			} else {
 				setMessage("Não foi possível conectar ao servidor. Tente novamente mais tarde.")
 			}
