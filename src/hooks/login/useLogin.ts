@@ -40,6 +40,7 @@ export function useLogin() {
       usuario: data.usuario,
       foto: "",
       senha: data.senha,
+      roles: [],
       token: "",
     }
     
