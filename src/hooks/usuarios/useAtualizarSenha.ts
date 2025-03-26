@@ -1,86 +1,94 @@
-import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { atualizarSenhaSchema, AtualizarSenhaSchemaType } from "../../validations/AtualizarSenhaSchema";
-import { resetarSenha } from "../../services/AxiosService";
+import { useState, useEffect } from "react"
+import { useLocation, useNavigate } from "react-router-dom"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import {
+	atualizarSenhaSchema,
+	AtualizarSenhaSchemaType,
+} from "../../validations/AtualizarSenhaSchema"
+import { resetarSenha } from "../../services/AxiosService"
 
 export const useAtualizarSenha = () => {
-  const [token, setToken] = useState<string | null>(null);
-  const [message, setMessage] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [tokenError, setTokenError] = useState<string>("");
+	const [token, setToken] = useState<string | null>(null)
+	const [message, setMessage] = useState<string>("")
+	const [isLoading, setIsLoading] = useState<boolean>(false)
+	const [tokenError, setTokenError] = useState<string>("")
 
-  const location = useLocation();
-  const navigate = useNavigate();
-  
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset
-  } = useForm<AtualizarSenhaSchemaType>({
-    resolver: zodResolver(atualizarSenhaSchema),
-    mode: "onBlur"
-  });
+	const location = useLocation()
+	const navigate = useNavigate()
 
-  useEffect(() => {
-    // Extrair o token da URL
-    const queryParams = new URLSearchParams(location.search);
-    const tokenParam = queryParams.get("token");
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+		reset,
+	} = useForm<AtualizarSenhaSchemaType>({
+		resolver: zodResolver(atualizarSenhaSchema),
+		mode: "onBlur",
+	})
 
-    if (!tokenParam) {
-      setTokenError("Token de recuperação não encontrado na URL");
-      return;
-    }
+	useEffect(() => {
+		// Extrair o token da URL
+		const queryParams = new URLSearchParams(location.search)
+		const tokenParam = queryParams.get("token")
 
-    setToken(tokenParam);
-  }, [location]);
+		if (!tokenParam) {
+			setTokenError("Token de recuperação não encontrado na URL")
+			return
+		}
 
-  const onSubmit = async (data: AtualizarSenhaSchemaType) => {
-    if (!token) return;
-    
-    setIsLoading(true);
-    setMessage("");
+		setToken(tokenParam)
+	}, [location])
 
-    try {
-      await resetarSenha("/usuarios/atualizarsenha", {
-        token,
-        senha: data.senha,
-        confirmarSenha: data.confirmarSenha
-      }, setMessage);
-      
-      // Limpar formulário após sucesso
-      reset();
-      
-      // Redireciona para a tela de login após alguns segundos
-      setTimeout(() => {
-        navigate("/login");
-      }, 3000);
+	const onSubmit = async (data: AtualizarSenhaSchemaType) => {
+		if (!token) return
 
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setMessage(error.message || "Erro ao atualizar senha");
-      } else {
-        setMessage("Não foi possível conectar ao servidor. Tente novamente mais tarde.");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+		setIsLoading(true)
+		setMessage("")
 
-  const voltar = () => {
-    navigate("/recuperarsenha");
-  };
+		try {
+			await resetarSenha(
+				"/usuarios/atualizarsenha",
+				{
+					token,
+					senha: data.senha,
+					confirmarSenha: data.confirmarSenha,
+				},
+				setMessage
+			)
 
-  return {
-    token,
-    tokenError,
-    message,
-    isLoading,
-    register,
-    errors,
-    onSubmit: handleSubmit(onSubmit),
-    voltar
-  };
-};
+			// Limpar formulário após sucesso
+			reset()
+
+			// Redireciona para a tela de login após alguns segundos
+			setTimeout(() => {
+				navigate("/login")
+			}, 3000)
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				setMessage(error.message || "Erro ao atualizar senha")
+			} else if (typeof error === "string" && error.includes("401")) {
+				setMessage("O link expirou! Solicite um novo link de Recuperação de Senha.")
+			} else {
+				setMessage("Não foi possível conectar ao servidor. Tente novamente mais tarde.")
+			}
+		} finally {
+			setIsLoading(false)
+		}
+	}
+
+	const voltar = () => {
+		navigate("/recuperarsenha")
+	}
+
+	return {
+		token,
+		tokenError,
+		message,
+		isLoading,
+		register,
+		errors,
+		onSubmit: handleSubmit(onSubmit),
+		voltar,
+	}
+}
