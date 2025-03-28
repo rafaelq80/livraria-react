@@ -29,6 +29,10 @@ export const usuarioSchema = z
 			.regex(/[a-z]/, "A senha deve conter pelo menos uma letra minúscula")
 			.regex(/[0-9]/, "A senha deve conter pelo menos um número"),
 		confirmarSenha: z.string().nonempty("Confirmação de senha é obrigatória"),
+		role: z.preprocess(
+			(val) => Number(val), 
+			z.number().int().positive("Selecione um papel de usuário")
+		),
 	})
 	.refine((data) => data.senha === data.confirmarSenha, {
 		message: "As senhas não correspondem",

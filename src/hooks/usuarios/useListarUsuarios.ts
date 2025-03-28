@@ -1,10 +1,8 @@
-import { useState, useEffect, useContext } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import AuthContext from "../../contexts/AuthContext"
-import { listar } from "../../services/AxiosService"
-import { ToastAlerta } from "../../utils/ToastAlerta"
 import Usuario from "../../models/Usuario"
-
+import { listar } from "../../services/AxiosService"
 
 export const useListarUsuarios = () => {
     const navigate = useNavigate()
@@ -28,13 +26,6 @@ export const useListarUsuarios = () => {
             setIsLoading(false)
         }
     }
-
-    useEffect(() => {
-        if (token === "") {
-            ToastAlerta("Você precisa estar logado", "info")
-            navigate("/")
-        }
-    }, [token, navigate])
 
     useEffect(() => {
         buscarUsuarios()

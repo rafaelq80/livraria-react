@@ -13,7 +13,7 @@ function PrivateRoute() {
 	}, [isAuthenticated])
     
 	if (!isAuthenticated) {
-		return <Navigate to="/" />
+		return <Navigate to="/login" />
 	}
 
 	// Renderiza as rotas protegidas através do Outlet

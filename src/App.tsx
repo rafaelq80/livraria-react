@@ -49,6 +49,7 @@ function App() {
 								<Route path="/categorias" element={<ListarCategorias />} />
 								<Route path="/editoras" element={<ListarEditoras />} />
 								<Route path="/autores" element={<ListarAutores />} />
+								<Route path="/editarusuario/:id" element={<FormUsuario />} />
 								<Route path="/perfil" element={<Perfil />} />
 							</Route>
 						</Routes>

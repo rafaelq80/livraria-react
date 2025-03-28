@@ -1,15 +1,13 @@
 import { EnvelopeSimple } from "@phosphor-icons/react"
 import { usePerfil } from "../../../hooks/usuarios/usePerfil"
+import CadastrarUsuario from "../cadastrarusuario/CadastrarUsuario"
 
 const Perfil = () => {
-	
 	const { modoEdicao, setModoEdicao, cancelarEdicao, usuario } = usePerfil()
-
-	console.log("Usuário: ", JSON.stringify(usuario))
 
 	return (
 		<div className="flex md:items-center justify-center min-h-screen">
-			<div className="items-center justify-center w-5xl md:h-[60vh] m-4 md:mx-auto p-8 bg-white rounded-lg shadow-md">
+			<div className="items-center justify-center w-6xl md:min-h-[60vh] m-4 md:mx-auto p-8 bg-white rounded-lg shadow-md">
 				<div className="flex flex-col md:flex-row items-start gap-8">
 					{/* Coluna da esquerda - Foto e informações básicas */}
 					<div className="w-full md:w-1/3 flex flex-col items-center">
@@ -40,19 +38,17 @@ const Perfil = () => {
 					</div>
 
 					{/* Coluna da direita - Informações detalhadas */}
-					<div className="w-full md:w-2/3">
+					<div className="w-full">
 						{modoEdicao ? (
 							<div className="space-y-4">
-								<div className="flex justify-center">
-									<h2 className="text-3xl tex-center font-semibold text-gray-700 mb-2">
-										Editar Perfil
-									</h2>
-								</div>
+			
+									<CadastrarUsuario isPerfil={true} />
+		
 
-								<div className="flex space-x-2 mt-4">
+								<div className="flex justify-end space-x-2 mt-4">
 									<button
 										onClick={cancelarEdicao}
-										className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-400 transition flex justify-center"
+										className="px-3 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200"
 									>
 										Cancelar
 									</button>

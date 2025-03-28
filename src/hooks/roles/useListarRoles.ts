@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom"
 import AuthContext from "../../contexts/AuthContext"
 import Role from "../../models/Role"
 import { listar } from "../../services/AxiosService"
-import { ToastAlerta } from "../../utils/ToastAlerta"
 
 export const useListarRoles = () => {
 	const navigate = useNavigate()
@@ -32,13 +31,6 @@ export const useListarRoles = () => {
 			setIsLoading(false)
 		}
 	}
-
-	useEffect(() => {
-		if (token === "") {
-			ToastAlerta("Você precisa estar logado", "info")
-			navigate("/")
-		}
-	}, [token, navigate])
 
 	useEffect(() => {
 		buscarRoles()

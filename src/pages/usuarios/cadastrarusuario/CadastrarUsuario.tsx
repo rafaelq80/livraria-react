@@ -4,8 +4,13 @@ import { RotatingLines } from "react-loader-spinner"
 import WebCamModal from "../../../components/webcam/webcammodal/WebCamModal"
 import { useCadastrarUsuario } from "../../../hooks/usuarios/useCadastrarUsuario"
 
-function CadastrarUsuario() {
+interface CadastrarUsuarioProps {
+	isPerfil?: boolean
+}
+
+function CadastrarUsuario({ isPerfil = false }: CadastrarUsuarioProps) {
 	const {
+		id,
 		isLoading,
 		register,
 		handleSubmit,
@@ -22,14 +27,16 @@ function CadastrarUsuario() {
 		capturePhoto,
 		openCamera,
 		setOpenCamera,
-	} = useCadastrarUsuario()
+		rolesList,
+		isAdmin,
+	} = useCadastrarUsuario(isPerfil)
 
 	return (
 		<>
 			<div className="flex items-center justify-center min-h-screen bg-gray-100 py-8">
 				<div className="bg-white shadow-lg rounded-lg mx-2 p-8 w-full max-w-6xl lg:w-[90%]">
 					<h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">
-						Cadastrar Usuário
+						{id ? "Editar Usuário" : "Cadastrar Usuário"}
 					</h2>
 					<div className="flex flex-col lg:flex-row gap-8">
 						<div className="w-full lg:w-1/3 flex flex-col items-center justify-center">
@@ -222,14 +229,50 @@ function CadastrarUsuario() {
 										</span>
 									)}
 								</div>
+
+								{/* New Role Selection */}
+								{isAdmin && (
+									<div className="flex flex-col w-full mb-4">
+										<label
+											htmlFor="role"
+											className="block text-gray-700 font-medium"
+										>
+											Papel de Usuário
+										</label>
+										<Controller
+											name="role"
+											control={control}
+											render={({ field }) => (
+												<select
+													{...field}
+													className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+												>
+													{rolesList.map((role) => (
+														<option key={role.id} value={role.id}>
+															{role.descricao}
+														</option>
+													))}
+												</select>
+											)}
+										/>
+										{errors.role && (
+											<span className="text-red-500 text-sm">
+												{errors.role.message}
+											</span>
+										)}
+									</div>
+								)}
+
 								<div className="flex justify-around gap-8 w-full">
-									<button
-										type="button"
-										className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-400 transition flex justify-center"
-										onClick={retornar}
-									>
-										Cancelar
-									</button>
+									{!isPerfil && (
+										<button
+											type="button"
+											className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-400 transition flex justify-center"
+											onClick={retornar}
+										>
+											Cancelar
+										</button>
+									)}
 
 									<button
 										type="submit"
@@ -245,7 +288,7 @@ function CadastrarUsuario() {
 												visible={true}
 											/>
 										) : (
-											<span>Cadastrar</span>
+											<span>{id ? "Atualizar" : "Cadastrar"}</span>
 										)}
 									</button>
 								</div>
