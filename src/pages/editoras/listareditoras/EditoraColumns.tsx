@@ -19,13 +19,13 @@ export function createEditoraColumns(): ColumnDef<Editora>[] {
 				<div className="flex justify-center items-center gap-2">
 					<button
 						onClick={() => navigate(`/editareditora/${row.original.id}`)}
-						className="text-blue-500 hover:text-blue-700"
+						className="text-blue-500 hover:text-blue-700 cursor-pointer"
 					>
 						<Pencil size={32} className="h-5 w-5 text-blue-500" />
 					</button>
 					<button
 						onClick={() => navigate(`/deletareditora/${row.original.id}`)}
-						className="text-red-500 hover:text-red-700"
+						className="text-red-500 hover:text-red-700 cursor-pointer"
 					>
 						<Trash size={32} className="h-5 w-5 text-red-500" />
 					</button>

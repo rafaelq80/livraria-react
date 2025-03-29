@@ -24,7 +24,7 @@ export function DataTableHeader({
       {onAddNew && (
         <button
           onClick={onAddNew}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-500 hover:bg-green-700 px-4 py-2 text-white font-bold rounded-xl"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-500 hover:bg-green-700 px-4 py-2 text-white font-bold rounded-xl cursor-pointer"
         >
           <Plus size={32} className="h-4 w-4" />
           Adicionar {title}

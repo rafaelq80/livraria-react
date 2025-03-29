@@ -1,6 +1,6 @@
 import { EnvelopeSimple } from "@phosphor-icons/react"
 import { usePerfil } from "../../../hooks/usuarios/usePerfil"
-import CadastrarUsuario from "../cadastrarusuario/CadastrarUsuario"
+import FormUsuario from "../../../components/usuarios/formusuario/FormUsuario"
 
 const Perfil = () => {
 	const { modoEdicao, setModoEdicao, cancelarEdicao, usuario } = usePerfil()
@@ -40,12 +40,13 @@ const Perfil = () => {
 					{/* Coluna da direita - Informações detalhadas */}
 					<div className="w-full">
 						{modoEdicao ? (
-							<div className="space-y-4">
-			
-									<CadastrarUsuario isPerfil={true} />
-		
+							<div className="w-full flex flex-col space-y-2 bg-gray-100">
+								
+								<div className="w-full flex justify-center py-4">
+									<FormUsuario isPerfil={true} />
+								</div>
 
-								<div className="flex justify-end space-x-2 mt-4">
+								<div className="flex justify-end p-4 space-x-2 mt-1">
 									<button
 										onClick={cancelarEdicao}
 										className="px-3 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200"

@@ -1,6 +1,13 @@
-import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 function NotFound() {
+
+	const navigate = useNavigate()
+
+	const retornar = () => {
+		navigate(-1)
+	}
+
 	return (
 		<div className="flex flex-col justify-center items-center h-[80vh] gap-8 bg-indigo-400">
 			<h1 className="text-white font-bold text-3xl">Página não encontrada!</h1>
@@ -9,11 +16,14 @@ function NotFound() {
 				alt="Not Found"
                 className="w-1/3"
 			/>
-			<Link to="/" style={{ textDecoration: "none", color: "blue" }}>
-				<button className="bg-indigo-900 hover:bg-indigo-700 cursor-pointer font-bold text-white py-2 px-4 rounded">
+			
+				<button 
+					className="bg-indigo-900 hover:bg-indigo-700 cursor-pointer font-bold text-white py-2 px-4 rounded"
+					onClick={retornar}
+				>
                     Home
                 </button>
-			</Link>
+			
 		</div>
 	)
 }

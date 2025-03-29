@@ -14,7 +14,7 @@ function ListarEditoras() {
 				<div className="flex justify-end">
 					<button
 						onClick={() => navigate("/cadastrareditora")}
-						className="flex items-center gap-2 bg-green-500 hover:bg-green-700 px-4 py-2 m-4 text-white font-bold rounded-xl"
+						className="flex items-center gap-2 bg-green-500 hover:bg-green-700 px-4 py-2 m-4 text-white font-bold rounded-xl cursor-pointer"
 					>
 						<Plus size={32} className="h-4 w-4" />
 						Nova Editora

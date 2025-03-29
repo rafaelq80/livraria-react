@@ -1,16 +1,33 @@
-import { DropdownMenus } from "../../../types/MenuTypes";
-
+import { CaretDown } from "@phosphor-icons/react"
+import { DropdownMenus } from "../../../types/MenuTypes"
 interface MenuSectionProps {
-    title: string;
-    menu: DropdownMenus;
-    toggleDropdown: (menu: DropdownMenus) => void;
-    dropdownOpen: boolean;
-    children: React.ReactNode;
-  }
-  
-  export const MenuSection = ({ title, menu, toggleDropdown, dropdownOpen, children }: MenuSectionProps) => (
-    <div>
-      <button className="w-full text-left py-2 hover:bg-indigo-400 px-2 rounded" onClick={() => toggleDropdown(menu)}>{title}</button>
-      {dropdownOpen && <div className="pl-4 space-y-2 mt-1">{children}</div>}
-    </div>
-  );
+	title: string
+	menu: DropdownMenus
+	toggleDropdown: (menu: DropdownMenus) => void
+	dropdownOpen: boolean
+	children: React.ReactNode
+}
+
+export const MenuSection = ({
+	title,
+	menu,
+	toggleDropdown,
+	dropdownOpen,
+	children,
+}: MenuSectionProps) => (
+	<div>
+		<button
+			className="w-full text-left py-1 hover:bg-indigo-400 px-2 rounded flex justify-between items-center"
+			onClick={() => toggleDropdown(menu)}
+		>
+			<span>{title}</span>
+			<CaretDown
+				className={`transition-transform duration-300 ${
+					dropdownOpen ? "rotate-270" : "rotate-0"
+				}`}
+				size={16}
+			/>
+		</button>
+		{dropdownOpen && <div className="pl-4 space-y-2 mt-1">{children}</div>}
+	</div>
+)

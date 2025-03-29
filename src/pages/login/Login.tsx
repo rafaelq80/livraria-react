@@ -15,7 +15,7 @@ function Login() {
   } = useLogin()
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center md:min-h-screen bg-gray-100 p-4">
       <div className="bg-white shadow-lg rounded-lg mx-2 p-8 w-96">
         <h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">Login</h2>
         <form onSubmit={handleSubmit}>

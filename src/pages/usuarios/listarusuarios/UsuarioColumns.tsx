@@ -63,13 +63,13 @@ export function createUsuarioColumns(): ColumnDef<Usuario>[] {
 						onClick={() => navigate(`/editarusuario/${row.original.id}`)}
 						className="text-blue-500 hover:text-blue-700"
 					>
-						<Pencil size={32} className="h-5 w-5 text-blue-500" />
+						<Pencil size={32} className="h-5 w-5 text-blue-500 cursor-pointer" />
 					</button>
 					<button
 						onClick={() => navigate(`/deletarusuario/${row.original.id}`)}
 						className="text-red-500 hover:text-red-700"
 					>
-						<Trash size={32} className="h-5 w-5 text-red-500" />
+						<Trash size={32} className="h-5 w-5 text-red-500 cursor-pointer" />
 					</button>
 				</div>
 			),
