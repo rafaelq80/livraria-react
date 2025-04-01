@@ -5,7 +5,7 @@ import { ToastAlerta } from "../../utils/ToastAlerta";
 import { DropdownMenus, DropdownState } from "../../types/MenuTypes";
 
 export function useNavbar(setMobileMenuOpen?: (open: boolean) => void) {
-  const { usuario, isAuthenticated, handleLogout } = useContext(AuthContext);
+  const { usuario, isAuthenticated, isAdmin, handleLogout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState<DropdownState>({
     ecommerce: false,
@@ -26,6 +26,7 @@ export function useNavbar(setMobileMenuOpen?: (open: boolean) => void) {
   return {
     usuario,
     isAuthenticated,
+    isAdmin,
     logout,
     dropdownOpen,
     toggleDropdown,

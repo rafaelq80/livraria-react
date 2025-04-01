@@ -15,11 +15,11 @@ import { DropdownMenu } from "./DropDownMenu"
 import { DropDownMenuItem } from "./DropDownMenuItem"
 
 function DesktopMenu() {
-	const { usuario, isAuthenticated, logout } = useNavbar()
+	const { usuario, isAuthenticated, isAdmin, logout } = useNavbar()
 
 	return (
 		<div className="hidden md:flex gap-4 py-4">
-			{isAuthenticated && (
+			{isAuthenticated && isAdmin && (
 				<>
 					<DropdownMenu title="E-Commerce">
 						<DropDownMenuItem
@@ -54,11 +54,11 @@ function DesktopMenu() {
 				</>
 			)}
 			{isAuthenticated ? (
-				<Link to="/Perfil">
+				<Link to="/perfil">
 					<img
 						src={usuario.foto}
 						alt={usuario.nome}
-						className="border-transparent rounded-full w-8 h-8"
+						className="border-transparent rounded-full w-10 h-10"
 					/>
 				</Link>
 			) : (

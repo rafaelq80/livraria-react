@@ -2,7 +2,7 @@ import { z } from "zod"
 
 export const categoriaSchema = z
 	.object({
-		tipo: z.string().nonempty("Nome é obrigatório"),
+		tipo: z.string().nonempty("Categoria é obrigatória"),
 	})
 	
 

@@ -1,115 +1,108 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useContext, useState, useEffect } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate, useParams } from "react-router-dom"
 import AuthContext from "../../contexts/AuthContext"
 import Categoria from "../../models/Categoria"
-import { listar, atualizar, cadastrar } from "../../services/AxiosService"
-import { ToastAlerta } from "../../utils/ToastAlerta"
+import { atualizar, cadastrar, listar } from "../../services/AxiosService"
+import { ErrorHandlerService } from "../../services/ErrorHandlerService"
+import { SuccessHandlerService } from "../../services/SuccessHandlerService"
 import { CategoriaSchemaType, categoriaSchema } from "../../validations/CategoriaSchema"
 
-
 export function useFormCategoria() {
+	const navigate = useNavigate()
+	const { usuario, handleLogout } = useContext(AuthContext)
+	const token = usuario.token
+	const { id } = useParams<{ id: string }>()
 
-    const navigate = useNavigate()
-    const { usuario, handleLogout } = useContext(AuthContext)
-    const token = usuario.token
-    const { id } = useParams<{ id: string }>()
+	const [isLoading, setIsLoading] = useState(false)
 
-    const [isLoading, setIsLoading] = useState(false)
+	const form = useForm<CategoriaSchemaType>({
+		resolver: zodResolver(categoriaSchema),
+		defaultValues: {
+			tipo: "",
+		},
+	})
 
+	const {
+		register,
+		handleSubmit,
+		control,
+		formState: { errors },
+		reset,
+		setValue,
+	} = form
 
-    const form = useForm<CategoriaSchemaType>({
-        resolver: zodResolver(categoriaSchema),
-        defaultValues: {
-            tipo: "",
-        },
-    })
+	// Configurando o tratador de erros para usuário não autenticado
+    const handleErrorWithLogout = ErrorHandlerService.createLoadErrorWithLogout(handleLogout);
+	
+    // Configurando os tratadores de sucesso para operações CRUD
+	const successHandlers = SuccessHandlerService.createCrudHandlers("Categoria", {
+		navigate,
+		redirectTo: "/categorias",
+		resetForm: () => {
+			reset()
+		},
+		handleLogout,
+	})
 
-    const { register, handleSubmit, control, formState: { errors }, reset, setValue } = form
+	const fetchCategoriaData = async () => {
+		if (!id) return
 
-    const handleError = (error: unknown) => {
-        if (typeof error === "string" && error.includes("401")) {
-            handleLogout()
-        } else {
-            ToastAlerta("Erro ao carregar dados!", "erro")
-        }
-    }
+		try {
+			await listar<Categoria>(
+				`/categorias/${id}`,
+				(categoriaData: Categoria) => {
+					setValue("tipo", categoriaData.tipo)
+				},
+				{ headers: { Authorization: token } }
+			)
+		} catch (error) {
+			handleErrorWithLogout(error)
+		}
+	}
 
-    const fetchCategoriaData = async () => {
-        if (!id) return
+	useEffect(() => {
+		fetchCategoriaData()
+	}, [id])
 
-        try {
-            await listar<Categoria>(
-                `/categorias/${id}`, 
-                (categoriaData: Categoria) => {
-                    setValue("tipo", categoriaData.tipo)
-                }, 
-                { headers: { Authorization: token } }
-            )
-        } catch (error) {
-            handleError(error)
-        }
-    }
+	const retornar = () => {
+		navigate("/categorias")
+	}
 
-    useEffect(() => {
-        fetchCategoriaData()
-    }, [id])
+	const onSubmit = async (data: CategoriaSchemaType) => {
+		setIsLoading(true)
+		try {
+			const categoria: Categoria = {
+				id: id ? Number(id) : 0,
+				tipo: data.tipo,
+			}
+			if (id) {
+				await atualizar(`/categorias`, categoria, successHandlers.handleUpdate(id), {
+					headers: { Authorization: token },
+				})
+			} else {
+				await cadastrar(`/categorias`, categoria, successHandlers.handleCreate, {
+					headers: { Authorization: token },
+				})
+			}
+		} catch (error) {
+            ErrorHandlerService.handleError(error, {
+                errorMessage: "Erro ao salvar a categoria!"
+            });
+		} finally {
+			setIsLoading(false)
+		}
+	}
 
-    const retornar = () => {
-        navigate("/categorias")
-    }
-
-    const onSubmit = async (data: CategoriaSchemaType) => {
-        setIsLoading(true)
-        try {
-            
-            const categoria: Categoria = {
-                id: id ? Number(id) : 0,
-                tipo: data.tipo,
-            }
-
-            const handleSuccess = () => {
-                ToastAlerta(id ? "Categoria atualizada com sucesso!" : "Categoria cadastrada com sucesso!", "sucesso")
-                
-                if (!id) {
-                    reset()
-                }
-
-                retornar()
-            }
-
-            if (id) {
-                await atualizar(
-                    `/categorias`, 
-                    categoria, 
-                    handleSuccess, 
-                    { headers: { Authorization: token } }
-                )
-            } else {
-                await cadastrar(
-                    `/categorias`, 
-                    categoria, 
-                    handleSuccess,
-                    { headers: { Authorization: token } }
-                )
-            }
-        } catch (error) {
-            console.error("Erro: ", error)
-            ToastAlerta("Erro ao salvar a categoria!", "erro")
-        } finally {
-            setIsLoading(false)
-        }
-    }
-
-    return {
-        id,
-        isLoading,
-        register,
-        handleSubmit,
-        control,
-        errors,
-        onSubmit,
-        retornar,
-    }
+	return {
+		id,
+		isLoading,
+		register,
+		handleSubmit,
+		control,
+		errors,
+		onSubmit,
+		retornar,
+	}
 }

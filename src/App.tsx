@@ -22,6 +22,7 @@ import PrivateRoute from "./routes/PrivateRoute"
 import Footer from "./templates/footer/Footer"
 import Navbar from "./templates/navbar/Navbar"
 import NotFound from "./templates/notfound/NotFound"
+import FormRole from "./pages/roles/formcategoria/FormRole"
 
 
 function App() {
@@ -46,14 +47,16 @@ function App() {
 								<Route path="/cadastrarproduto" element={<FormProduto />} />
 								<Route path="/atualizarproduto/:id" element={<FormProduto />} />
 								<Route path="/usuarios" element={<ListarUsuarios />} />
+								<Route path="/editarusuario/:id" element={<CadastrarUsuario />} />
+								<Route path="/perfil" element={<Perfil />} />
 								<Route path="/roles" element={<ListarRoles />} />
+								<Route path="/cadastrarrole" element={<FormRole />} />
+								<Route path="/editarrole/:id" element={<FormRole />} />
 								<Route path="/categorias" element={<ListarCategorias />} />
 								<Route path="/cadastrarcategoria" element={<FormCategoria />} />
 								<Route path="/editarcategoria/:id" element={<FormCategoria />} />
 								<Route path="/editoras" element={<ListarEditoras />} />
 								<Route path="/autores" element={<ListarAutores />} />
-								<Route path="/editarusuario/:id" element={<CadastrarUsuario />} />
-								<Route path="/perfil" element={<Perfil />} />
 							</Route>
 						</Routes>
 					</div>

@@ -6,9 +6,12 @@ import AuthContext from "../../contexts/AuthContext"
 import Role from "../../models/Role"
 import Usuario from "../../models/Usuario"
 import { atualizar, cadastrarUsuario, listar } from "../../services/AxiosService"
+import { ErrorHandlerService } from "../../services/ErrorHandlerService"
 import { createUsuarioFormData } from "../../services/FormDataService"
-import { ToastAlerta } from "../../utils/ToastAlerta"
+import { ImageService } from "../../services/ImageService"
+
 import { UsuarioSchemaType, usuarioSchema } from "../../validations/UsuarioSchema"
+import { SuccessHandlerService } from "../../services/SuccessHandlerService"
 
 export function useCadastrarUsuario(isPerfil?: boolean) {
     const navigate = useNavigate()
@@ -16,7 +19,7 @@ export function useCadastrarUsuario(isPerfil?: boolean) {
     const token = usuario.token
     const { id: rotaId } = useParams<{ id: string }>()
 
-	const id = isPerfil ? usuario.id : rotaId
+    const id = isPerfil ? usuario.id : rotaId
 
     const [isLoading, setIsLoading] = useState(false)
     const [fotoPreview, setFotoPreview] = useState("")
@@ -51,13 +54,20 @@ export function useCadastrarUsuario(isPerfil?: boolean) {
         navigate(token ? "/usuarios" : "/login")
     }
 
-    const handleError = (error: unknown) => {
-        if (typeof error === "string" && error.includes("401")) {
-            handleLogout()
-        } else {
-            ToastAlerta("Erro ao carregar dados!", "erro")
-        }
-    }
+    // Configurando o tratador de erros para usuário não autenticado
+    const handleErrorWithLogout = ErrorHandlerService.createLoadErrorWithLogout(handleLogout);
+
+    // Configurando os tratadores de sucesso para operações CRUD
+    const successHandlers = SuccessHandlerService.createCrudHandlers("Usuário", {
+        navigate,
+        redirectTo: isAuthenticated ? "/usuarios" : "/login",
+        resetForm: () => {
+            reset();
+            setFotoPreview("");
+        },
+        handleLogout,
+        currentUserId: usuario.id
+    });
 
     const fetchRoles = async () => {
         try {
@@ -69,7 +79,7 @@ export function useCadastrarUsuario(isPerfil?: boolean) {
                 { headers: { Authorization: token } }
             )
         } catch (error) {
-            handleError(error)
+            handleErrorWithLogout(error)
         }
     }
 
@@ -89,7 +99,7 @@ export function useCadastrarUsuario(isPerfil?: boolean) {
                 { headers: { Authorization: token } }
             )
         } catch (error) {
-            handleError(error)
+            handleErrorWithLogout(error)
         }
     }
 
@@ -100,33 +110,35 @@ export function useCadastrarUsuario(isPerfil?: boolean) {
         fetchUserData()
     }, [id, token])
 
-    const convertBase64ToFile = async (base64Image: string): Promise<File> => {
-        const response = await fetch(base64Image)
-        const blob = await response.blob()
-        return new File([blob], "webcam-photo.jpg", { type: "image/jpeg" })
-    }
-
+    // Usando o ImageService para processar imagens
     const handleImageUpdate = async (imageSource: string | File) => {
-        if (imageSource instanceof File) {
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                const result = reader.result
-                if (typeof result === "string") {
-                    setFotoPreview(result)
-                    setValue("fotoFile", imageSource, { shouldValidate: true })
-                }
-            }
-            reader.readAsDataURL(imageSource)
-        } else {
-            setFotoPreview(imageSource)
-            const file = await convertBase64ToFile(imageSource)
-            setValue("fotoFile", file, { shouldValidate: true })
+        try {
+            const { preview, file } = await ImageService.processImage(imageSource, {
+                fileName: "user-photo.jpg",
+                fileType: "image/jpeg"
+            });
+            
+            setFotoPreview(preview);
+            setValue("fotoFile", file, { shouldValidate: true });
+        } catch (error) {
+            ErrorHandlerService.handleError(error, {
+                errorMessage: "Erro ao processar imagem!"
+            });
         }
     }
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (file) handleImageUpdate(file)
+        ImageService.handleFileChange(e, {
+            onSuccess: (file, preview) => {
+                setFotoPreview(preview);
+                setValue("fotoFile", file, { shouldValidate: true });
+            },
+            onError: (error) => {
+                ErrorHandlerService.handleError(error, {
+                    errorMessage: "Erro ao selecionar imagem!"
+                });
+            }
+        });
     }
 
     const handleFileSelect = () => fileInputRef.current?.click()
@@ -152,38 +164,26 @@ export function useCadastrarUsuario(isPerfil?: boolean) {
 
             const formData = createUsuarioFormData(user, data.fotoFile || null)
 
-            const handleSuccess = () => {
-                ToastAlerta(id ? "Usuário atualizado com sucesso!" : "Usuário cadastrado com sucesso!", "sucesso")
-                
-                if (id && usuario.id === Number(id)) {
-                    handleLogout()
-                } else {
-                    navigate(isAuthenticated ? "/usuarios" : "/login")
-                }
-
-                if (!id) {
-                    reset()
-                    setFotoPreview("")
-                }
-            }
-
             if (id) {
+                // Usando o handler de atualização com o ID do usuário
                 await atualizar(
                     `/usuarios/atualizar`, 
                     formData, 
-                    handleSuccess, 
+                    successHandlers.handleUpdate(id), 
                     { headers: { Authorization: token } }
                 )
             } else {
+                // Usando o handler de criação
                 await cadastrarUsuario(
                     `/usuarios/cadastrar`, 
                     formData, 
-                    handleSuccess
+                    successHandlers.handleCreate
                 )
             }
         } catch (error) {
-            console.error("Erro: ", error)
-            ToastAlerta("Erro ao salvar o usuário!", "erro")
+            ErrorHandlerService.handleError(error, {
+                errorMessage: "Erro ao salvar o usuário!"
+            });
         } finally {
             setIsLoading(false)
         }

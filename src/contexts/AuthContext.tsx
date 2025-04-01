@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useEffect, useState } from "react";
 import UsuarioLogin from "../models/UsuarioLogin";
 import { ToastAlerta } from "../utils/ToastAlerta";
 import { login } from "../services/AxiosService";
@@ -8,7 +8,8 @@ interface AuthContextProps {
     handleLogout(): void;
     handleLogin(usuario: UsuarioLogin): Promise<void>;
     isLoading: boolean;
-    isAuthenticated: boolean
+    isAuthenticated: boolean;
+    isAdmin: boolean;
     isLogout: boolean;
 }
 
@@ -34,6 +35,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
        
     const [isLogout, setIsLogout] = useState(false);
 
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    // Verifica se o usuário é admin sempre que as roles mudarem
+    useEffect(() => {
+        // Verifica se o array de roles existe e se contém "ADMIN" ou similar
+        const checkIsAdmin = () => {
+            if (usuario.roles && usuario.roles.length > 0) {
+                const adminRole = usuario.roles.find(role => 
+                    role.nome.toLowerCase().includes('admin')
+                );
+                setIsAdmin(!!adminRole);
+            } else {
+                setIsAdmin(false);
+            }
+        };
+
+        checkIsAdmin();
+    }, [usuario.roles]);
+    
     async function handleLogin(usuarioLogin: UsuarioLogin) {
 
         setIsLoading(true);
@@ -70,6 +90,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             handleLogout, 
             isLoading, 
             isAuthenticated: !!usuario.token, 
+            isAdmin,
             isLogout, 
         }}>
             {children}
