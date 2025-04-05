@@ -1,7 +1,7 @@
 import { ArrowFatLeft, ArrowFatRight } from "@phosphor-icons/react";
 import { RotatingLines } from "react-loader-spinner";
 import { useParams } from "react-router-dom";
-import { useFormProduto } from "../../../hooks/produtos/useFormProduto";
+import { useFormProduto } from "../../../hooks/produtos/formproduto/useFormProduto";
 
 function FormProduto() {
   const { id } = useParams<{ id: string }>();
@@ -28,12 +28,12 @@ function FormProduto() {
   } = useFormProduto(id);
 
   return (
-    <div className="container flex flex-col mx-auto items-center">
-      <h1 className="text-4xl text-center my-4">
+    <div className="container px-4 flex flex-col mx-auto items-center">
+      <h1 className="text-2xl md:text-3xl lg:text-4xl text-center my-4">
         {id !== undefined ? "Editar Produto" : "Cadastrar Produto"}
       </h1>
 
-      <form className="flex flex-col w-1/2 gap-4" onSubmit={onSubmit}>
+      <form className="flex flex-col w-full sm:w-4/5 md:w-3/4 lg:w-2/3 xl:w-1/2 gap-4" onSubmit={onSubmit}>
         <div className="flex flex-col gap-2">
           <label htmlFor="titulo">Título</label>
           <input
@@ -59,8 +59,8 @@ function FormProduto() {
           {errors.preco && <p className="text-red-500 text-sm">{errors.preco.message}</p>}
         </div>
 
-        <div className="flex justify-between flex-nowrap">
-          <div className="flex flex-col gap-2 w-1/2 pr-1">
+        <div className="flex flex-col sm:flex-row justify-between sm:flex-nowrap gap-2 sm:gap-4">
+          <div className="flex flex-col gap-2 w-full sm:w-1/2">
             <label htmlFor="isbn10">ISBN-10</label>
             <input
               {...register("isbn10")}
@@ -72,7 +72,7 @@ function FormProduto() {
             {errors.isbn10 && <p className="text-red-500 text-sm">{errors.isbn10.message}</p>}
           </div>
 
-          <div className="flex flex-col gap-2 w-1/2 pl-1">
+          <div className="flex flex-col gap-2 w-full sm:w-1/2">
             <label htmlFor="isbn13">ISBN-13</label>
             <input
               {...register("isbn13")}
@@ -110,14 +110,14 @@ function FormProduto() {
             />
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex flex-col md:flex-row gap-4 mb-2">
             <div className="flex flex-col flex-1">
               <label htmlFor="available-authors" className="mb-1">
                 Lista de Autores
               </label>
               <select
                 id="available-authors"
-                className="bg-white border p-2 border-slate-800 rounded focus:outline-none focus:ring-2 focus:ring-zinc-400 h-32"
+                className="bg-white border p-2 border-slate-800 rounded focus:outline-none focus:ring-2 focus:ring-zinc-400 h-32 w-full text-ellipsis overflow-hidden"
                 value={selectedAutorToAdd}
                 onChange={handleSelectAutorToAdd}
                 size={5}
@@ -131,22 +131,27 @@ function FormProduto() {
               </select>
             </div>
 
-            <div className="flex flex-col justify-center gap-2">
+            <div className="flex md:flex-col justify-center items-center gap-4 md:gap-2 py-2 md:py-0">
               <button
                 type="button"
                 onClick={handleAddAutor}
                 disabled={!selectedAutorToAdd}
-                className="px-2 py-1 bg-green-600 text-white rounded disabled:bg-gray-400"
+                className="px-4 py-2 md:px-2 md:py-1 bg-green-600 text-white rounded disabled:bg-gray-400 flex items-center justify-center"
               >
-                <ArrowFatRight size={16} weight="bold" />
+                <span className="md:hidden mr-2">Adicionar</span>
+                <ArrowFatRight size={16} weight="bold" className="hidden md:block" />
+                <ArrowFatRight size={16} weight="bold" className="md:hidden transform rotate-90" />
               </button>
+              
               <button
                 type="button"
                 onClick={handleRemoveAutor}
                 disabled={!selectedAutorToRemove}
-                className="px-2 py-1 bg-red-600 text-white rounded disabled:bg-gray-400"
+                className="px-4 py-2 md:px-2 md:py-1 bg-red-600 text-white rounded disabled:bg-gray-400 flex items-center justify-center"
               >
-                <ArrowFatLeft size={16} weight="bold" />
+                <span className="md:hidden mr-2">Remover</span>
+                <ArrowFatLeft size={16} weight="bold" className="hidden md:block" />
+                <ArrowFatLeft size={16} weight="bold" className="md:hidden transform -rotate-90" />
               </button>
             </div>
 
@@ -156,7 +161,7 @@ function FormProduto() {
               </label>
               <select
                 id="selected-authors"
-                className="bg-white border p-2 border-slate-800 rounded focus:outline-none focus:ring-2 focus:ring-zinc-400 h-32"
+                className="bg-white border p-2 border-slate-800 rounded focus:outline-none focus:ring-2 focus:ring-zinc-400 h-32 w-full text-ellipsis overflow-hidden"
                 value={selectedAutorToRemove}
                 onChange={handleSelectAutorToRemove}
                 size={5}
@@ -217,7 +222,7 @@ function FormProduto() {
           type="submit"
           disabled={isLoading}
           className="flex justify-center rounded disabled:bg-gray-400 bg-indigo-900 
-                  hover:bg-indigo-600 text-white font-bold w-1/2 mx-auto py-2 mb-8"
+                  hover:bg-indigo-600 text-white font-bold w-full sm:w-2/3 md:w-1/2 mx-auto py-2 mb-8"
         >
           {isLoading ? (
             <RotatingLines
