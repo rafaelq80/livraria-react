@@ -45,8 +45,9 @@ export const atualizar = async <T>(
 	return resposta.data
 }
 
-export const deletar = async (url: string, header: object) => {
-	await api.delete(url, header)
+export const deletar = async <T>(url: string, token?: string): Promise<T> => {
+	const resposta = await api.delete<T>(url, { headers: getHeaders(token) })
+	return resposta.data
 }
 
 export const login = async <T>(
