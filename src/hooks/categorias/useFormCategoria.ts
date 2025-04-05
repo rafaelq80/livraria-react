@@ -33,10 +33,7 @@ export function useFormCategoria() {
 		setValue,
 	} = form
 
-	// Configurando o tratador de erros para usuário não autenticado
-    const handleErrorWithLogout = ErrorHandlerService.createLoadErrorWithLogout(handleLogout);
-	
-    // Configurando os tratadores de sucesso para operações CRUD
+	// Configurando os tratadores de sucesso para operações CRUD
 	const successHandlers = SuccessHandlerService.createCrudHandlers("Categoria", {
 		navigate,
 		redirectTo: "/categorias",
@@ -50,15 +47,10 @@ export function useFormCategoria() {
 		if (!id) return
 
 		try {
-			await listar<Categoria>(
-				`/categorias/${id}`,
-				(categoriaData: Categoria) => {
-					setValue("tipo", categoriaData.tipo)
-				},
-				{ headers: { Authorization: token } }
-			)
+			const resposta = await listar<Categoria>(`/categorias/${id}`, token)
+			setValue("tipo", resposta.tipo)
 		} catch (error) {
-			handleErrorWithLogout(error)
+			ErrorHandlerService.handleError(error, { handleLogout })
 		}
 	}
 
@@ -77,19 +69,17 @@ export function useFormCategoria() {
 				id: id ? Number(id) : 0,
 				tipo: data.tipo,
 			}
-			if (id) {
-				await atualizar(`/categorias`, categoria, successHandlers.handleUpdate(id), {
-					headers: { Authorization: token },
-				})
-			} else {
-				await cadastrar(`/categorias`, categoria, successHandlers.handleCreate, {
-					headers: { Authorization: token },
-				})
-			}
+			
+			const acao = id ? atualizar : cadastrar
+			const onSuccess = id ? successHandlers.handleUpdate(id) : successHandlers.handleCreate
+
+			await acao(`/categorias`, categoria, token)
+			onSuccess()
+
 		} catch (error) {
-            ErrorHandlerService.handleError(error, {
-                errorMessage: "Erro ao salvar a categoria!"
-            });
+			ErrorHandlerService.handleError(error, {
+				errorMessage: "Erro ao salvar a categoria!",
+			})
 		} finally {
 			setIsLoading(false)
 		}

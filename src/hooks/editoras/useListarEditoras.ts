@@ -3,25 +3,22 @@ import { useNavigate } from "react-router-dom"
 import AuthContext from "../../contexts/AuthContext"
 import Editora from "../../models/Editora"
 import { listar } from "../../services/AxiosService"
+import { ErrorHandlerService } from "../../services/ErrorHandlerService"
 
 export const useListarEditoras = () => {
     const navigate = useNavigate()
     const [editoras, setEditoras] = useState<Editora[]>([])
-    const { usuario, handleLogout } = useContext(AuthContext)
+    const { usuario, isAdmin, handleLogout } = useContext(AuthContext)
     const token = usuario.token
     const [isLoading, setIsLoading] = useState(true)
-    const [showButton, setShowButton] = useState(false)
 
     const buscarEditoras = async () => {
         setIsLoading(true)
         try {
-            await listar("/editoras", setEditoras, {
-                headers: {
-                    Authorization: token,
-                },
-            })
-        } catch (error: unknown) {
-            if (typeof error === "string" && error.includes("401")) handleLogout()
+            const resposta = await listar<Editora[]>("/editoras", token)
+            setEditoras(resposta)
+        } catch (error) {
+            ErrorHandlerService.handleError(error, { handleLogout })
         } finally {
             setIsLoading(false)
         }
@@ -31,14 +28,10 @@ export const useListarEditoras = () => {
         buscarEditoras()
     }, [])
 
-    useEffect(() => {
-        setShowButton(editoras.length === 0)
-    }, [editoras])
-
     return {
         editoras,
         isLoading,
-        showButton,
+        isAdmin,
         navigate,
         buscarEditoras
     }

@@ -3,13 +3,13 @@ import { useContext, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate, useParams } from "react-router-dom"
 import AuthContext from "../../contexts/AuthContext"
-import Role from "../../models/Role"
+import Autor from "../../models/Autor"
 import { atualizar, cadastrar, listar } from "../../services/AxiosService"
 import { ErrorHandlerService } from "../../services/ErrorHandlerService"
 import { SuccessHandlerService } from "../../services/SuccessHandlerService"
-import { RoleSchemaType, roleSchema } from "../../validations/RoleSchema"
+import { AutorSchemaType, autorSchema } from "../../validations/AutorSchema"
 
-export function useFormRole() {
+export function useFormAutor() {
 	const navigate = useNavigate()
 	const { usuario, handleLogout } = useContext(AuthContext)
 	const token = usuario.token
@@ -17,11 +17,11 @@ export function useFormRole() {
 
 	const [isLoading, setIsLoading] = useState(false)
 
-	const form = useForm<RoleSchemaType>({
-		resolver: zodResolver(roleSchema),
+	const form = useForm<AutorSchemaType>({
+		resolver: zodResolver(autorSchema),
 		defaultValues: {
 			nome: "",
-			descricao: "",
+			nacionalidade: "",
 		},
 	})
 
@@ -35,50 +35,54 @@ export function useFormRole() {
 	} = form
 
 	// Configurando os tratadores de sucesso para operações CRUD
-	const successHandlers = SuccessHandlerService.createCrudHandlers("Role", {
+	const successHandlers = SuccessHandlerService.createCrudHandlers("Autor", {
 		navigate,
-		redirectTo: "/roles",
+		redirectTo: "/autores",
 		resetForm: () => {
 			reset()
 		},
 		handleLogout,
 	})
 
-	const fetchRoleData = async () => {
+	const fetchAutorData = async () => {
 		if (!id) return
 
 		try {
-			const resposta = await listar<Role>(`/roles/${id}`, token)
-            setValue("nome", resposta.nome)
-			setValue("descricao", resposta.descricao)
+			const resposta = await listar<Autor>(`/autores/${id}`, token)
+			setValue("nome", resposta.nome)
+			setValue("nacionalidade", resposta.nacionalidade)
 		} catch (error) {
 			ErrorHandlerService.handleError(error, { handleLogout })
 		}
 	}
 
 	useEffect(() => {
-		fetchRoleData()
+		fetchAutorData()
 	}, [id])
 
 	const retornar = () => {
-		navigate("/roles")
+		navigate("/autores")
 	}
 
-	const onSubmit = async (data: RoleSchemaType) => {
+	const onSubmit = async (data: AutorSchemaType) => {
 		setIsLoading(true)
 		try {
-			const role: Role = {
+			const autor: Autor = {
 				id: id ? Number(id) : 0,
 				nome: data.nome,
-				descricao: data.descricao,
+				nacionalidade: data.nacionalidade,
 			}
+			
 			const acao = id ? atualizar : cadastrar
 			const onSuccess = id ? successHandlers.handleUpdate(id) : successHandlers.handleCreate
 
-			await acao(`/roles`, role, token)
+			await acao(`/autores`, autor, token)
 			onSuccess()
+
 		} catch (error) {
-			ErrorHandlerService.handleError(error, { handleLogout })
+			ErrorHandlerService.handleError(error, {
+				errorMessage: "Erro ao salvar o autor!",
+			})
 		} finally {
 			setIsLoading(false)
 		}

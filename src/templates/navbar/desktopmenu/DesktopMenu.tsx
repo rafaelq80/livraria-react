@@ -15,11 +15,11 @@ import { DropdownMenu } from "./DropDownMenu"
 import { DropDownMenuItem } from "./DropDownMenuItem"
 
 function DesktopMenu() {
-	const { usuario, isAuthenticated, isAdmin, logout } = useNavbar()
+	const { usuario, isAuthenticated, logout } = useNavbar()
 
 	return (
 		<div className="hidden md:flex gap-4 py-4">
-			{isAuthenticated && isAdmin && (
+			{isAuthenticated  && (
 				<>
 					<DropdownMenu title="E-Commerce">
 						<DropDownMenuItem

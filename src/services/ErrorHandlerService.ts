@@ -1,88 +1,99 @@
 import { ToastAlerta } from "../utils/ToastAlerta";
 
 export interface ErrorHandlerOptions {
- 
-  handleLogout?: () => void;
   errorMessage?: string;
   onError?: (error: unknown) => void;
-
+  handleLogout?: () => void;
 }
 
-/**
- * Serviço para tratamento centralizado de erros
- */
+interface ErrorMessages {
+  [key: string]: string;
+}
+
+interface ErrorWithStatus {
+  status: number | string;
+}
+
 export class ErrorHandlerService {
-  
-  /**
-   * Trata erros de forma padronizada na aplicação
-   */
-  static handleError(error: unknown, options: ErrorHandlerOptions = {}): void {
-    const { 
-      handleLogout,
-      errorMessage = "Erro ao processar solicitação!",
-      onError
-    } = options;
+  private static readonly HTTP_ERROR_MESSAGES: ErrorMessages = {
+    "401": "Acesso Negado!",
+    "403": "Erro de autorização. Contate o Administrador.",
+    "500": "Erro no servidor. Tente novamente mais tarde."
+  };
 
-    // Log detalhado do erro para depuração
-    console.error("Erro capturado:", error);
-    
-    // Tratamento para erros de autenticação (401)
-    if (typeof error === "string" && error.includes("401")) {
-      // Se for erro de autenticação e existir função de logout, executa
-      if (handleLogout) {
-        handleLogout();
-        ToastAlerta("Sessão expirada. Por favor, faça login novamente.", "info");
-      } else {
-        ToastAlerta("Erro de autenticação. Verifique suas credenciais.", "erro");
+  private static readonly NETWORK_ERROR_MESSAGE = "Erro de conexão. Verifique sua internet.";
+
+  private static isErrorWithStatus(error: unknown): error is ErrorWithStatus {
+    return Boolean(
+      error && 
+      typeof error === "object" && 
+      "status" in error && 
+      (typeof (error as ErrorWithStatus).status === "number" || 
+       typeof (error as ErrorWithStatus).status === "string")
+    );
+  }
+
+  private static getErrorCode(error: unknown): string | null {
+    if (typeof error === "string") {
+      for (const code of Object.keys(this.HTTP_ERROR_MESSAGES)) {
+        if (error.includes(code)) {
+          return code;
+        }
       }
-    } 
-
-    // Tratamento para erros de autorização (403)
-    else if (typeof error === "string" && error.includes("403")) {
-      // Se for erro de autorização executa
-      ToastAlerta("Erro de autorização. Verifique suas permissões e tente novamente.", "erro");
-    } 
-
-    // Tratamento para erros de servidor (500)
-    else if (typeof error === "string" && error.includes("500")) {
-      ToastAlerta("Erro no servidor. Tente novamente mais tarde.", "erro");
+    } else if (error instanceof Error) {
+      const errorMsg = error.message;
+      for (const code of Object.keys(this.HTTP_ERROR_MESSAGES)) {
+        if (errorMsg.includes(code)) {
+          return code;
+        }
+      }
+    } else if (this.isErrorWithStatus(error)) {
+      const status = String(error.status);
+      if (this.HTTP_ERROR_MESSAGES[status]) {
+        return status;
+      }
     }
-    // Tratamento para erros de rede
-    else if (error instanceof Error && error.message.includes("Network")) {
-      ToastAlerta("Erro de conexão. Verifique sua internet.", "erro");
-    }
+    return null;
+  }
 
-    // Tratamento para erros gerais
-    else {
+  static handleError(error: unknown, options: ErrorHandlerOptions = {}): void {
+    const { handleLogout, errorMessage = "Erro ao processar solicitação!", onError } = options;
+
+    console.error("Erro capturado:", error);
+
+    const errorCode = this.getErrorCode(error);
+    let messageDisplayed = false;
+
+    if (errorCode) {
+      const message = this.HTTP_ERROR_MESSAGES[errorCode];
+      if (errorCode === "401" && handleLogout) {
+        handleLogout();
+        ToastAlerta(message, "info");
+      } else {
+        ToastAlerta(message, "erro");
+      }
+      messageDisplayed = true;
+    }
+    
+    if (!messageDisplayed && error instanceof Error && error.message.includes("Network")) {
+      ToastAlerta(this.NETWORK_ERROR_MESSAGE, "erro");
+      messageDisplayed = true;
+    }
+    
+    if (!messageDisplayed && errorMessage) {
       ToastAlerta(errorMessage, "erro");
     }
     
-    // Se existir uma função de callback adicional, executa
     if (onError) {
       onError(error);
     }
-    
   }
 
-  /**
-   * Cria uma função de tratamento de erro configurada
-   */
   static createErrorHandler(options: ErrorHandlerOptions = {}) {
     return (error: unknown) => this.handleError(error, options);
   }
 
-  /**
-   * Cria um handler de erro com logout configurado para tratamento de erros
-   * comuns ao carregar dados
-   */
-  static createLoadErrorWithLogout(
-    handleLogout: () => void, 
-    customErrorMessage: string = "Usuário não autenticado!"
-  ) {
-    return this.createErrorHandler({
-      handleLogout,
-      errorMessage: customErrorMessage
-    });
+  static registerErrorMessages(customMessages: ErrorMessages): void {
+    Object.assign(this.HTTP_ERROR_MESSAGES, customMessages);
   }
-
 }

@@ -93,7 +93,7 @@ export class SuccessHandlerService {
         navigate,
         redirectTo,
         resetForm,
-        successMessage: `${entityName} cadastrado (a) com sucesso!`
+        successMessage: `${entityName} cadastrado(a) com sucesso!`
       }),
      
       // Handler para atualização
@@ -103,14 +103,14 @@ export class SuccessHandlerService {
         handleLogout,
         currentUserId,
         targetUserId,
-        successMessage: `${entityName} atualizado (a) com sucesso!`
+        successMessage: `${entityName} atualizado(a) com sucesso!`
       }),
      
       // Handler para exclusão
       handleDelete: this.createSuccessHandler<T>({
         navigate,
         redirectTo,
-        successMessage: `${entityName} excluído com sucesso!`
+        successMessage: `${entityName} excluído(a) com sucesso!`
       }),
      
       // Handler personalizado (permite sobrescrever opções)

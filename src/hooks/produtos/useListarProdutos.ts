@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import Produto from "../../models/Produto"
-import { listarProdutos } from "../../services/AxiosService"
+import { listar } from "../../services/AxiosService"
 import { ToastAlerta } from "../../utils/ToastAlerta"
 
 
@@ -12,7 +12,8 @@ export const useListarProdutos = () => {
     const buscarProdutos = async () => {
         setIsLoading(true)
         try {
-            await listarProdutos("/produtos", setProdutos)
+            const resposta = await listar<Produto[]>("/produtos")
+            setProdutos(resposta)
         } catch (error: unknown) {
             console.error("Erro: ", error)
            ToastAlerta("Erro ao Listar Produtos", 'error')

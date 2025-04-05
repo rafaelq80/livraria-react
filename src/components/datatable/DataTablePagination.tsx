@@ -1,7 +1,6 @@
 import { SkipBack, SkipForward } from '@phosphor-icons/react'
 import { Table } from '@tanstack/react-table'
 
-// Updated type definition to be more flexible
 export interface DataTablePaginationProps<TData = unknown> {
   table: Table<TData>
 }

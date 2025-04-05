@@ -4,7 +4,6 @@ import {
   Table
 } from '@tanstack/react-table'
 
-// Updated type definition to be more flexible
 export interface DataTableDesktopViewProps<TData = unknown> {
   table: Table<TData>
   columns: ColumnDef<TData>[]
@@ -21,7 +20,8 @@ export function DataTableDesktopView<TData = unknown>({
   
   return (
     <div className="hidden md:block">
-      {/* Header Row */}
+
+      {/* Cabeçalho da Tabela */}
       <div className="grid grid-cols-12 bg-indigo-500 font-bold text-gray-50 text-base text-center uppercase tracking-wider">
         {table.getHeaderGroups().map((headerGroup) => (
           headerGroup.headers.map((header, index) => (
@@ -41,7 +41,7 @@ export function DataTableDesktopView<TData = unknown>({
         ))}
       </div>
       
-      {/* Data Rows */}
+      {/* Linhas de dados */}
       <div className="divide-y divide-indigo-500 bg-white">
         {table.getRowModel().rows.map((row) => (
           <div

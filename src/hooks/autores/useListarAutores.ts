@@ -3,25 +3,22 @@ import { useNavigate } from "react-router-dom"
 import AuthContext from "../../contexts/AuthContext"
 import Autor from "../../models/Autor"
 import { listar } from "../../services/AxiosService"
+import { ErrorHandlerService } from "../../services/ErrorHandlerService"
 
 export const useListarAutores = () => {
     const navigate = useNavigate()
     const [autores, setAutores] = useState<Autor[]>([])
-    const { usuario, handleLogout } = useContext(AuthContext)
+    const { usuario, isAdmin,handleLogout } = useContext(AuthContext)
     const token = usuario.token
     const [isLoading, setIsLoading] = useState(true)
-    const [showButton, setShowButton] = useState(false)
 
     const buscarAutores = async () => {
         setIsLoading(true)
         try {
-            await listar("/autores", setAutores, {
-                headers: {
-                    Authorization: token,
-                },
-            })
+            const resposta = await listar<Autor[]>("/autores", token)
+            setAutores(resposta)
         } catch (error: unknown) {
-            if (typeof error === "string" && error.includes("401")) handleLogout()
+            ErrorHandlerService.handleError(error, { handleLogout })
         } finally {
             setIsLoading(false)
         }
@@ -31,14 +28,10 @@ export const useListarAutores = () => {
         buscarAutores()
     }, [])
 
-    useEffect(() => {
-        setShowButton(autores.length === 0)
-    }, [autores])
-
     return {
         autores,
         isLoading,
-        showButton,
+        isAdmin,
         navigate,
         buscarAutores
     }

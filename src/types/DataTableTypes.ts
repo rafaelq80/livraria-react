@@ -35,6 +35,7 @@ export interface DataTableProps<TData extends object> {
   onAddNew?: () => void
   columnSpans?: string[]
   pageSize?: number
+  isAdmin?: boolean
 }
 
 // Optional: Utility Types for Common Table Scenarios

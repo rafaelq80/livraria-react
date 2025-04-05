@@ -5,209 +5,194 @@ import { useNavigate, useParams } from "react-router-dom"
 import AuthContext from "../../contexts/AuthContext"
 import Role from "../../models/Role"
 import Usuario from "../../models/Usuario"
-import { atualizar, cadastrarUsuario, listar } from "../../services/AxiosService"
+import { atualizar, cadastrar, listar } from "../../services/AxiosService"
 import { ErrorHandlerService } from "../../services/ErrorHandlerService"
 import { createUsuarioFormData } from "../../services/FormDataService"
 import { ImageService } from "../../services/ImageService"
-
-import { UsuarioSchemaType, usuarioSchema } from "../../validations/UsuarioSchema"
 import { SuccessHandlerService } from "../../services/SuccessHandlerService"
+import { UsuarioSchemaType, usuarioSchema } from "../../validations/UsuarioSchema"
 
 export function useCadastrarUsuario(isPerfil?: boolean) {
-    const navigate = useNavigate()
-    const { usuario, isAuthenticated, handleLogout } = useContext(AuthContext)
-    const token = usuario.token
-    const { id: rotaId } = useParams<{ id: string }>()
+	const navigate = useNavigate()
+	const { usuario, isAuthenticated, handleLogout } = useContext(AuthContext)
+	const token = usuario.token
+	const { id: rotaId } = useParams<{ id: string }>()
 
-    const id = isPerfil ? usuario.id : rotaId
+	const id = isPerfil ? usuario.id : rotaId
 
-    const [isLoading, setIsLoading] = useState(false)
-    const [fotoPreview, setFotoPreview] = useState("")
-    const [openCamera, setOpenCamera] = useState(false)
-    const [rolesList, setRolesList] = useState<Role[]>([])
+	const [isLoading, setIsLoading] = useState(false)
+	const [fotoPreview, setFotoPreview] = useState("")
+	const [openCamera, setOpenCamera] = useState(false)
+	const [rolesList, setRolesList] = useState<Role[]>([])
 
-    const fileInputRef = useRef<HTMLInputElement>(null)
-    const cameraInputRef = useRef<HTMLInputElement>(null)
+	const fileInputRef = useRef<HTMLInputElement>(null)
+	const cameraInputRef = useRef<HTMLInputElement>(null)
 
-    const defaultRole: Role = {
-        id: 2,
-        nome: "user",
-        descricao: "Usuário",
-    }
+	const defaultRole: Role = {
+		id: 2,
+		nome: "user",
+		descricao: "Usuário",
+	}
 
-    const form = useForm<UsuarioSchemaType>({
-        resolver: zodResolver(usuarioSchema),
-        defaultValues: {
-            nome: "",
-            usuario: "",
-            foto: "",
-            fotoFile: undefined,
-            senha: "",
-            confirmarSenha: "",
-            role: defaultRole.id,
-        },
-    })
+	const form = useForm<UsuarioSchemaType>({
+		resolver: zodResolver(usuarioSchema),
+		defaultValues: {
+			nome: "",
+			usuario: "",
+			foto: "",
+			fotoFile: undefined,
+			senha: "",
+			confirmarSenha: "",
+			role: defaultRole.id,
+		},
+	})
 
-    const { register, handleSubmit, control, formState: { errors }, reset, setValue } = form
+	const {
+		register,
+		handleSubmit,
+		control,
+		formState: { errors },
+		reset,
+		setValue,
+	} = form
 
-    const retornar = () => {
-        navigate(token ? "/usuarios" : "/login")
-    }
+	const retornar = () => {
+		navigate(token ? "/usuarios" : "/login")
+	}
 
-    // Configurando o tratador de erros para usuário não autenticado
-    const handleErrorWithLogout = ErrorHandlerService.createLoadErrorWithLogout(handleLogout);
+	// Configurando os tratadores de sucesso para operações CRUD
+	const successHandlers = SuccessHandlerService.createCrudHandlers("Usuário", {
+		navigate,
+		redirectTo: isAuthenticated ? "/usuarios" : "/login",
+		resetForm: () => {
+			reset()
+			setFotoPreview("")
+		},
+		handleLogout,
+		currentUserId: usuario.id,
+	})
 
-    // Configurando os tratadores de sucesso para operações CRUD
-    const successHandlers = SuccessHandlerService.createCrudHandlers("Usuário", {
-        navigate,
-        redirectTo: isAuthenticated ? "/usuarios" : "/login",
-        resetForm: () => {
-            reset();
-            setFotoPreview("");
-        },
-        handleLogout,
-        currentUserId: usuario.id
-    });
+	const fetchRoles = async () => {
+		try {
+			const resposta = await listar<Role[]>(`/roles`, token)
+			setRolesList(resposta)
+		} catch (error) {
+			ErrorHandlerService.handleError(error, { handleLogout })
+		}
+	}
 
-    const fetchRoles = async () => {
-        try {
-            await listar<Role[]>(
-                `/roles`, 
-                (rolesData) => {
-                    setRolesList(rolesData)
-                }, 
-                { headers: { Authorization: token } }
-            )
-        } catch (error) {
-            handleErrorWithLogout(error)
-        }
-    }
+	const fetchUserData = async () => {
+		if (!id) return
 
-    const fetchUserData = async () => {
-        if (!id) return
+		try {
+			const resposta = await listar<Usuario>(`/usuarios/${id}`, token)
 
-        try {
-            await listar<Usuario>(
-                `/usuarios/${id}`, 
-                (userData: Usuario) => {
-                    // Carrega os dados no formulario
-                    setValue("nome", userData.nome)
-                    setValue("usuario", userData.usuario)
-                    setValue("role", userData.roles[0]?.id || defaultRole.id)
-                    setFotoPreview(userData.foto || "")
-                }, 
-                { headers: { Authorization: token } }
-            )
-        } catch (error) {
-            handleErrorWithLogout(error)
-        }
-    }
+			// Carrega os dados no formulario
+			setValue("nome", resposta.nome)
+			setValue("usuario", resposta.usuario)
+			setValue("role", resposta.roles[0]?.id || defaultRole.id)
+			setFotoPreview(resposta.foto || "")
+		} catch (error) {
+			ErrorHandlerService.handleError(error, { handleLogout })
+		}
+	}
 
-    useEffect(() => {
-        if (usuario.roles.some(role => role.nome === "admin")) {
-            fetchRoles()
-        }
-        fetchUserData()
-    }, [id, token])
+	useEffect(() => {
+		if (usuario.roles.some((role) => role.nome === "admin")) {
+			fetchRoles()
+		}
+		fetchUserData()
+	}, [id, token])
 
-    // Usando o ImageService para processar imagens
-    const handleImageUpdate = async (imageSource: string | File) => {
-        try {
-            const { preview, file } = await ImageService.processImage(imageSource, {
-                fileName: "user-photo.jpg",
-                fileType: "image/jpeg"
-            });
+	// Usando o ImageService para processar imagens
+	const handleImageUpdate = async (imageSource: string | File) => {
+		try {
+			const { preview, file } = await ImageService.processImage(imageSource, {
+				fileName: "user-photo.jpg",
+				fileType: "image/jpeg",
+			})
+
+			setFotoPreview(preview)
+			setValue("fotoFile", file, { shouldValidate: true })
+		} catch (error) {
+			ErrorHandlerService.handleError(error, {
+				errorMessage: "Erro ao processar imagem!",
+			})
+		}
+	}
+
+	const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+		ImageService.handleFileChange(e, {
+			onSuccess: (file, preview) => {
+				setFotoPreview(preview)
+				setValue("fotoFile", file, { shouldValidate: true })
+			},
+			onError: (error) => {
+				ErrorHandlerService.handleError(error, {
+					errorMessage: "Erro ao selecionar imagem!",
+				})
+			},
+		})
+	}
+
+	const handleFileSelect = () => fileInputRef.current?.click()
+
+	const capturePhoto = (imageSrc: string) => {
+		handleImageUpdate(imageSrc)
+		setOpenCamera(false)
+	}
+
+	const onSubmit = async (data: UsuarioSchemaType) => {
+		setIsLoading(true)
+		try {
+			const selectedRole = rolesList.find((role) => role.id === data.role) || defaultRole
+
+			const user: Usuario = {
+				id: id ? Number(id) : 0,
+				nome: data.nome,
+				usuario: data.usuario,
+				senha: data.senha,
+				foto: data.foto,
+				roles: [selectedRole],
+			}
+
+			const formData = createUsuarioFormData(user, data.fotoFile || null)
+
+			const acao = id ? atualizar : cadastrar
+			const url = id ? "usuarios/atualizar" : "usuarios/cadastrar"
+			const onSuccess = id ? successHandlers.handleUpdate(id) : successHandlers.handleCreate
+
+			await acao(url, formData, token)
+			onSuccess()
             
-            setFotoPreview(preview);
-            setValue("fotoFile", file, { shouldValidate: true });
-        } catch (error) {
-            ErrorHandlerService.handleError(error, {
-                errorMessage: "Erro ao processar imagem!"
-            });
-        }
-    }
+		} catch (error) {
+			ErrorHandlerService.handleError(error, {
+				errorMessage: "Erro ao salvar o usuário!",
+			})
+		} finally {
+			setIsLoading(false)
+		}
+	}
 
-    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-        ImageService.handleFileChange(e, {
-            onSuccess: (file, preview) => {
-                setFotoPreview(preview);
-                setValue("fotoFile", file, { shouldValidate: true });
-            },
-            onError: (error) => {
-                ErrorHandlerService.handleError(error, {
-                    errorMessage: "Erro ao selecionar imagem!"
-                });
-            }
-        });
-    }
-
-    const handleFileSelect = () => fileInputRef.current?.click()
-
-    const capturePhoto = (imageSrc: string) => {
-        handleImageUpdate(imageSrc)
-        setOpenCamera(false)
-    }
-
-    const onSubmit = async (data: UsuarioSchemaType) => {
-        setIsLoading(true)
-        try {
-            const selectedRole = rolesList.find(role => role.id === data.role) || defaultRole
-
-            const user: Usuario = {
-                id: id ? Number(id) : 0,
-                nome: data.nome,
-                usuario: data.usuario,
-                senha: data.senha,
-                foto: data.foto,
-                roles: [selectedRole],
-            }
-
-            const formData = createUsuarioFormData(user, data.fotoFile || null)
-
-            if (id) {
-                // Usando o handler de atualização com o ID do usuário
-                await atualizar(
-                    `/usuarios/atualizar`, 
-                    formData, 
-                    successHandlers.handleUpdate(id), 
-                    { headers: { Authorization: token } }
-                )
-            } else {
-                // Usando o handler de criação
-                await cadastrarUsuario(
-                    `/usuarios/cadastrar`, 
-                    formData, 
-                    successHandlers.handleCreate
-                )
-            }
-        } catch (error) {
-            ErrorHandlerService.handleError(error, {
-                errorMessage: "Erro ao salvar o usuário!"
-            });
-        } finally {
-            setIsLoading(false)
-        }
-    }
-
-    return {
-        id,
-        isLoading,
-        register,
-        handleSubmit,
-        control,
-        errors,
-        onSubmit,
-        retornar,
-        fotoPreview,
-        setFotoPreview,
-        handleFileChange,
-        handleFileSelect,
-        fileInputRef,
-        cameraInputRef,
-        capturePhoto,
-        openCamera,
-        setOpenCamera,
-        rolesList,
-        isAdmin: usuario.roles.some(role => role.nome === "admin"),
-    }
+	return {
+		id,
+		isLoading,
+		register,
+		handleSubmit,
+		control,
+		errors,
+		onSubmit,
+		retornar,
+		fotoPreview,
+		setFotoPreview,
+		handleFileChange,
+		handleFileSelect,
+		fileInputRef,
+		cameraInputRef,
+		capturePhoto,
+		openCamera,
+		setOpenCamera,
+		rolesList,
+		isAdmin: usuario.roles.some((role) => role.nome === "admin"),
+	}
 }

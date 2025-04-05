@@ -7,19 +7,15 @@ import { listar } from "../../services/AxiosService"
 export const useListarUsuarios = () => {
     const navigate = useNavigate()
     const [usuarios, setUsuarios] = useState<Usuario[]>([])
-    const { usuario, handleLogout } = useContext(AuthContext)
+    const { usuario, isAdmin, handleLogout } = useContext(AuthContext)
     const token = usuario.token
     const [isLoading, setIsLoading] = useState(true)
-    const [showButton, setShowButton] = useState(false)
 
     const buscarUsuarios = async () => {
         setIsLoading(true)
         try {
-            await listar("/usuarios/all", setUsuarios, {
-                headers: {
-                    Authorization: token,
-                },
-            })
+            const resposta = await listar<Usuario[]>("/usuarios/all", token)
+            setUsuarios(resposta)
         } catch (error: unknown) {
             if (typeof error === "string" && error.includes("401")) handleLogout()
         } finally {
@@ -31,14 +27,10 @@ export const useListarUsuarios = () => {
         buscarUsuarios()
     }, [])
 
-    useEffect(() => {
-        setShowButton(usuarios.length === 0)
-    }, [usuarios])
-
     return {
         usuarios,
         isLoading,
-        showButton,
+        isAdmin,
         navigate,
         buscarUsuarios
     }

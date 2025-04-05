@@ -21,11 +21,25 @@ import RecuperarSenha from "./pages/usuarios/recuperarsenha/RecuperarSenha"
 import PrivateRoute from "./routes/PrivateRoute"
 import Footer from "./templates/footer/Footer"
 import Navbar from "./templates/navbar/Navbar"
-import NotFound from "./templates/notfound/NotFound"
-import FormRole from "./pages/roles/formcategoria/FormRole"
-
+import NotFound from "./templates/status/NotFound"
+import FormRole from "./pages/roles/formrole/FormRole"
+import Role from "./models/Role"
+import Forbidden from "./templates/status/Forbidden"
+import FormAutor from "./pages/autores/formautor/FormAutor"
 
 function App() {
+	const adminRole: Role = {
+		id: 1,
+		nome: "admin",
+		descricao: "Admninistrador",
+	}
+
+	const userRole: Role = {
+		id: 2,
+		nome: "user",
+		descricao: "Usuário",
+	}
+
 	return (
 		<>
 			<AuthProvider>
@@ -36,19 +50,21 @@ function App() {
 						<Routes>
 							<Route path="/" element={<Home />} />
 							<Route path="*" element={<NotFound />} />
+							<Route path="/forbidden" element={<Forbidden />} />
 							<Route path="/login" element={<Login />} />
 							<Route path="/cadastro" element={<CadastrarUsuario />} />
 							<Route path="/produtos" element={<ListarProdutos />} />
-							<Route path="/consultarnome/:titulo" element={<ListarProdutosPorNome />} />
+							<Route
+								path="/consultarnome/:titulo"
+								element={<ListarProdutosPorNome />}
+							/>
 							<Route path="/recuperarsenha" element={<RecuperarSenha />} />
 							<Route path="/atualizarsenha" element={<AtualizarSenha />} />
 
-							<Route element={<PrivateRoute />}>
+							<Route element={<PrivateRoute allowedRoles={[adminRole]} />}>
 								<Route path="/cadastrarproduto" element={<FormProduto />} />
 								<Route path="/atualizarproduto/:id" element={<FormProduto />} />
 								<Route path="/usuarios" element={<ListarUsuarios />} />
-								<Route path="/editarusuario/:id" element={<CadastrarUsuario />} />
-								<Route path="/perfil" element={<Perfil />} />
 								<Route path="/roles" element={<ListarRoles />} />
 								<Route path="/cadastrarrole" element={<FormRole />} />
 								<Route path="/editarrole/:id" element={<FormRole />} />
@@ -57,7 +73,15 @@ function App() {
 								<Route path="/editarcategoria/:id" element={<FormCategoria />} />
 								<Route path="/editoras" element={<ListarEditoras />} />
 								<Route path="/autores" element={<ListarAutores />} />
+								<Route path="/cadastrarautor" element={<FormAutor />} />
+								<Route path="/editarautor/:id" element={<FormAutor />} />
 							</Route>
+
+							<Route element={<PrivateRoute allowedRoles={[adminRole, userRole]} />}>
+								<Route path="/editarusuario/:id" element={<CadastrarUsuario />} />
+								<Route path="/perfil" element={<Perfil />} />
+							</Route>
+
 						</Routes>
 					</div>
 					<Footer />
