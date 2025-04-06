@@ -30,12 +30,12 @@ function Navbar() {
 							<img
 								src="https://ik.imagekit.io/vzr6ryejm/livraria/logo_livraria.png?updatedAt=1737603351362"
 								alt="Logo"
-								className="w-48"
+								className="w-36 md:w-40 lg:w-48"
 							/>
 						</Link>
 
 						{/* Barra de pesquisa no desktop - entre logo e menu */}
-						<div className="hidden md:block flex-grow mx-4">
+						<div className="hidden md:block flex-grow mx-2 lg:mx-4">
 							<SearchBar
 								titulo={titulo}
 								setTitulo={setTitulo}

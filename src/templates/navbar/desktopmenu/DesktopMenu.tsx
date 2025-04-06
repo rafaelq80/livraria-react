@@ -9,7 +9,6 @@ import {
 	User,
 	Users,
 } from "@phosphor-icons/react"
-import { Link } from "react-router-dom"
 import { useNavbar } from "../../../hooks/navbar/useNavbar"
 import { DropdownMenu } from "./DropDownMenu"
 import { DropDownMenuItem } from "./DropDownMenuItem"
@@ -18,8 +17,8 @@ function DesktopMenu() {
 	const { usuario, isAuthenticated, logout } = useNavbar()
 
 	return (
-		<div className="hidden md:flex gap-4 py-4">
-			{isAuthenticated  && (
+		<div className="hidden md:flex items-center gap-2 lg:gap-4 py-4 flex-shrink-0">
+			{isAuthenticated && (
 				<>
 					<DropdownMenu title="E-Commerce">
 						<DropDownMenuItem
@@ -27,10 +26,10 @@ function DesktopMenu() {
 							icon={<Book size={20} />}
 							text="Novo Produto"
 						/>
-						<DropDownMenuItem 
-							to="/autores" 
-							icon={<IdentificationCard size={20} />} 
-							text="Autores" 
+						<DropDownMenuItem
+							to="/autores"
+							icon={<IdentificationCard size={20} />}
+							text="Autores"
 						/>
 						<DropDownMenuItem
 							to="/categorias"
@@ -53,21 +52,41 @@ function DesktopMenu() {
 					</DropdownMenu>
 				</>
 			)}
+
+			{/* Menu do Usuário com ícone */}
+
 			{isAuthenticated ? (
-				<Link to="/perfil">
-					<img
-						src={usuario.foto}
-						alt={usuario.nome}
-						className="border-transparent rounded-full w-10 h-10"
+				<DropdownMenu
+					icon={
+						<img
+							src={usuario.foto}
+							alt={usuario.nome}
+							className="border-transparent rounded-full w-8 h-8 lg:w-10 lg:h-10"
+						/>
+					}
+				>
+					<DropDownMenuItem to="/perfil" icon={<User size={20} />} text="Perfil" />
+					<DropDownMenuItem
+						to=""
+						icon={<SignOut size={20} />}
+						text="Sair"
+						onClick={logout}
 					/>
-				</Link>
+				</DropdownMenu>
 			) : (
-				<DropDownMenuItem to="/login" icon={<User size={32} />} text="" />
+				<DropdownMenu 
+					icon={<User size={28} className="flex-shrink-0" />}
+					to="/login"
+				>
+				</DropdownMenu>
 			)}
-			<DropDownMenuItem to="/carrinho" icon={<ShoppingCart size={32} />} text="" />
-			{isAuthenticated && (
-				<DropDownMenuItem to="" icon={<SignOut size={32} />} text="" onClick={logout} />
-			)}
+
+			{/* Carrinho */}
+			<DropdownMenu
+				to="/carrinho"
+				icon={<ShoppingCart size={28} className="flex-shrink-0" />}
+			>
+			</DropdownMenu>
 		</div>
 	)
 }

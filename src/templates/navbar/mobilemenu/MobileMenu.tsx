@@ -32,7 +32,13 @@ function MobileMenu({ mobileMenuOpen, setMobileMenuOpen }: MenuProps) {
 			} md:hidden overflow-hidden transition-all duration-300 ease-in-out w-full bg-indigo-900`}
 		>
 			<div className="flex flex-col gap-2 p-4">
-				<SearchBar titulo={titulo} setTitulo={setTitulo} buscarProdutos={buscarProdutos} />
+				<SearchBar
+					titulo={titulo}
+					setTitulo={setTitulo}
+					buscarProdutos={buscarProdutos}
+					onSearchSubmit={() => setMobileMenuOpen(false)}
+				/>
+
 				{isAuthenticated && (
 					<>
 						<MenuSection

@@ -9,9 +9,9 @@ import ListarCategorias from "./pages/categorias/listarcategorias/ListarCategori
 import ListarEditoras from "./pages/editoras/listareditoras/ListarEditoras"
 import Home from "./pages/home/Home"
 import Login from "./pages/login/Login"
-import FormProduto from "./pages/produtos/formproduto/FormProdutos"
+import FormProduto from "./pages/produtos/formproduto/FormProduto"
 import ListarProdutos from "./pages/produtos/listarprodutos/ListarProdutos"
-import ListarProdutosPorNome from "./pages/produtos/listarprodutospornome/ListarProdutosPorNome"
+import ListarProdutosPorNome from "./pages/produtos/listarprodutosportitulo/ListarProdutosPorTitulo"
 import ListarRoles from "./pages/roles/listarroles/ListarRoles"
 import AtualizarSenha from "./pages/usuarios/atualizarsenha/AtualizarSenha"
 import CadastrarUsuario from "./pages/usuarios/cadastrarusuario/CadastrarUsuario"
@@ -26,6 +26,7 @@ import FormRole from "./pages/roles/formrole/FormRole"
 import Role from "./models/Role"
 import Forbidden from "./templates/status/Forbidden"
 import FormAutor from "./pages/autores/formautor/FormAutor"
+import FormEditora from "./pages/editoras/formeditora/FormEditora"
 
 function App() {
 	const adminRole: Role = {
@@ -72,6 +73,8 @@ function App() {
 								<Route path="/cadastrarcategoria" element={<FormCategoria />} />
 								<Route path="/editarcategoria/:id" element={<FormCategoria />} />
 								<Route path="/editoras" element={<ListarEditoras />} />
+								<Route path="/cadastrareditora" element={<FormEditora />} />
+								<Route path="/editareditora/:id" element={<FormEditora />} />
 								<Route path="/autores" element={<ListarAutores />} />
 								<Route path="/cadastrarautor" element={<FormAutor />} />
 								<Route path="/editarautor/:id" element={<FormAutor />} />
