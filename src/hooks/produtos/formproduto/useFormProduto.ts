@@ -80,7 +80,17 @@ export function useFormProduto(produtoId?: string) {
 	useEffect(() => {
 		const loadProduto = async () => {
 			if (produtoId === undefined) {
-				reset()
+				reset({
+					id: 0,
+					titulo: "",
+					preco: 0,
+					isbn10: "",
+					isbn13: "",
+					foto: "",
+					categoria: { id: 0, tipo: "" },
+					editora: { id: 0, nome: "" },
+					autores: [],
+				})
 				resetAutores()
 				return
 			}
