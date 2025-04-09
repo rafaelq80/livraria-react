@@ -1,3 +1,4 @@
+import Produto from '../models/Produto'
 import Usuario from '../models/Usuario'
 
 type StringConvertible = string | number | boolean | Date
@@ -42,6 +43,32 @@ export function createUsuarioFormData(user: Usuario, foto: File | null) {
         formData.append("foto", foto)
     } else if (user.foto) {
         formData.append("foto", user.foto)
+    }
+
+    return formData
+}
+
+/** 
+ * Função Específica para criar FormData do tipo Produto
+ **/ 
+export function createProdutoFormData(produto: Produto, foto: File | null) {
+    // Usar a função genérica para simplificar
+    const formData = createFormData({
+        id: produto.id,
+        titulo: produto.titulo,
+        preco: produto.preco,
+        isbn10: produto.isbn10,
+        isbn13: produto.isbn13,
+        categoria: JSON.stringify(produto.categoria),
+        editora: JSON.stringify(produto.editora),
+        autores: JSON.stringify(produto.autores)
+    })
+    
+    // Adicionar a foto apenas uma vez, de acordo com sua disponibilidade
+    if (foto) {
+        formData.append("foto", foto)
+    } else if (produto.foto) {
+        formData.append("foto", produto.foto)
     }
 
     return formData

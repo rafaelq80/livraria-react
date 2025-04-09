@@ -47,7 +47,7 @@ function FormEditora() {
 
 									<button
 										type="submit"
-										className="w-1/2 bg-indigo-900 text-white py-2 rounded hover:bg-indigo-400 transition flex justify-center"
+										className="w-1/2 bg-indigo-900 text-white py-2 rounded hover:bg-indigo-700 transition flex justify-center"
 										disabled={isLoading}
 									>
 										{isLoading ? (

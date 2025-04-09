@@ -1,103 +1,156 @@
-import { useState, useEffect, useMemo, useCallback, useContext } from "react"
-import Autor from "../../../models/Autor"
-import { useApi } from "./useApi"
-import { debounce } from "lodash"
-import { ErrorHandlerService } from "../../../services/ErrorHandlerService"
-import AuthContext from "../../../contexts/AuthContext"
+import { useState, useEffect, useMemo, useCallback } from "react";
+import Autor from "../../../models/Autor";
+import { useApi } from "./useApi";
+import { debounce } from "lodash";
 
-export function useAutores() {
-	const [autores, setAutores] = useState<Autor[]>([])
-	const [selectedAutores, setSelectedAutores] = useState<Autor[]>([])
-	const [selectedAutorToAdd, setSelectedAutorToAdd] = useState<string>("")
-	const [selectedAutorToRemove, setSelectedAutorToRemove] = useState<string>("")
-	const [filtrarAutor, setFiltrarAutor] = useState<string>("")
-	const { handleLogout } = useContext(AuthContext)
-	const { fetchData } = useApi<Autor>()
+// Interface para o estado do hook
+interface AutoresState {
+  selectedAutores: Autor[];
+  selectedAutorToAdd: string;
+  selectedAutorToRemove: string;
+  filtrarAutor: string;
+}
 
-	// Carrega todos os autores ao inicializar
-	useEffect(() => {
-		const loadAutores = async () => {
-			const response = await fetchData("/autores")
-			if (response) {
-				setAutores(Array.isArray(response) ? response : [])
-			}
-		}
-		loadAutores()
-	}, [fetchData])
+// Interface de retorno do hook
+interface UseAutoresReturn extends AutoresState {
+  autores: Autor[];
+  availableAutores: Autor[];
+  handleFiltrarAutor: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleAddAutor: () => Promise<void>;
+  handleRemoveAutor: () => void;
+  handleSelectAutorToAdd: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleSelectAutorToRemove: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  setSelectedAutores: React.Dispatch<React.SetStateAction<Autor[]>>;
+  resetAutores: () => void;
+}
 
-	// Filtra autores disponíveis com useMemo para melhorar performance
-	const availableAutores = useMemo(() => {
-		return autores
-			.filter((autor) => !selectedAutores.some((selected) => selected.id === autor.id))
-			.filter((autor) => autor.nome.toUpperCase().includes(filtrarAutor.toUpperCase()))
-	}, [autores, selectedAutores, filtrarAutor])
+export function useAutores(): UseAutoresReturn {
+  // Estado consolidado
+  const [autores, setAutores] = useState<Autor[]>([]);
+  const [state, setState] = useState<AutoresState>({
+    selectedAutores: [],
+    selectedAutorToAdd: "",
+    selectedAutorToRemove: "",
+    filtrarAutor: "",
+  });
 
-	// Debounce para o filtro de autor
-	const debouncedSetFiltrarAutor = useCallback(
-		debounce((value: string) => {
-			setFiltrarAutor(value)
-		}, 300),
-		[]
-	)
+  // Extraindo valores do estado para facilitar acesso
+  const { selectedAutores, selectedAutorToAdd, selectedAutorToRemove, filtrarAutor } = state;
+  
+  // Funções para atualizar partes específicas do estado
+  const updateState = useCallback((updates: Partial<AutoresState>) => {
+    setState(prev => ({ ...prev, ...updates }));
+  }, []);
 
-	const handleFiltrarAutor = useCallback(
-		(e: React.ChangeEvent<HTMLInputElement>) => {
-			debouncedSetFiltrarAutor(e.target.value)
-		},
-		[debouncedSetFiltrarAutor]
-	)
+  // API helpers
+  const { fetchData } = useApi<Autor>();
 
-	const handleAddAutor = useCallback(async () => {
-		if (!selectedAutorToAdd) return
+  // Carrega todos os autores ao inicializar
+  useEffect(() => {
+    const loadAutores = async () => {
+      const response = await fetchData("/autores");
+      if (response.success && response.data) {
+        setAutores(Array.isArray(response.data) ? response.data : []);
+      }
+    };
+    loadAutores();
+  }, [fetchData]);
 
-		try {
-			const autor = await fetchData(`/autores/${selectedAutorToAdd}`)
-			if (autor) {
-				setSelectedAutores((prev) => [...prev, autor])
-				setSelectedAutorToAdd("")
-			}
-		} catch (error) {
-			ErrorHandlerService.handleError(error, { handleLogout })
-		}
-	}, [selectedAutorToAdd, fetchData])
+  // Filtra autores disponíveis com useMemo para melhorar performance
+  const availableAutores = useMemo(() => {
+    return autores
+      .filter((autor) => !selectedAutores.some((selected) => selected.id === autor.id))
+      .filter((autor) => autor.nome.toUpperCase().includes(filtrarAutor.toUpperCase()));
+  }, [autores, selectedAutores, filtrarAutor]);
 
-	const handleRemoveAutor = useCallback(() => {
-		if (!selectedAutorToRemove) return
+  // Debounce para o filtro de autor - criado apenas uma vez
+  const debouncedSetFiltrarAutor = useMemo(() => 
+    debounce((value: string) => {
+      updateState({ filtrarAutor: value });
+    }, 300), 
+    [updateState]
+  );
 
-		setSelectedAutores((prev) =>
-			prev.filter((autor) => autor.id.toString() !== selectedAutorToRemove)
-		)
-		setSelectedAutorToRemove("")
-	}, [selectedAutorToRemove])
+  // Tratadores de eventos
+  const handleFiltrarAutor = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      debouncedSetFiltrarAutor(e.target.value);
+    },
+    [debouncedSetFiltrarAutor]
+  );
 
-	const handleSelectAutorToAdd = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-		setSelectedAutorToAdd(e.target.value)
-	}, [])
+  const handleAddAutor = useCallback(async () => {
+    if (!selectedAutorToAdd) return;
 
-	const handleSelectAutorToRemove = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-		setSelectedAutorToRemove(e.target.value)
-	}, [])
+    const response = await fetchData(`/autores/${selectedAutorToAdd}`);
+    if (response.success && response.data) {
+      updateState({ 
+        selectedAutores: [...selectedAutores, response.data],
+        selectedAutorToAdd: ""
+      });
+    }
+  }, [selectedAutorToAdd, fetchData, selectedAutores, updateState]);
 
-	const resetAutores = useCallback(() => {
-		setSelectedAutores([])
-		setSelectedAutorToAdd("")
-		setSelectedAutorToRemove("")
-		setFiltrarAutor("")
-	}, [])
+  const handleRemoveAutor = useCallback(() => {
+    if (!selectedAutorToRemove) return;
 
-	return {
-		autores,
-		availableAutores,
-		selectedAutores,
-		setSelectedAutores,
-		selectedAutorToAdd,
-		selectedAutorToRemove,
-		filtrarAutor,
-		handleFiltrarAutor,
-		handleAddAutor,
-		handleRemoveAutor,
-		handleSelectAutorToAdd,
-		handleSelectAutorToRemove,
-		resetAutores,
-	}
+    updateState({
+      selectedAutores: selectedAutores.filter(
+        (autor) => autor.id.toString() !== selectedAutorToRemove
+      ),
+      selectedAutorToRemove: ""
+    });
+  }, [selectedAutorToRemove, selectedAutores, updateState]);
+
+  const handleSelectAutorToAdd = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      updateState({ selectedAutorToAdd: e.target.value });
+    }, 
+    [updateState]
+  );
+
+  const handleSelectAutorToRemove = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      updateState({ selectedAutorToRemove: e.target.value });
+    },
+    [updateState]
+  );
+
+  // Função para redefinir o estado
+  const resetAutores = useCallback(() => {
+    updateState({
+      selectedAutores: [],
+      selectedAutorToAdd: "",
+      selectedAutorToRemove: "",
+      filtrarAutor: ""
+    });
+  }, [updateState]);
+
+  // Exposição da função setSelectedAutores para uso externo
+  const setSelectedAutores = useCallback(
+    (value: React.SetStateAction<Autor[]>) => {
+      const newValue = typeof value === 'function' 
+        ? value(selectedAutores) 
+        : value;
+      
+      updateState({ selectedAutores: newValue });
+    },
+    [selectedAutores, updateState]
+  );
+
+  return {
+    autores,
+    availableAutores,
+    selectedAutores,
+    selectedAutorToAdd,
+    selectedAutorToRemove,
+    filtrarAutor,
+    handleFiltrarAutor,
+    handleAddAutor,
+    handleRemoveAutor,
+    handleSelectAutorToAdd,
+    handleSelectAutorToRemove,
+    setSelectedAutores,
+    resetAutores,
+  };
 }

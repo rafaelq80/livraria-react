@@ -26,11 +26,11 @@ function FormUsuario({ isPerfil = false }: FormUsuarioProps) {
 	return (
 		<>
 			<div className="bg-white shadow-lg rounded-lg mx-2 p-8 w-full max-w-6xl lg:w-[90%]">
-				<h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">
+				<h2 className="mb-6 text-3xl font-semibold text-center text-gray-800">
 					{id ? "Editar Usuário" : "Cadastrar Usuário"}
 				</h2>
-				<div className="flex flex-col lg:flex-row gap-8">
-					<div className="w-full lg:w-1/3 flex flex-col items-center justify-center">
+				<div className="flex flex-col gap-8 lg:flex-row">
+					<div className="flex flex-col items-center justify-center w-full lg:w-1/3">
 						<CampoFoto
 							control={control}
 							setValue={setValue}
@@ -43,7 +43,7 @@ function FormUsuario({ isPerfil = false }: FormUsuarioProps) {
 					<div className="w-full lg:w-2/3">
 						<form onSubmit={handleSubmit(onSubmit)}>
 							<div className="flex flex-col w-full mb-4">
-								<label htmlFor="nome" className="block text-gray-700 font-medium">
+								<label htmlFor="nome" className="block font-medium text-gray-700">
 									Nome
 								</label>
 								<input
@@ -54,7 +54,7 @@ function FormUsuario({ isPerfil = false }: FormUsuarioProps) {
 									{...register("nome")}
 								/>
 								{errors.nome && (
-									<span className="text-red-500 text-sm">
+									<span className="text-sm text-red-500">
 										{errors.nome.message}
 									</span>
 								)}
@@ -62,7 +62,7 @@ function FormUsuario({ isPerfil = false }: FormUsuarioProps) {
 							<div className="flex flex-col w-full mb-4">
 								<label
 									htmlFor="usuario"
-									className="block text-gray-700 font-medium"
+									className="block font-medium text-gray-700"
 								>
 									Usuario
 								</label>
@@ -74,13 +74,13 @@ function FormUsuario({ isPerfil = false }: FormUsuarioProps) {
 									{...register("usuario")}
 								/>
 								{errors.usuario && (
-									<span className="text-red-500 text-sm">
+									<span className="text-sm text-red-500">
 										{errors.usuario.message}
 									</span>
 								)}
 							</div>
 							<div className="flex flex-col w-full mb-4">
-								<label htmlFor="senha" className="block text-gray-700 font-medium">
+								<label htmlFor="senha" className="block font-medium text-gray-700">
 									Senha
 								</label>
 								<input
@@ -91,7 +91,7 @@ function FormUsuario({ isPerfil = false }: FormUsuarioProps) {
 									{...register("senha")}
 								/>
 								{errors.senha && (
-									<span className="text-red-500 text-sm">
+									<span className="text-sm text-red-500">
 										{errors.senha.message}
 									</span>
 								)}
@@ -99,7 +99,7 @@ function FormUsuario({ isPerfil = false }: FormUsuarioProps) {
 							<div className="flex flex-col w-full mb-4">
 								<label
 									htmlFor="confirmarSenha"
-									className="block text-gray-700 font-medium"
+									className="block font-medium text-gray-700"
 								>
 									Confirmar Senha
 								</label>
@@ -111,7 +111,7 @@ function FormUsuario({ isPerfil = false }: FormUsuarioProps) {
 									{...register("confirmarSenha")}
 								/>
 								{errors.confirmarSenha && (
-									<span className="text-red-500 text-sm">
+									<span className="text-sm text-red-500">
 										{errors.confirmarSenha.message}
 									</span>
 								)}
@@ -122,7 +122,7 @@ function FormUsuario({ isPerfil = false }: FormUsuarioProps) {
 								<div className="flex flex-col w-full mb-4">
 									<label
 										htmlFor="role"
-										className="block text-gray-700 font-medium"
+										className="block font-medium text-gray-700"
 									>
 										Papel de Usuário
 									</label>
@@ -143,18 +143,18 @@ function FormUsuario({ isPerfil = false }: FormUsuarioProps) {
 										)}
 									/>
 									{errors.role && (
-										<span className="text-red-500 text-sm">
+										<span className="text-sm text-red-500">
 											{errors.role.message}
 										</span>
 									)}
 								</div>
 							)}
 
-							<div className="flex justify-around gap-8 w-full">
+							<div className="flex justify-around w-full gap-8">
 								{!isPerfil && (
 									<button
 										type="button"
-										className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-400 transition flex justify-center"
+										className="flex justify-center w-full py-2 text-white transition bg-red-500 rounded hover:bg-red-400"
 										onClick={retornar}
 									>
 										Cancelar
@@ -163,7 +163,7 @@ function FormUsuario({ isPerfil = false }: FormUsuarioProps) {
 
 								<button
 									type="submit"
-									className="w-full bg-indigo-900 text-white py-2 rounded hover:bg-indigo-400 transition flex justify-center"
+									className="flex justify-center w-full py-2 text-white transition bg-indigo-900 rounded hover:bg-indigo-700"
 									disabled={isLoading}
 								>
 									{isLoading ? (

@@ -60,7 +60,7 @@ function Login() {
           </div>
           <button
             type="submit"
-            className="w-full bg-indigo-900 text-white py-2 rounded-lg hover:bg-indigo-400 transition flex justify-center"
+            className="w-full bg-indigo-900 text-white py-2 rounded-lg hover:bg-indigo-700 transition flex justify-center"
           >
             {isLoading ? (
               <RotatingLines

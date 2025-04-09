@@ -37,7 +37,7 @@ function ListarProdutosPorTitulo() {
           </label>
           <button
             onClick={limparFiltroPreco}
-            className="bg-indigo-900 hover:bg-indigo-400 text-white py-1 px-4 rounded font-bold ml-auto"
+            className="bg-indigo-900 hover:bg-indigo-700 text-white py-1 px-4 rounded font-bold ml-auto"
           >
             Limpar
           </button>

@@ -17,7 +17,7 @@ export const MenuSection = ({
 }: MenuSectionProps) => (
 	<div>
 		<button
-			className="w-full text-left py-1 hover:bg-indigo-400 px-2 rounded flex justify-between items-center"
+			className="w-full text-left py-1 hover:bg-indigo-700 px-2 rounded flex justify-between items-center"
 			onClick={() => toggleDropdown(menu)}
 		>
 			<span>{title}</span>
