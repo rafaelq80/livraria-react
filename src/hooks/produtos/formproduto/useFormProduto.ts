@@ -99,7 +99,7 @@ export function useFormProduto(produtoId?: string) {
     if (produtoId === lastProcessedId && !isFormLoading) {
       return;
     }
-    
+
     setIsFormLoading(true);
     
     const loadProduto = async () => {
@@ -169,6 +169,10 @@ export function useFormProduto(produtoId?: string) {
     }
   }, [selectedAutores, setValue, watch, isFormLoading]);
 
+  const retornar = () => {
+    navigate("/")
+  }
+  
   // Handlers de mudança para campos de select
   const handleCategoriaChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -249,6 +253,7 @@ export function useFormProduto(produtoId?: string) {
     handleCategoriaChange,
     handleEditoraChange,
     onSubmit: handleFormSubmit(onSubmit),
+    retornar,
     formValues,
     control,
     setValue,
