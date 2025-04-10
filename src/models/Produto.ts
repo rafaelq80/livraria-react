@@ -6,6 +6,7 @@ export default interface Produto {
     id: number;
     titulo: string;
     preco: number;
+    desconto: number;
     foto: string;
     isbn10: string;
     isbn13: string;

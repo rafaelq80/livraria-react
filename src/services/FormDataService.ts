@@ -57,6 +57,7 @@ export function createProdutoFormData(produto: Produto, foto: File | null) {
         id: produto.id,
         titulo: produto.titulo,
         preco: produto.preco,
+        desconto: produto.desconto,
         isbn10: produto.isbn10,
         isbn13: produto.isbn13,
         categoria: JSON.stringify(produto.categoria),

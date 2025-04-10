@@ -15,10 +15,13 @@ export function useApi<T>() {
   const token = usuario.token;
 
   // Handler de erro unificado para todas as operações
-  const handleApiError = useCallback(<R>(error: unknown): ApiResponse<R> => {
-    ErrorHandlerService.handleError(error, { handleLogout });
-    return { data: null as unknown as R, success: false, error };
-  }, [handleLogout]);
+  const handleApiError = useCallback(
+    <R>(error: unknown): ApiResponse<R> => {
+      ErrorHandlerService.handleError(error, { handleLogout });
+      return { data: null, success: false, error };
+    }, 
+    [handleLogout]
+  );
 
   // Busca dados da API
   const fetchData = useCallback(
@@ -52,8 +55,7 @@ export function useApi<T>() {
       try {
         const result = await cadastrar<R>(url, data, token);
         return { data: result || data, success: true };
-      }
-      catch (error) {
+      } catch (error) {
         return handleApiError(error);
       }
     },

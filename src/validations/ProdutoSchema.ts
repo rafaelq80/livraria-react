@@ -7,6 +7,10 @@ export const produtoSchema = z.object({
   id: z.number().optional(),
   titulo: z.string().min(1, "Título é obrigatório"),
   preco: z.coerce.number().min(0.01, "Preço deve ser maior que zero"),
+  desconto: z.coerce.number()
+    .min(0, "Desconto deve ser no mínimo 0%")
+    .max(100, "Desconto não pode ultrapassar 100%")
+    .default(0),
   isbn10: z.string().min(1, "ISBN-10 é obrigatório"),
   isbn13: z.string().min(1, "ISBN-13 é obrigatório"),
   foto: z.string().optional().default(""),

@@ -1,10 +1,13 @@
-import { ArrowFatLeft, ArrowFatRight } from "@phosphor-icons/react"
-import { RotatingLines } from "react-loader-spinner"
 import { useParams } from "react-router-dom"
-import { useFormProduto } from "../../../hooks/produtos/formproduto/useFormProduto"
+import SeletorAutores from "../../../components/autores/SeletorAutores"
 import { CampoFoto } from "../../../components/campofoto/CampoFoto"
-import { NumericFormat, PatternFormat } from "react-number-format"
-import { Controller } from "react-hook-form"
+import { useFormProduto } from "../../../hooks/produtos/formproduto/useFormProduto"
+import CurrencyField from "../../../components/ui/CurrencyField"
+import PatternField from "../../../components/ui/PatternField"
+import SelectField, { Option } from "../../../components/ui/SelectField"
+import PercentField from "../../../components/ui/PercentField"
+import InputField from "../../../components/ui/InputField"
+import Button from "../../../components/ui/Button"
 
 function FormProduto() {
 	const { id } = useParams<{ id: string }>()
@@ -16,21 +19,26 @@ function FormProduto() {
 		editoras,
 		availableAutores,
 		selectedAutores,
-		selectedAutorToAdd,
-		selectedAutorToRemove,
-		filtrarAutor,
-		handleFiltrarAutor,
-		handleAddAutor,
-		handleRemoveAutor,
-		handleSelectAutorToAdd,
-		handleSelectAutorToRemove,
+		setSelectedAutores,
 		handleCategoriaChange,
 		handleEditoraChange,
 		onSubmit,
+		retornar,
 		formValues,
 		control,
 		setValue,
 	} = useFormProduto(id)
+
+	// Transformar categorias e editoras em options para SelectField
+	const categoriasOptions: Option[] = categorias.map((categoria) => ({
+		id: categoria.id,
+		label: categoria.tipo,
+	}))
+
+	const editorasOptions: Option[] = editoras.map((editora) => ({
+		id: editora.id,
+		label: editora.nome,
+	}))
 
 	return (
 		<div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
@@ -67,350 +75,119 @@ function FormProduto() {
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
 								{/* Título - ocupa linha inteira */}
 								<div className="md:col-span-2">
-									<label
-										htmlFor="titulo"
-										className="block text-sm font-medium text-gray-700 mb-1"
-									>
-										Título
-									</label>
-									<input
-										{...register("titulo")}
-										type="text"
-										placeholder="Insira o título do Livro"
+									<InputField
 										id="titulo"
-										className={`w-full bg-white border-2 ${
-											errors.titulo ? "border-red-500" : "border-slate-700"
-										} rounded p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+										label="Título"
+										placeholder="Insira o título do Livro"
+										error={errors.titulo?.message}
+										{...register("titulo")}
 									/>
-									{errors.titulo && (
-										<p className="text-red-500 text-sm mt-1">
-											{errors.titulo.message}
-										</p>
-									)}
 								</div>
 
-								{/* Preço com NumericFormat */}
-								<div>
-									<label
-										htmlFor="preco"
-										className="block text-sm font-medium text-gray-700 mb-1"
-									>
-										Preço
-									</label>
-									<Controller
-										name="preco"
-										control={control}
-										render={({ field: { onChange, value, ref } }) => (
-											<NumericFormat
-												id="preco"
-												value={value}
-												onValueChange={(values) => {
-													onChange(values.floatValue)
-												}}
-												thousandSeparator="."
-												decimalSeparator=","
-												prefix="R$ "
-												decimalScale={2}
-												fixedDecimalScale
-												placeholder="R$ 0,00"
-												className={`w-full bg-white border-2 ${
-													errors.preco
-														? "border-red-500"
-														: "border-slate-700"
-												} rounded p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500`}
-												getInputRef={ref}
-											/>
-										)}
-									/>
-									{errors.preco && (
-										<p className="text-red-500 text-sm mt-1">
-											{errors.preco.message}
-										</p>
-									)}
-								</div>
+								{/* Preço */}
+								<CurrencyField
+									id="preco"
+									name="preco"
+									label="Preço"
+									control={control}
+									error={errors.preco?.message}
+									required
+									helperText="Valor em reais (R$)"
+								/>
 
-								{/* Categoria */}
-								<div>
-									<label
-										htmlFor="categoria"
-										className="block text-sm font-medium text-gray-700 mb-1"
-									>
-										Categoria
-									</label>
-									<select
-										id="categoria"
-										className={`w-full bg-white border-2 ${
-											errors.categoria?.id
-												? "border-red-500"
-												: "border-slate-700"
-										} rounded p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500`}
-										onChange={handleCategoriaChange}
-										value={formValues.categoria?.id || ""}
-									>
-										<option value="" disabled>
-											Selecione uma Categoria
-										</option>
-										{categorias.map((categoria) => (
-											<option key={categoria.id} value={categoria.id}>
-												{categoria.tipo}
-											</option>
-										))}
-									</select>
-									{errors.categoria?.id && (
-										<p className="text-red-500 text-sm mt-1">
-											{errors.categoria.id.message}
-										</p>
-									)}
-								</div>
+								{/* Desconto */}
+								<PercentField
+									id="desconto"
+									name="desconto"
+									label="Desconto"
+									control={control}
+									error={errors.desconto?.message}
+									required
+									helperText="Valor em porcentagem (%)"
+								/>
 
 								{/* ISBN-10 */}
-								<div>
-									<label
-										htmlFor="isbn10"
-										className="block text-sm font-medium text-gray-700 mb-1"
-									>
-										ISBN-10
-									</label>
-									<Controller
-										name="isbn10"
-										control={control}
-										render={({ field: { onChange, value, ref } }) => (
-											<PatternFormat
-												getInputRef={ref}
-												value={value}
-												onValueChange={(val) => onChange(val.value)}
-												format="###-#-#####-#"
-												allowEmptyFormatting
-												mask="_"
-												className={`w-full bg-white border-2 ${
-													errors.isbn10
-														? "border-red-500"
-														: "border-slate-700"
-												} rounded p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500`}
-											/>
-										)}
-									/>
-
-									{errors.isbn10 && (
-										<p className="text-red-500 text-sm mt-1">
-											{errors.isbn10.message}
-										</p>
-									)}
-								</div>
+								<PatternField
+									id="isbn10"
+									name="isbn10"
+									label="ISBN-10"
+									control={control}
+									error={errors.isbn10?.message}
+									pattern="###-#-#####-#"
+									placeholder="000-0-00000-0"
+									helperText="Formato: 000-0-00000-0"
+								/>
 
 								{/* ISBN-13 */}
-								<div>
-									<label
-										htmlFor="isbn13"
-										className="block text-sm font-medium text-gray-700 mb-1"
-									>
-										ISBN-13
-									</label>
-									<Controller
-										name="isbn13"
-										control={control}
-										render={({ field: { onChange, value, ref } }) => (
-											<PatternFormat
-												getInputRef={ref}
-												value={value}
-												onValueChange={(val) => onChange(val.value)}
-												format="###-#-#####-####"
-												allowEmptyFormatting
-												mask="_"
-												className={`w-full bg-white border-2 ${
-													errors.isbn13
-														? "border-red-500"
-														: "border-slate-700"
-												} rounded p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500`}
-											/>
-										)}
-									/>
-									{errors.isbn13 && (
-										<p className="text-red-500 text-sm mt-1">
-											{errors.isbn13.message}
-										</p>
-									)}
-								</div>
+								<PatternField
+									id="isbn13"
+									name="isbn13"
+									label="ISBN-13"
+									control={control}
+									error={errors.isbn13?.message}
+									pattern="###-#-#####-####"
+									placeholder="000-0-00000-0000"
+									helperText="Formato: 000-0-00000-0000"
+								/>
+
+								{/* Categoria */}
+								<SelectField
+									id="categoria"
+									label="Categoria"
+									options={categoriasOptions}
+									value={formValues.categoria?.id || ""}
+									onChange={handleCategoriaChange}
+									error={errors.categoria?.id?.message}
+									placeholder="Selecione uma Categoria"
+									required
+								/>
 
 								{/* Editora */}
-								<div>
-									<label
-										htmlFor="editora"
-										className="block text-sm font-medium text-gray-700 mb-1"
-									>
-										Editora
-									</label>
-									<select
-										id="editora"
-										className={`w-full bg-white border-2 ${
-											errors.editora?.id
-												? "border-red-500"
-												: "border-slate-700"
-										} rounded p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500`}
-										onChange={handleEditoraChange}
-										value={formValues.editora?.id || ""}
-									>
-										<option value="" disabled>
-											Selecione uma Editora
-										</option>
-										{editoras.map((editora) => (
-											<option key={editora.id} value={editora.id}>
-												{editora.nome}
-											</option>
-										))}
-									</select>
-									{errors.editora?.id && (
-										<p className="text-red-500 text-sm mt-1">
-											{errors.editora.id.message}
-										</p>
-									)}
-								</div>
+								<SelectField
+									id="editora"
+									label="Editora"
+									options={editorasOptions}
+									value={formValues.editora?.id || ""}
+									onChange={handleEditoraChange}
+									error={errors.editora?.id?.message}
+									placeholder="Selecione uma Editora"
+									required
+								/>
 							</div>
 
 							{/* Seção de Autores */}
 							<div className="mb-6">
-								<h3 className="text-lg font-medium text-gray-800 mb-3">Autores</h3>
-
-								{/* Campo de Busca de Autor */}
-								<div className="mb-4">
-									<label
-										htmlFor="search-author"
-										className="block text-sm font-medium text-gray-700 mb-1"
-									>
-										Buscar Autor
-									</label>
-									<input
-										type="text"
-										id="search-author"
-										placeholder="Digite o nome do autor para filtrar"
-										className="w-full bg-white border-2 border-slate-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-										value={filtrarAutor}
-										onChange={handleFiltrarAutor}
-									/>
-								</div>
-
-								{/* Painel de Seleção de Autores */}
-								<div className="flex flex-col md:flex-row gap-4">
-									{/* Lista de Autores Disponíveis */}
-									<div className="flex-1">
-										<label
-											htmlFor="available-authors"
-											className="block text-sm font-medium text-gray-700 mb-1"
-										>
-											Autores Disponíveis
-										</label>
-										<select
-											id="available-authors"
-											className="w-full bg-white border-2 border-slate-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 h-40"
-											value={selectedAutorToAdd}
-											onChange={handleSelectAutorToAdd}
-											size={5}
-										>
-											<option value="">Selecione para adicionar</option>
-											{availableAutores.map((autor) => (
-												<option key={autor.id} value={autor.id}>
-													{autor.nome}
-												</option>
-											))}
-										</select>
-									</div>
-
-									{/* Botões de Ação */}
-									<div className="flex md:flex-col justify-center items-center gap-3 my-2">
-										<button
-											type="button"
-											onClick={handleAddAutor}
-											disabled={!selectedAutorToAdd}
-											className="px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded disabled:bg-gray-400 flex items-center justify-center transition-colors"
-										>
-											<span className="md:hidden mr-2">Adicionar</span>
-											<ArrowFatRight
-												size={18}
-												weight="bold"
-												className="hidden md:block"
-											/>
-											<ArrowFatRight
-												size={18}
-												weight="bold"
-												className="md:hidden transform rotate-90"
-											/>
-										</button>
-
-										<button
-											type="button"
-											onClick={handleRemoveAutor}
-											disabled={!selectedAutorToRemove}
-											className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded disabled:bg-gray-400 flex items-center justify-center transition-colors"
-										>
-											<span className="md:hidden mr-2">Remover</span>
-											<ArrowFatLeft
-												size={18}
-												weight="bold"
-												className="hidden md:block"
-											/>
-											<ArrowFatLeft
-												size={18}
-												weight="bold"
-												className="md:hidden transform -rotate-90"
-											/>
-										</button>
-									</div>
-
-									{/* Lista de Autores Selecionados */}
-									<div className="flex-1">
-										<label
-											htmlFor="selected-authors"
-											className="block text-sm font-medium text-gray-700 mb-1"
-										>
-											Autores do Livro
-										</label>
-										<select
-											id="selected-authors"
-											className="w-full bg-white border-2 border-slate-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 h-40"
-											value={selectedAutorToRemove}
-											onChange={handleSelectAutorToRemove}
-											size={5}
-										>
-											<option value="">Selecione para remover</option>
-											{selectedAutores.map((autor) => (
-												<option key={autor.id} value={autor.id}>
-													{autor.nome}
-												</option>
-											))}
-										</select>
-									</div>
-								</div>
-								{errors.autores && (
-									<p className="text-red-500 text-sm mt-2">
-										{errors.autores.message}
-									</p>
-								)}
+								<SeletorAutores
+									availableAutores={availableAutores}
+									selectedAutores={selectedAutores}
+									setSelectedAutores={setSelectedAutores}
+									errors={errors.autores}
+								/>
 							</div>
 						</div>
 					</div>
 
 					{/* Botão de Submissão - na largura total */}
-					<div className="mt-8 flex justify-center">
-						<button
+					<div className="mt-8 flex justify-center gap-4">
+						<Button
 							type="submit"
-							disabled={isLoading}
-							className="px-8 py-3 rounded-md disabled:bg-gray-400 bg-indigo-900 
-                    hover:bg-indigo-700 text-white font-bold transition-colors w-full md:w-1/2 lg:w-1/3"
+							isLoading={isLoading}
+							size="full"
+							className="md:w-1/3 lg:w-1/4"
 						>
-							{isLoading ? (
-								<div className="flex justify-center">
-									<RotatingLines
-										strokeColor="white"
-										strokeWidth="5"
-										animationDuration="0.75"
-										width="24"
-										visible={true}
-									/>
-								</div>
-							) : (
-								<span>{id !== undefined ? "Atualizar" : "Cadastrar"}</span>
-							)}
-						</button>
+							{id !== undefined ? "Atualizar" : "Cadastrar"}
+						</Button>
+
+						<Button
+							type="reset"
+							variant="danger"
+							size="full"
+							className="md:w-1/3 lg:w-1/4"
+							onClick={retornar}
+						>
+							Cancelar
+						</Button>
+
 					</div>
 				</form>
 			</div>

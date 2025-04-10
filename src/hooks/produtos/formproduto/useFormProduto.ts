@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Categoria from "../../../models/Categoria";
 import Editora from "../../../models/Editora";
 import Produto from "../../../models/Produto";
@@ -16,6 +16,7 @@ const DEFAULT_FORM_VALUES: ProdutoSchemaType = {
   id: 0,
   titulo: "",
   preco: 0,
+  desconto: 0,
   isbn10: "",
   isbn13: "",
   foto: "",
@@ -27,19 +28,20 @@ const DEFAULT_FORM_VALUES: ProdutoSchemaType = {
 
 export function useFormProduto(produtoId?: string) {
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [editoras, setEditoras] = useState<Editora[]>([]);
-  // Estado para controlar quando o formulário está sendo carregado inicialmente
   const [isFormLoading, setIsFormLoading] = useState<boolean>(true);
-  // Estado para armazenar o último ID processado, evitando processamentos repetidos
   const [lastProcessedId, setLastProcessedId] = useState<string | undefined>(undefined);
 
-  // Hooks
+  // API hooks
   const { fetchData, updateData, createData } = useApi<Produto>();
-  const autorHook = useAutores();
-  const { selectedAutores, setSelectedAutores, resetAutores } = autorHook;
+  const { 
+    selectedAutores, 
+    setSelectedAutores, 
+    availableAutores, 
+    resetAutores 
+  } = useAutores();
 
   // Configuração do React Hook Form com Zod
   const {
@@ -74,7 +76,6 @@ export function useFormProduto(produtoId?: string) {
   // Carrega dados iniciais de categorias e editoras
   useEffect(() => {
     const loadInitialData = async () => {
-      // Carregando categorias e editoras em paralelo
       const [categoriasResponse, editorasResponse] = await Promise.all([
         fetchData<Categoria[]>("/categorias"),
         fetchData<Editora[]>("/editoras")
@@ -92,40 +93,37 @@ export function useFormProduto(produtoId?: string) {
     loadInitialData();
   }, [fetchData]);
 
-  // Atualização no useEffect que carrega o produto
+  // Carrega o produto quando o ID muda
   useEffect(() => {
     // Verifica se o ID já foi processado para evitar loops
     if (produtoId === lastProcessedId && !isFormLoading) {
       return;
     }
     
-    // Marca o início do carregamento do formulário
     setIsFormLoading(true);
     
     const loadProduto = async () => {
-      // Quando não há ID (modo de criação)
+      // Modo de criação (sem ID)
       if (!produtoId) {
-        // Reset completo incluindo limpeza do campo de foto
         reset({
           ...DEFAULT_FORM_VALUES,
-          foto: "",  // Explicitamente limpar a string da foto
-          fotoFile: undefined  // Limpar o arquivo
+          foto: "",
+          fotoFile: undefined
         });
         resetAutores();
         
-        // Atualiza o último ID processado
         setLastProcessedId(undefined);
         setIsFormLoading(false);
         return;
       }
 
-      // Evita requisições desnecessárias se já estamos processando o mesmo ID
+      // Evita requisições desnecessárias
       if (produtoId === lastProcessedId) {
         setIsFormLoading(false);
         return;
       }
 
-      // Carrega o produto pelo ID (modo de edição)
+      // Modo de edição (com ID)
       const response = await fetchData<Produto>(`/produtos/${produtoId}`);
       
       if (!response.success || !response.data) {
@@ -136,24 +134,22 @@ export function useFormProduto(produtoId?: string) {
 
       const produto = response.data;
 
-      // Reseta o formulário com os dados do produto
+      // Atualiza o formulário com os dados do produto
       reset({
         ...produto,
         categoria: produto.categoria || DEFAULT_FORM_VALUES.categoria,
         editora: produto.editora || DEFAULT_FORM_VALUES.editora,
         autores: produto.autores || [],
-        // Garantir que o fotoFile seja limpo para evitar problemas
         fotoFile: undefined
       });
 
+      // Atualiza os autores selecionados
       if (produto.autores?.length > 0) {
         setSelectedAutores(produto.autores);
       } else {
-        // Reset autores quando não existirem autores no produto
         resetAutores();
       }
       
-      // Atualiza o último ID processado e finaliza o carregamento
       setLastProcessedId(produtoId);
       setIsFormLoading(false);
     };
@@ -163,8 +159,7 @@ export function useFormProduto(produtoId?: string) {
 
   // Sincroniza os autores selecionados com o formulário
   useEffect(() => {
-    // Verifica se os IDs dos autores são diferentes antes de atualizar
-    if (isFormLoading) return; // Evita atualizações durante o carregamento inicial
+    if (isFormLoading) return;
     
     const currentIds = (watch('autores') || []).map(a => a.id).sort().join(',');
     const selectedIds = selectedAutores.map(a => a.id).sort().join(',');
@@ -174,7 +169,7 @@ export function useFormProduto(produtoId?: string) {
     }
   }, [selectedAutores, setValue, watch, isFormLoading]);
 
-  // Handlers de mudança para categoria e editora
+  // Handlers de mudança para campos de select
   const handleCategoriaChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       const categoriaId = Number(e.target.value);
@@ -197,16 +192,16 @@ export function useFormProduto(produtoId?: string) {
     [editoras, setValue]
   );
 
-  // Submissão do formulário - Simplificada
+  // Submissão do formulário
   const onSubmit = async (data: ProdutoSchemaType) => {
     setIsLoading(true);
 
     try {
-
       const produto: Produto = {
-        id: id ? Number(id) : 0,
+        id: produtoId ? Number(produtoId) : 0,
         titulo: data.titulo,
         preco: data.preco,
+        desconto: data.desconto,
         foto: data.foto,
         isbn10: data.isbn10,
         isbn13: data.isbn13,
@@ -221,7 +216,7 @@ export function useFormProduto(produtoId?: string) {
         },
       };
 
-      const formData = createProdutoFormData(produto, data.fotoFile || null)
+      const formData = createProdutoFormData(produto, data.fotoFile || null);
       
       const isEditing = Boolean(produtoId);
       const url = "/produtos";
@@ -232,9 +227,9 @@ export function useFormProduto(produtoId?: string) {
         : await createData<FormData>(url, formData as FormData);
       
       if (response.success) {
-        const handler = isEditing ? 
-          successHandlers.handleUpdate(id || '') : 
-          successHandlers.handleCreate;
+        const handler = isEditing 
+          ? successHandlers.handleUpdate(produtoId || '') 
+          : successHandlers.handleCreate;
         handler();
       }
     } finally {
@@ -248,12 +243,14 @@ export function useFormProduto(produtoId?: string) {
     isLoading,
     categorias,
     editoras,
-    ...autorHook,
+    selectedAutores,
+    availableAutores,
+    setSelectedAutores,
     handleCategoriaChange,
     handleEditoraChange,
     onSubmit: handleFormSubmit(onSubmit),
     formValues,
-    control,  // Exportando o control para uso com o CampoFoto
-    setValue,  // Exportando setValue para uso com o CampoFoto
+    control,
+    setValue,
   };
 }

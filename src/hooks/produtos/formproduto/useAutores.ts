@@ -6,46 +6,31 @@ import { debounce } from "lodash";
 // Interface para o estado do hook
 interface AutoresState {
   selectedAutores: Autor[];
-  selectedAutorToAdd: string;
-  selectedAutorToRemove: string;
   filtrarAutor: string;
 }
 
-// Interface de retorno do hook
-interface UseAutoresReturn extends AutoresState {
-  autores: Autor[];
-  availableAutores: Autor[];
-  handleFiltrarAutor: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleAddAutor: () => Promise<void>;
-  handleRemoveAutor: () => void;
-  handleSelectAutorToAdd: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  handleSelectAutorToRemove: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  setSelectedAutores: React.Dispatch<React.SetStateAction<Autor[]>>;
-  resetAutores: () => void;
-}
-
-export function useAutores(): UseAutoresReturn {
-  // Estado consolidado
+export function useAutores() {
+  // Estado de autores disponíveis
   const [autores, setAutores] = useState<Autor[]>([]);
+  
+  // Estado consolidado para a UI
   const [state, setState] = useState<AutoresState>({
     selectedAutores: [],
-    selectedAutorToAdd: "",
-    selectedAutorToRemove: "",
     filtrarAutor: "",
   });
 
-  // Extraindo valores do estado para facilitar acesso
-  const { selectedAutores, selectedAutorToAdd, selectedAutorToRemove, filtrarAutor } = state;
+  // Desestruturação do estado para facilitar o acesso
+  const { selectedAutores, filtrarAutor } = state;
   
-  // Funções para atualizar partes específicas do estado
+  // API helpers
+  const { fetchData } = useApi<Autor>();
+
+  // Função para atualizar parcialmente o estado
   const updateState = useCallback((updates: Partial<AutoresState>) => {
     setState(prev => ({ ...prev, ...updates }));
   }, []);
 
-  // API helpers
-  const { fetchData } = useApi<Autor>();
-
-  // Carrega todos os autores ao inicializar
+  // Carrega os autores apenas uma vez ao inicializar
   useEffect(() => {
     const loadAutores = async () => {
       const response = await fetchData("/autores");
@@ -53,6 +38,7 @@ export function useAutores(): UseAutoresReturn {
         setAutores(Array.isArray(response.data) ? response.data : []);
       }
     };
+    
     loadAutores();
   }, [fetchData]);
 
@@ -71,7 +57,7 @@ export function useAutores(): UseAutoresReturn {
     [updateState]
   );
 
-  // Tratadores de eventos
+  // Tratador de evento para filtro com debounce
   const handleFiltrarAutor = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       debouncedSetFiltrarAutor(e.target.value);
@@ -79,49 +65,10 @@ export function useAutores(): UseAutoresReturn {
     [debouncedSetFiltrarAutor]
   );
 
-  const handleAddAutor = useCallback(async () => {
-    if (!selectedAutorToAdd) return;
-
-    const response = await fetchData(`/autores/${selectedAutorToAdd}`);
-    if (response.success && response.data) {
-      updateState({ 
-        selectedAutores: [...selectedAutores, response.data],
-        selectedAutorToAdd: ""
-      });
-    }
-  }, [selectedAutorToAdd, fetchData, selectedAutores, updateState]);
-
-  const handleRemoveAutor = useCallback(() => {
-    if (!selectedAutorToRemove) return;
-
-    updateState({
-      selectedAutores: selectedAutores.filter(
-        (autor) => autor.id.toString() !== selectedAutorToRemove
-      ),
-      selectedAutorToRemove: ""
-    });
-  }, [selectedAutorToRemove, selectedAutores, updateState]);
-
-  const handleSelectAutorToAdd = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      updateState({ selectedAutorToAdd: e.target.value });
-    }, 
-    [updateState]
-  );
-
-  const handleSelectAutorToRemove = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      updateState({ selectedAutorToRemove: e.target.value });
-    },
-    [updateState]
-  );
-
   // Função para redefinir o estado
   const resetAutores = useCallback(() => {
     updateState({
       selectedAutores: [],
-      selectedAutorToAdd: "",
-      selectedAutorToRemove: "",
       filtrarAutor: ""
     });
   }, [updateState]);
@@ -139,17 +86,10 @@ export function useAutores(): UseAutoresReturn {
   );
 
   return {
-    autores,
     availableAutores,
     selectedAutores,
-    selectedAutorToAdd,
-    selectedAutorToRemove,
     filtrarAutor,
     handleFiltrarAutor,
-    handleAddAutor,
-    handleRemoveAutor,
-    handleSelectAutorToAdd,
-    handleSelectAutorToRemove,
     setSelectedAutores,
     resetAutores,
   };
