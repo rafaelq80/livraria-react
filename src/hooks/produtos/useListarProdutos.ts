@@ -1,10 +1,16 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import Produto from "../../models/Produto"
 import { listar } from "../../services/AxiosService"
 import { ToastAlerta } from "../../utils/ToastAlerta"
+import { useNavigate } from "react-router-dom"
+import AuthContext from "../../contexts/AuthContext"
 
 
 export const useListarProdutos = () => {
+
+    const navigate = useNavigate();
+
+    const { isAdmin } = useContext(AuthContext)
 
     const [produtos, setProdutos] = useState<Produto[]>([])
     const [isLoading, setIsLoading] = useState(true)
@@ -30,6 +36,8 @@ export const useListarProdutos = () => {
     return {
         produtos,
         isLoading,
-        buscarProdutos
+        buscarProdutos,
+        navigate,
+        isAdmin,
     }
 }

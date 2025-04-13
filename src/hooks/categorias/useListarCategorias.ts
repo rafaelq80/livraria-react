@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react"
+import { useCallback, useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import AuthContext from "../../contexts/AuthContext"
 import Categoria from "../../models/Categoria"
@@ -24,6 +24,10 @@ export const useListarCategorias = () => {
 		}
 	}
 
+	const recarregarCategorias = useCallback(() => {
+        buscarCategorias();
+    }, [buscarCategorias]);
+
 	useEffect(() => {
 		buscarCategorias()
 	}, [])
@@ -34,5 +38,6 @@ export const useListarCategorias = () => {
 		isAdmin,
 		navigate,
 		buscarCategorias,
+		recarregarCategorias
 	}
 }

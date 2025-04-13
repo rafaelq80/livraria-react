@@ -170,7 +170,7 @@ export function useFormProduto(produtoId?: string) {
   }, [selectedAutores, setValue, watch, isFormLoading]);
 
   const retornar = () => {
-    navigate("/")
+    navigate("/listarprodutos")
   }
   
   // Handlers de mudança para campos de select

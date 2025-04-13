@@ -3,30 +3,31 @@ import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import "./App.css"
 import { AuthProvider } from "./contexts/AuthContext"
-import ListarAutores from "./pages/autores/listarautores/ListarAutores"
-import FormCategoria from "./pages/categorias/formcategoria/FormCategoria"
-import ListarCategorias from "./pages/categorias/listarcategorias/ListarCategorias"
-import ListarEditoras from "./pages/editoras/listareditoras/ListarEditoras"
+import Role from "./models/Role"
+import ListarAutores from "./pages/autores"
+import FormAutor from "./pages/autores/FormAutor"
+import ListarCategorias from "./pages/categorias"
+import FormCategoria from "./pages/categorias/FormCategoria"
+import ListarEditoras from "./pages/editoras"
+import FormEditora from "./pages/editoras/FormEditora"
 import Home from "./pages/home/Home"
 import Login from "./pages/login/Login"
-import FormProduto from "./pages/produtos/formproduto/FormProduto"
-import ListarProdutos from "./pages/produtos/listarprodutos/ListarProdutos"
-import ListarProdutosPorNome from "./pages/produtos/listarprodutosportitulo/ListarProdutosPorTitulo"
-import ListarRoles from "./pages/roles/listarroles/ListarRoles"
-import AtualizarSenha from "./pages/usuarios/atualizarsenha/AtualizarSenha"
-import CadastrarUsuario from "./pages/usuarios/cadastrarusuario/CadastrarUsuario"
-import ListarUsuarios from "./pages/usuarios/listarusuarios/ListarUsuarios"
-import Perfil from "./pages/usuarios/perfil/Perfil"
-import RecuperarSenha from "./pages/usuarios/recuperarsenha/RecuperarSenha"
+import IndexProdutos from "./pages/produtos"
+import FormProduto from "./pages/produtos/FormProduto"
+import ListarProdutos from "./pages/produtos/ListarProdutos"
+import ListarProdutosPorNome from "./pages/produtos/ListarProdutosPorTitulo"
+import AtualizarSenha from "./pages/recuperarsenha/AtualizarSenha"
+import RecuperarSenha from "./pages/recuperarsenha/RecuperarSenha"
+import ListarRoles from "./pages/roles"
+import FormRole from "./pages/roles/FormRole"
+import CadastrarUsuario from "./pages/usuarios/FormUsuario"
+import ListarUsuarios from "./pages/usuarios/index"
+import Perfil from "./pages/usuarios/Perfil"
 import PrivateRoute from "./routes/PrivateRoute"
 import Footer from "./templates/footer/Footer"
 import Navbar from "./templates/navbar/Navbar"
-import NotFound from "./templates/status/NotFound"
-import FormRole from "./pages/roles/formrole/FormRole"
-import Role from "./models/Role"
 import Forbidden from "./templates/status/Forbidden"
-import FormAutor from "./pages/autores/formautor/FormAutor"
-import FormEditora from "./pages/editoras/formeditora/FormEditora"
+import NotFound from "./templates/status/NotFound"
 
 function App() {
 	const adminRole: Role = {
@@ -63,8 +64,9 @@ function App() {
 							<Route path="/atualizarsenha" element={<AtualizarSenha />} />
 
 							<Route element={<PrivateRoute allowedRoles={[adminRole]} />}>
+								<Route path="/listarprodutos" element={<IndexProdutos />} />
 								<Route path="/cadastrarproduto" element={<FormProduto />} />
-								<Route path="/atualizarproduto/:id" element={<FormProduto />} />
+								<Route path="/editarproduto/:id" element={<FormProduto />} />
 								<Route path="/usuarios" element={<ListarUsuarios />} />
 								<Route path="/roles" element={<ListarRoles />} />
 								<Route path="/cadastrarrole" element={<FormRole />} />
@@ -84,7 +86,6 @@ function App() {
 								<Route path="/editarusuario/:id" element={<CadastrarUsuario />} />
 								<Route path="/perfil" element={<Perfil />} />
 							</Route>
-
 						</Routes>
 					</div>
 					<Footer />

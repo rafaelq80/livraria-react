@@ -1,5 +1,5 @@
 import Carrossel from "../../components/carrossel/Carrossel"
-import ListarProdutos from "../produtos/listarprodutos/ListarProdutos"
+import ListarProdutos from "../produtos/ListarProdutos"
 
 function Home() {
 	return (

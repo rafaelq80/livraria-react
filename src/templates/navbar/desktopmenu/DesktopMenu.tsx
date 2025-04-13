@@ -22,9 +22,9 @@ function DesktopMenu() {
 				<>
 					<DropdownMenu title="E-Commerce">
 						<DropDownMenuItem
-							to="/cadastrarproduto"
+							to="/listarprodutos"
 							icon={<Book size={20} />}
-							text="Novo Produto"
+							text="Produtos"
 						/>
 						<DropDownMenuItem
 							to="/autores"
