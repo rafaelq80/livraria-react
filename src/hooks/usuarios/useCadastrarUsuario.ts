@@ -1,21 +1,21 @@
-import { useEffect, useState, useContext } from "react"
-import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
 import { useNavigate, useParams } from "react-router-dom"
 
-import AuthContext from "../../contexts/AuthContext"
-import { listar, cadastrar, atualizar } from "../../services/AxiosService"
+import { atualizar, cadastrar, listar } from "../../services/AxiosService"
 import { ErrorHandlerService } from "../../services/ErrorHandlerService"
-import { SuccessHandlerService } from "../../services/SuccessHandlerService"
 import { createUsuarioFormData } from "../../services/FormDataService"
+import { SuccessHandlerService } from "../../services/SuccessHandlerService"
 
-import Usuario from "../../models/Usuario"
 import Role from "../../models/Role"
+import Usuario from "../../models/Usuario"
+import { useAuth } from "../../store/AuthStore"
 import { usuarioSchema, UsuarioSchemaType } from "../../validations/UsuarioSchema"
 
 export function useCadastrarUsuario(isPerfil?: boolean) {
   const navigate = useNavigate()
-  const { usuario, isAuthenticated, handleLogout } = useContext(AuthContext)
+  const { usuario, isAuthenticated, handleLogout } = useAuth()
   const token = usuario.token
   const { id: rotaId } = useParams<{ id: string }>()
 

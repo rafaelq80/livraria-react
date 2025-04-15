@@ -44,7 +44,7 @@ function FormProduto() {
 	return (
 		<div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
 			<div className="container mx-auto bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8 w-full max-w-7xl">
-				<h1 className="text-2xl md:text-3xl lg:text-4xl text-center mb-6 text-black">
+				<h1 className="text-2xl md:text-3xl lg:text-4xl text-center mb-6 text-gray-800">
 					{id !== undefined ? "Editar Produto" : "Cadastrar Produto"}
 				</h1>
 

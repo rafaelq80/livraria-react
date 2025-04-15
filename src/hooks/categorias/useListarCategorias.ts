@@ -1,14 +1,14 @@
-import { useCallback, useContext, useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import AuthContext from "../../contexts/AuthContext"
 import Categoria from "../../models/Categoria"
 import { listar } from "../../services/AxiosService"
 import { ErrorHandlerService } from "../../services/ErrorHandlerService"
+import { useAuth } from "../../store/AuthStore"
 
 export const useListarCategorias = () => {
 	const navigate = useNavigate()
 	const [categorias, setCategorias] = useState<Categoria[]>([])
-	const { usuario, isAdmin, handleLogout } = useContext(AuthContext)
+	const { usuario, isAdmin, handleLogout } = useAuth()
 	const token = usuario.token
 	const [isLoading, setIsLoading] = useState(true)
 

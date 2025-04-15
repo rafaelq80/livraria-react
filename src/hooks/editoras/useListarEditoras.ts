@@ -1,14 +1,14 @@
-import { useContext, useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import AuthContext from "../../contexts/AuthContext"
 import Editora from "../../models/Editora"
 import { listar } from "../../services/AxiosService"
 import { ErrorHandlerService } from "../../services/ErrorHandlerService"
+import { useAuth } from "../../store/AuthStore"
 
 export const useListarEditoras = () => {
     const navigate = useNavigate()
     const [editoras, setEditoras] = useState<Editora[]>([])
-    const { usuario, isAdmin, handleLogout } = useContext(AuthContext)
+    const { usuario, isAdmin, handleLogout } = useAuth()
     const token = usuario.token
     const [isLoading, setIsLoading] = useState(true)
 
@@ -24,6 +24,10 @@ export const useListarEditoras = () => {
         }
     }
 
+    const recarregarEditoras = useCallback(() => {
+		buscarEditoras()
+	}, [buscarEditoras])
+
     useEffect(() => {
         buscarEditoras()
     }, [])
@@ -33,6 +37,7 @@ export const useListarEditoras = () => {
         isLoading,
         isAdmin,
         navigate,
-        buscarEditoras
+        buscarEditoras,
+        recarregarEditoras
     }
 }

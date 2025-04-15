@@ -4,8 +4,8 @@ import { useListarEditoras } from "../../hooks/editoras/useListarEditoras"
 import { createEditoraColumns } from "./EditoraColumns"
 
 function ListarEditoras() {
-	const { editoras, isLoading, isAdmin, navigate } = useListarEditoras()
-	const columns = createEditoraColumns()
+	const { editoras, isLoading, isAdmin, navigate, recarregarEditoras  } = useListarEditoras()
+	const columns = createEditoraColumns(recarregarEditoras)
 
 	return (
 		<div className="p-4">

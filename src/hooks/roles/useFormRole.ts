@@ -1,17 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useContext, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate, useParams } from "react-router-dom"
-import AuthContext from "../../contexts/AuthContext"
 import Role from "../../models/Role"
 import { atualizar, cadastrar, listar } from "../../services/AxiosService"
 import { ErrorHandlerService } from "../../services/ErrorHandlerService"
 import { SuccessHandlerService } from "../../services/SuccessHandlerService"
+import { useAuth } from "../../store/AuthStore"
 import { RoleSchemaType, roleSchema } from "../../validations/RoleSchema"
 
 export function useFormRole() {
 	const navigate = useNavigate()
-	const { usuario, handleLogout } = useContext(AuthContext)
+	const { usuario, handleLogout } = useAuth()
 	const token = usuario.token
 	const { id } = useParams<{ id: string }>()
 

@@ -1,9 +1,9 @@
-import { useContext, useState } from "react"
-import AuthContext from "../../contexts/AuthContext"
+import { useState } from "react"
+import { useAuth } from "../../store/AuthStore"
 
 export const usePerfil = () => {
 
-	const { usuario } = useContext(AuthContext)
+	const { usuario } = useAuth()
 
 	// Estado para o modo de edição
 	const [modoEdicao, setModoEdicao] = useState(false)

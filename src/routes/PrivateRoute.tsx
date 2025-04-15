@@ -1,15 +1,15 @@
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import AuthContext from "../contexts/AuthContext";
-import { ToastAlerta } from "../utils/ToastAlerta";
 import Role from "../models/Role";
+import { useAuth } from "../store/AuthStore";
+import { ToastAlerta } from "../utils/ToastAlerta";
 
 interface PrivateRouteProps {
   allowedRoles: Role[];
 }
 
 function PrivateRoute({ allowedRoles }: PrivateRouteProps) {
-  const { usuario, isAuthenticated } = useContext(AuthContext);
+  const { usuario, isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (!isAuthenticated) {

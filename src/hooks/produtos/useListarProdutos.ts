@@ -1,16 +1,16 @@
-import { useContext, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import Produto from "../../models/Produto"
 import { listar } from "../../services/AxiosService"
+import { useAuth } from "../../store/AuthStore"
 import { ToastAlerta } from "../../utils/ToastAlerta"
-import { useNavigate } from "react-router-dom"
-import AuthContext from "../../contexts/AuthContext"
 
 
 export const useListarProdutos = () => {
 
     const navigate = useNavigate();
 
-    const { isAdmin } = useContext(AuthContext)
+    const { isAdmin } = useAuth()
 
     const [produtos, setProdutos] = useState<Produto[]>([])
     const [isLoading, setIsLoading] = useState(true)

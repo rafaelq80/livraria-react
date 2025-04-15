@@ -1,9 +1,8 @@
 import { Pencil, ShoppingCart, Trash } from "@phosphor-icons/react"
 import { Link } from "react-router-dom"
 import Produto from "../../../models/Produto"
+import { useAuth } from "../../../store/AuthStore"
 import { formatarMoeda } from "../../../utils/FormatarMoeda"
-import { useContext } from "react"
-import AuthContext from "../../../contexts/AuthContext"
 
 interface CardProdutoProps {
 	produto: Produto
@@ -11,7 +10,7 @@ interface CardProdutoProps {
 
 function CardProdutos({ produto }: CardProdutoProps) {
 	
-  const { isAuthenticated, isAdmin } = useContext(AuthContext)
+  const { isAuthenticated, isAdmin } = useAuth()
 
 	return (
 		<div className="flex flex-col rounded-lg overflow-hidden justify-between bg-white my-4 hover:shadow-lg shadow-md">

@@ -4,8 +4,8 @@ import { useListarAutores } from "../../hooks/autores/useListarAutores"
 import { createAutorColumns } from "./AutorColumns"
 
 function ListarAutores() {
-	const { autores, isLoading, isAdmin, navigate } = useListarAutores()
-	const columns = createAutorColumns()
+	const { autores, isLoading, isAdmin, navigate, recarregarAutores } = useListarAutores()
+	const columns = createAutorColumns(recarregarAutores)
 
 	return (
 		<div className="p-4">

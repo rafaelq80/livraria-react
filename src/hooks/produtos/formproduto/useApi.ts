@@ -1,7 +1,7 @@
-import { useCallback, useContext } from "react";
-import AuthContext from "../../../contexts/AuthContext";
+import { useCallback } from "react";
 import { atualizar, cadastrar, listar } from "../../../services/AxiosService";
 import { ErrorHandlerService } from "../../../services/ErrorHandlerService";
+import { useAuth } from "../../../store/AuthStore";
 
 // Tipo genérico para respostas da API
 type ApiResponse<T> = {
@@ -11,7 +11,7 @@ type ApiResponse<T> = {
 };
 
 export function useApi<T>() {
-  const { usuario, handleLogout } = useContext(AuthContext);
+  const { usuario, handleLogout } = useAuth();
   const token = usuario.token;
 
   // Handler de erro unificado para todas as operações

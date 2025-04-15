@@ -1,9 +1,11 @@
+import { Pencil } from "@phosphor-icons/react"
 import { ColumnDef } from "@tanstack/react-table"
-import Autor from "../../models/Autor"
 import { useNavigate } from "react-router-dom"
-import { Pencil, Trash } from "@phosphor-icons/react"
+import DeleteButton from "../../components/modal/DeleteButton"
+import { useDeleteAutor } from "../../hooks/autores/useDeleteAutor"
+import Autor from "../../models/Autor"
 
-export function createAutorColumns(): ColumnDef<Autor>[] {
+export function createAutorColumns(onAutorDeleted?: () => void): ColumnDef<Autor>[] {
 	const navigate = useNavigate()
 
 	return [
@@ -20,22 +22,34 @@ export function createAutorColumns(): ColumnDef<Autor>[] {
 		{
 			id: "actions",
 			header: "",
-			cell: ({ row }) => (
-				<div className="flex justify-center items-center gap-2">
-					<button
-						onClick={() => navigate(`/editarautor/${row.original.id}`)}
-						className="text-blue-500 hover:text-blue-700 cursor-pointer"
-					>
-						<Pencil size={32} className="h-5 w-5 text-blue-500" />
-					</button>
-					<button
-						onClick={() => navigate(`/deletarautor/${row.original.id}`)}
-						className="text-red-500 hover:text-red-700 cursor-pointer"
-					>
-						<Trash size={32} className="h-5 w-5 text-red-500" />
-					</button>
-				</div>
-			),
+			cell: ({ row }) => {
+				const autor = row.original
+				const { excluirAutor, isLoading } = useDeleteAutor(
+					autor.id.toString(),
+					onAutorDeleted
+				)
+
+				return (
+					<div className="flex justify-center items-center gap-2">
+						<button
+							onClick={() => navigate(`/editarautor/${row.original.id}`)}
+							className="text-blue-500 hover:text-blue-700 cursor-pointer"
+						>
+							<Pencil size={32} className="h-5 w-5 text-blue-500" />
+						</button>
+						<DeleteButton<Autor>
+							item={autor}
+							onDelete={async () => {
+								await excluirAutor()
+								return Promise.resolve()
+							}}
+							disabled={isLoading}
+							modalTitle="Excluir Autor"
+							itemName={`o autor "${autor.nome}"`}
+						/>
+					</div>
+				)
+			},
 		},
 	] as const satisfies ColumnDef<Autor>[]
 }

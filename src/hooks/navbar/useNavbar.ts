@@ -1,11 +1,11 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthContext from "../../contexts/AuthContext";
-import { ToastAlerta } from "../../utils/ToastAlerta";
+import { useAuth } from "../../store/AuthStore";
 import { DropdownMenus, DropdownState } from "../../types/MenuTypes";
+import { ToastAlerta } from "../../utils/ToastAlerta";
 
 export function useNavbar(setMobileMenuOpen?: (open: boolean) => void) {
-  const { usuario, isAuthenticated, isAdmin, handleLogout } = useContext(AuthContext);
+  const { usuario, isAuthenticated, isAdmin, handleLogout } = useAuth();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState<DropdownState>({
     ecommerce: false,

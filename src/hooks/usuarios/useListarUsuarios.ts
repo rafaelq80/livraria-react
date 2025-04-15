@@ -1,13 +1,13 @@
-import { useContext, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import AuthContext from "../../contexts/AuthContext"
 import Usuario from "../../models/Usuario"
 import { listar } from "../../services/AxiosService"
+import { useAuth } from "../../store/AuthStore"
 
 export const useListarUsuarios = () => {
     const navigate = useNavigate()
     const [usuarios, setUsuarios] = useState<Usuario[]>([])
-    const { usuario, isAdmin, handleLogout } = useContext(AuthContext)
+    const { usuario, isAdmin, handleLogout } = useAuth()
     const token = usuario.token
     const [isLoading, setIsLoading] = useState(true)
 

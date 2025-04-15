@@ -1,15 +1,15 @@
 // hooks/useLoginForm.ts
-import { useContext, useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import AuthContext from "../../contexts/AuthContext"
+import { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
+import { useNavigate } from "react-router-dom"
+import { useAuth } from "../../store/AuthStore"
 import { loginSchema, LoginSchemaType } from "../../validations/LoginSchema"
 
 
 export function useLogin() {
   const navigate = useNavigate()
-  const { usuario, handleLogin, isLoading } = useContext(AuthContext)
+  const { usuario, handleLogin, isLoading } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
   
   // Configuração do React Hook Form com Zod

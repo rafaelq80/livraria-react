@@ -2,7 +2,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import "./App.css"
-import { AuthProvider } from "./contexts/AuthContext"
 import Role from "./models/Role"
 import ListarAutores from "./pages/autores"
 import FormAutor from "./pages/autores/FormAutor"
@@ -44,53 +43,48 @@ function App() {
 
 	return (
 		<>
-			<AuthProvider>
-				<ToastContainer />
-				<BrowserRouter>
-					<Navbar />
-					<div className="md:min-h-[80vh] bg-slate-200">
-						<Routes>
-							<Route path="/" element={<Home />} />
-							<Route path="*" element={<NotFound />} />
-							<Route path="/forbidden" element={<Forbidden />} />
-							<Route path="/login" element={<Login />} />
-							<Route path="/cadastro" element={<CadastrarUsuario />} />
-							<Route path="/produtos" element={<ListarProdutos />} />
-							<Route
-								path="/consultarnome/:titulo"
-								element={<ListarProdutosPorNome />}
-							/>
-							<Route path="/recuperarsenha" element={<RecuperarSenha />} />
-							<Route path="/atualizarsenha" element={<AtualizarSenha />} />
+			<ToastContainer />
+			<BrowserRouter>
+				<Navbar />
+				<div className="md:min-h-[80vh] bg-slate-200">
+					<Routes>
+						<Route path="/" element={<Home />} />
+						<Route path="*" element={<NotFound />} />
+						<Route path="/forbidden" element={<Forbidden />} />
+						<Route path="/login" element={<Login />} />
+						<Route path="/cadastro" element={<CadastrarUsuario />} />
+						<Route path="/produtos" element={<ListarProdutos />} />
+						<Route path="/consultarnome/:titulo" element={<ListarProdutosPorNome />} />
+						<Route path="/recuperarsenha" element={<RecuperarSenha />} />
+						<Route path="/atualizarsenha" element={<AtualizarSenha />} />
 
-							<Route element={<PrivateRoute allowedRoles={[adminRole]} />}>
-								<Route path="/listarprodutos" element={<IndexProdutos />} />
-								<Route path="/cadastrarproduto" element={<FormProduto />} />
-								<Route path="/editarproduto/:id" element={<FormProduto />} />
-								<Route path="/usuarios" element={<ListarUsuarios />} />
-								<Route path="/roles" element={<ListarRoles />} />
-								<Route path="/cadastrarrole" element={<FormRole />} />
-								<Route path="/editarrole/:id" element={<FormRole />} />
-								<Route path="/categorias" element={<ListarCategorias />} />
-								<Route path="/cadastrarcategoria" element={<FormCategoria />} />
-								<Route path="/editarcategoria/:id" element={<FormCategoria />} />
-								<Route path="/editoras" element={<ListarEditoras />} />
-								<Route path="/cadastrareditora" element={<FormEditora />} />
-								<Route path="/editareditora/:id" element={<FormEditora />} />
-								<Route path="/autores" element={<ListarAutores />} />
-								<Route path="/cadastrarautor" element={<FormAutor />} />
-								<Route path="/editarautor/:id" element={<FormAutor />} />
-							</Route>
+						<Route element={<PrivateRoute allowedRoles={[adminRole]} />}>
+							<Route path="/listarprodutos" element={<IndexProdutos />} />
+							<Route path="/cadastrarproduto" element={<FormProduto />} />
+							<Route path="/editarproduto/:id" element={<FormProduto />} />
+							<Route path="/usuarios" element={<ListarUsuarios />} />
+							<Route path="/roles" element={<ListarRoles />} />
+							<Route path="/cadastrarrole" element={<FormRole />} />
+							<Route path="/editarrole/:id" element={<FormRole />} />
+							<Route path="/categorias" element={<ListarCategorias />} />
+							<Route path="/cadastrarcategoria" element={<FormCategoria />} />
+							<Route path="/editarcategoria/:id" element={<FormCategoria />} />
+							<Route path="/editoras" element={<ListarEditoras />} />
+							<Route path="/cadastrareditora" element={<FormEditora />} />
+							<Route path="/editareditora/:id" element={<FormEditora />} />
+							<Route path="/autores" element={<ListarAutores />} />
+							<Route path="/cadastrarautor" element={<FormAutor />} />
+							<Route path="/editarautor/:id" element={<FormAutor />} />
+						</Route>
 
-							<Route element={<PrivateRoute allowedRoles={[adminRole, userRole]} />}>
-								<Route path="/editarusuario/:id" element={<CadastrarUsuario />} />
-								<Route path="/perfil" element={<Perfil />} />
-							</Route>
-						</Routes>
-					</div>
-					<Footer />
-				</BrowserRouter>
-			</AuthProvider>
+						<Route element={<PrivateRoute allowedRoles={[adminRole, userRole]} />}>
+							<Route path="/editarusuario/:id" element={<CadastrarUsuario />} />
+							<Route path="/perfil" element={<Perfil />} />
+						</Route>
+					</Routes>
+				</div>
+				<Footer />
+			</BrowserRouter>
 		</>
 	)
 }
