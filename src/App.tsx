@@ -27,6 +27,7 @@ import Footer from "./templates/footer/Footer"
 import Navbar from "./templates/navbar/Navbar"
 import Forbidden from "./templates/status/Forbidden"
 import NotFound from "./templates/status/NotFound"
+import ProdutoDetalhe from "./pages/produtos/ProdutoDetalhe"
 
 function App() {
 	const adminRole: Role = {
@@ -57,6 +58,7 @@ function App() {
 						<Route path="/consultarnome/:titulo" element={<ListarProdutosPorNome />} />
 						<Route path="/recuperarsenha" element={<RecuperarSenha />} />
 						<Route path="/atualizarsenha" element={<AtualizarSenha />} />
+						<Route path="/produtodetalhe/:id" element={<ProdutoDetalhe />} />
 
 						<Route element={<PrivateRoute allowedRoles={[adminRole]} />}>
 							<Route path="/listarprodutos" element={<IndexProdutos />} />

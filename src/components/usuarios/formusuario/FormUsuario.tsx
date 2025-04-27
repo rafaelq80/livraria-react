@@ -37,6 +37,9 @@ function FormUsuario({ isPerfil = false }: FormUsuarioProps) {
 							photoFieldName="fotoFile"
 							label="Foto do Perfil"
 							initialPreview={fotoPreview}
+							allowedTypes={["jpg", "jpeg", "png", "webp"]}
+							maxFileSize={5000000}
+							showFileInfo={true}
 						/>
 					</div>
 

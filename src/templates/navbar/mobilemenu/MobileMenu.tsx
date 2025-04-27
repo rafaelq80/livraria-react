@@ -21,7 +21,7 @@ interface MenuProps {
 }
 
 function MobileMenu({ mobileMenuOpen, setMobileMenuOpen }: MenuProps) {
-	const { titulo, setTitulo, buscarProdutos } = useSearchBar()
+	const { titulo, setTitulo, buscarProdutos, suggestions, selectSuggestion } = useSearchBar()
 	const { usuario, isAuthenticated, logout, dropdownOpen, toggleDropdown } =
 		useNavbar(setMobileMenuOpen)
 
@@ -37,6 +37,8 @@ function MobileMenu({ mobileMenuOpen, setMobileMenuOpen }: MenuProps) {
 					setTitulo={setTitulo}
 					buscarProdutos={buscarProdutos}
 					onSearchSubmit={() => setMobileMenuOpen(false)}
+					suggestions={suggestions}
+					selectSuggestion={selectSuggestion}
 				/>
 
 				{isAuthenticated && (

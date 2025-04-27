@@ -25,7 +25,7 @@ function IndexProdutos() {
 						columns={columns}
 						title="Produto"
 						onAddNew={() => navigate("/cadastrarproduto")}
-						columnSpans={["col-span-1", "col-span-4", "col-span-2", "col-span-2", "col-span-2", "col-span-1",]}
+						columnSpans={["col-span-1", "col-span-4", "col-span-3", "col-span-3", "col-span-1",]}
 						isAdmin={isAdmin}
 					/>
 				</div>

@@ -65,19 +65,6 @@ export function createProdutoColumns(): ColumnDef<Produto>[] {
 			},
 		},
 		{
-			accessorKey: "isbn13",
-			header: "ISBN-13",
-			cell: (props) => {
-				const raw = props.getValue() as string;
-		
-				// Verifica se são exatamente 13 dígitos
-				if (!/^\d{13}$/.test(raw)) return raw;
-		
-				// Formata usando regex
-				return raw.replace(/^(\d{3})(\d)(\d{2})(\d{6})(\d)$/, "$1-$2-$3-$4-$5");
-			},
-		},
-		{
 			id: "actions",
 			header: "",
 			cell: ({ row }) => (

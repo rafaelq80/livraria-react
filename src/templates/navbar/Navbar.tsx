@@ -13,6 +13,8 @@ function Navbar() {
 		setMobileMenuOpen,
 		buscarProdutos,
 		toggleMobileMenu,
+		suggestions,
+		selectSuggestion
 	} = useSearchBar()
 
 	return (
@@ -40,6 +42,8 @@ function Navbar() {
 								titulo={titulo}
 								setTitulo={setTitulo}
 								buscarProdutos={buscarProdutos}
+								suggestions={suggestions}
+								selectSuggestion={selectSuggestion}
 							/>
 						</div>
 

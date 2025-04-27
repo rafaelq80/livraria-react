@@ -56,10 +56,13 @@ export function createProdutoFormData(produto: Produto, foto: File | null) {
     const formData = createFormData({
         id: produto.id,
         titulo: produto.titulo,
+        descricao: produto.descricao,
         preco: produto.preco,
         desconto: produto.desconto,
         isbn10: produto.isbn10,
         isbn13: produto.isbn13,
+        paginas: produto.paginas,
+        idioma: produto.idioma,
         categoria: JSON.stringify(produto.categoria),
         editora: JSON.stringify(produto.editora),
         autores: JSON.stringify(produto.autores)

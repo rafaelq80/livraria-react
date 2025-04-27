@@ -1,261 +1,284 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import Categoria from "../../../models/Categoria";
-import Editora from "../../../models/Editora";
-import Produto from "../../../models/Produto";
-import { createProdutoFormData } from "../../../services/FormDataService";
-import { SuccessHandlerService } from "../../../services/SuccessHandlerService";
-import { ProdutoSchemaType, produtoSchema } from "../../../validations/ProdutoSchema";
-import { useApi } from "./useApi";
-import { useAutores } from "./useAutores";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { useForm } from "react-hook-form"
+import { useNavigate } from "react-router-dom"
+import Categoria from "../../../models/Categoria"
+import Editora from "../../../models/Editora"
+import Produto from "../../../models/Produto"
+import { listar, atualizar, cadastrar } from "../../../services/AxiosService"
+import { createProdutoFormData } from "../../../services/FormDataService"
+import { ErrorHandlerService } from "../../../services/ErrorHandlerService"
+import { SuccessHandlerService } from "../../../services/SuccessHandlerService"
+import { ProdutoSchemaType, produtoSchema } from "../../../validations/ProdutoSchema"
+import { useAuth } from "../../../store/AuthStore"
+import { useSelecionarAutores } from "./useSelecionarAutores"
 
 // Valores padrão para o formulário
 const DEFAULT_FORM_VALUES: ProdutoSchemaType = {
-  id: 0,
-  titulo: "",
-  preco: 0,
-  desconto: 0,
-  isbn10: "",
-  isbn13: "",
-  foto: "",
-  fotoFile: undefined,
-  categoria: { id: 0, tipo: "" },
-  editora: { id: 0, nome: "" },
-  autores: [],
-};
+	id: 0,
+	titulo: "",
+	descricao: "",
+	preco: 0,
+	desconto: 0,
+	isbn10: "",
+	isbn13: "",
+	paginas: 0,
+	idioma: "",
+	foto: "",
+	fotoFile: undefined,
+	categoria: { id: 0, tipo: "" },
+	editora: { id: 0, nome: "" },
+	autores: [],
+}
 
 export function useFormProduto(produtoId?: string) {
-  const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [categorias, setCategorias] = useState<Categoria[]>([]);
-  const [editoras, setEditoras] = useState<Editora[]>([]);
-  const [isFormLoading, setIsFormLoading] = useState<boolean>(true);
-  const [lastProcessedId, setLastProcessedId] = useState<string | undefined>(undefined);
+	const navigate = useNavigate()
+	const { usuario, handleLogout } = useAuth()
+	const token = usuario.token
 
-  // API hooks
-  const { fetchData, updateData, createData } = useApi<Produto>();
-  const { 
-    selectedAutores, 
-    setSelectedAutores, 
-    availableAutores, 
-    resetAutores 
-  } = useAutores();
+	const [isLoading, setIsLoading] = useState<boolean>(false)
+	const [categorias, setCategorias] = useState<Categoria[]>([])
+	const [editoras, setEditoras] = useState<Editora[]>([])
+	const [isFormLoading, setIsFormLoading] = useState<boolean>(true)
+	const [lastProcessedId, setLastProcessedId] = useState<string | undefined>(undefined)
 
-  // Configuração do React Hook Form com Zod
-  const {
-    register,
-    handleSubmit: handleFormSubmit,
-    formState: { errors },
-    setValue,
-    watch,
-    reset,
-    control,
-  } = useForm<ProdutoSchemaType>({
-    resolver: zodResolver(produtoSchema),
-    defaultValues: DEFAULT_FORM_VALUES,
-  });
+	// Usando diretamente useAutores sem useApi
+	const { selectedAutores, setSelectedAutores, availableAutores, resetAutores } =
+		useSelecionarAutores()
 
-  // Observa os valores do formulário
-  const formValues = watch();
+	const {
+		register,
+		handleSubmit: handleFormSubmit,
+		formState: { errors },
+		setValue,
+		watch,
+		reset,
+		control,
+	} = useForm<ProdutoSchemaType>({
+		resolver: zodResolver(produtoSchema),
+		defaultValues: DEFAULT_FORM_VALUES,
+	})
 
-  // Handlers de sucesso para operações CRUD - Memoizado
-  const successHandlers = useMemo(() => 
-    SuccessHandlerService.createCrudHandlers<Produto>("Produto", {
-      navigate,
-      redirectTo: "/",
-      resetForm: () => {
-        reset();
-        resetAutores();
-      },
-    }),
-    [navigate, reset, resetAutores]
-  );
+	const formValues = watch()
 
-  // Carrega dados iniciais de categorias e editoras
-  useEffect(() => {
-    const loadInitialData = async () => {
-      const [categoriasResponse, editorasResponse] = await Promise.all([
-        fetchData<Categoria[]>("/categorias"),
-        fetchData<Editora[]>("/editoras")
-      ]);
+	// Handlers de sucesso para operações CRUD - Memoizado
+	const successHandlers = useMemo(
+		() =>
+			SuccessHandlerService.createCrudHandlers<Produto>("Produto", {
+				navigate,
+				redirectTo: "/",
+				resetForm: () => {
+					reset()
+					resetAutores()
+				},
+			}),
+		[navigate, reset, resetAutores]
+	)
 
-      if (categoriasResponse.success && categoriasResponse.data) {
-        setCategorias(categoriasResponse.data);
-      }
+	// Carrega dados iniciais de categorias e editoras diretamente com AxiosService
+	useEffect(() => {
+		const loadInitialData = async () => {
+			try {
+				const [categoriasData, editorasData] = await Promise.all([
+					listar<Categoria[]>("/categorias", token),
+					listar<Editora[]>("/editoras", token),
+				])
 
-      if (editorasResponse.success && editorasResponse.data) {
-        setEditoras(editorasResponse.data);
-      }
-    };
+				setCategorias(categoriasData)
+				setEditoras(editorasData)
+			} catch (error) {
+				ErrorHandlerService.handleError(error, { handleLogout })
+			}
+		}
 
-    loadInitialData();
-  }, [fetchData]);
+		loadInitialData()
+	}, [token, handleLogout])
 
-  // Carrega o produto quando o ID muda
-  useEffect(() => {
-    // Verifica se o ID já foi processado para evitar loops
-    if (produtoId === lastProcessedId && !isFormLoading) {
-      return;
-    }
+	// Carrega o produto quando o ID muda
+	useEffect(() => {
+		// Verifica se o ID já foi processado para evitar loops
+		if (produtoId === lastProcessedId && !isFormLoading) {
+			return
+		}
 
-    setIsFormLoading(true);
-    
-    const loadProduto = async () => {
-      // Modo de criação (sem ID)
-      if (!produtoId) {
-        reset({
-          ...DEFAULT_FORM_VALUES,
-          foto: "",
-          fotoFile: undefined
-        });
-        resetAutores();
-        
-        setLastProcessedId(undefined);
-        setIsFormLoading(false);
-        return;
-      }
+		setIsFormLoading(true)
 
-      // Evita requisições desnecessárias
-      if (produtoId === lastProcessedId) {
-        setIsFormLoading(false);
-        return;
-      }
+		const loadProduto = async () => {
+			// Modo de criação (sem ID)
+			if (!produtoId) {
+				reset({
+					...DEFAULT_FORM_VALUES,
+					foto: "",
+					fotoFile: undefined,
+				})
+				resetAutores()
 
-      // Modo de edição (com ID)
-      const response = await fetchData<Produto>(`/produtos/${produtoId}`);
-      
-      if (!response.success || !response.data) {
-        setIsFormLoading(false);
-        setLastProcessedId(produtoId);
-        return;
-      }
+				setLastProcessedId(undefined)
+				setIsFormLoading(false)
+				return
+			}
 
-      const produto = response.data;
+			// Evita requisições desnecessárias
+			if (produtoId === lastProcessedId) {
+				setIsFormLoading(false)
+				return
+			}
 
-      // Atualiza o formulário com os dados do produto
-      reset({
-        ...produto,
-        categoria: produto.categoria || DEFAULT_FORM_VALUES.categoria,
-        editora: produto.editora || DEFAULT_FORM_VALUES.editora,
-        autores: produto.autores || [],
-        fotoFile: undefined
-      });
+			// Modo de edição (com ID)
+			try {
+				const produto = await listar<Produto>(`/produtos/${produtoId}`, token)
 
-      // Atualiza os autores selecionados
-      if (produto.autores?.length > 0) {
-        setSelectedAutores(produto.autores);
-      } else {
-        resetAutores();
-      }
-      
-      setLastProcessedId(produtoId);
-      setIsFormLoading(false);
-    };
+				// Atualiza o formulário com os dados do produto
+				reset({
+					...produto,
+					categoria: produto.categoria || DEFAULT_FORM_VALUES.categoria,
+					editora: produto.editora || DEFAULT_FORM_VALUES.editora,
+					autores: produto.autores || [],
+					fotoFile: undefined,
+				})
 
-    loadProduto();
-  }, [produtoId, reset, fetchData, resetAutores, setSelectedAutores, lastProcessedId, isFormLoading]);
+				// Atualiza os autores selecionados
+				if (produto.autores?.length > 0) {
+					setSelectedAutores(produto.autores)
+				} else {
+					resetAutores()
+				}
+			} catch (error) {
+				ErrorHandlerService.handleError(error, { handleLogout })
+			} finally {
+				setLastProcessedId(produtoId)
+				setIsFormLoading(false)
+			}
+		}
 
-  // Sincroniza os autores selecionados com o formulário
-  useEffect(() => {
-    if (isFormLoading) return;
-    
-    const currentIds = (watch('autores') || []).map(a => a.id).sort().join(',');
-    const selectedIds = selectedAutores.map(a => a.id).sort().join(',');
-    
-    if (currentIds !== selectedIds) {
-      setValue("autores", selectedAutores, { shouldDirty: true });
-    }
-  }, [selectedAutores, setValue, watch, isFormLoading]);
+		loadProduto()
+	}, [
+		produtoId,
+		reset,
+		token,
+		handleLogout,
+		resetAutores,
+		setSelectedAutores,
+		lastProcessedId,
+		isFormLoading,
+	])
 
-  const retornar = () => {
-    navigate("/listarprodutos")
-  }
-  
-  // Handlers de mudança para campos de select
-  const handleCategoriaChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const categoriaId = Number(e.target.value);
-      const categoria = categorias.find((c) => c.id === categoriaId);
-      if (categoria) {
-        setValue("categoria", categoria);
-      }
-    },
-    [categorias, setValue]
-  );
+	// Sincroniza os autores selecionados com o formulário
+	useEffect(() => {
+		if (isFormLoading) return
 
-  const handleEditoraChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const editoraId = Number(e.target.value);
-      const editora = editoras.find((e) => e.id === editoraId);
-      if (editora) {
-        setValue("editora", editora);
-      }
-    },
-    [editoras, setValue]
-  );
+		const currentIds = (watch("autores") || [])
+			.map((a) => a.id)
+			.sort()
+			.join(",")
+		const selectedIds = selectedAutores
+			.map((a) => a.id)
+			.sort()
+			.join(",")
 
-  // Submissão do formulário
-  const onSubmit = async (data: ProdutoSchemaType) => {
-    setIsLoading(true);
+		if (currentIds !== selectedIds) {
+			setValue("autores", selectedAutores, { shouldDirty: true })
+		}
+	}, [selectedAutores, setValue, watch, isFormLoading])
 
-    try {
-      const produto: Produto = {
-        id: produtoId ? Number(produtoId) : 0,
-        titulo: data.titulo,
-        preco: data.preco,
-        desconto: data.desconto,
-        foto: data.foto,
-        isbn10: data.isbn10,
-        isbn13: data.isbn13,
-        autores: selectedAutores,
-        categoria: {
-          id: data.categoria.id,
-          tipo: data.categoria.tipo || "",
-        },
-        editora: {
-          id: data.editora.id,
-          nome: data.editora.nome || "",
-        },
-      };
+	const retornar = () => {
+		navigate("/listarprodutos")
+	}
 
-      const formData = createProdutoFormData(produto, data.fotoFile || null);
-      
-      const isEditing = Boolean(produtoId);
-      const url = "/produtos";
-      
-      // Envia o FormData para a API
-      const response = isEditing 
-        ? await updateData<FormData>(url, formData as FormData)
-        : await createData<FormData>(url, formData as FormData);
-      
-      if (response.success) {
-        const handler = isEditing 
-          ? successHandlers.handleUpdate(produtoId || '') 
-          : successHandlers.handleCreate;
-        handler();
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+	// Handlers de mudança para campos de select
+	const handleCategoriaChange = useCallback(
+		(e: React.ChangeEvent<HTMLSelectElement>) => {
+			const categoriaId = Number(e.target.value)
+			const categoria = categorias.find((c) => c.id === categoriaId)
+			if (categoria) {
+				setValue("categoria", categoria)
+			}
+		},
+		[categorias, setValue]
+	)
 
-  return {
-    register,
-    errors,
-    isLoading,
-    categorias,
-    editoras,
-    selectedAutores,
-    availableAutores,
-    setSelectedAutores,
-    handleCategoriaChange,
-    handleEditoraChange,
-    onSubmit: handleFormSubmit(onSubmit),
-    retornar,
-    formValues,
-    control,
-    setValue,
-  };
+	const handleEditoraChange = useCallback(
+		(e: React.ChangeEvent<HTMLSelectElement>) => {
+			const editoraId = Number(e.target.value)
+			const editora = editoras.find((e) => e.id === editoraId)
+			if (editora) {
+				setValue("editora", editora)
+			}
+		},
+		[editoras, setValue]
+	)
+
+	// Submissão do formulário - substituindo useApi por chamadas diretas
+	const onSubmit = async (data: ProdutoSchemaType) => {
+		setIsLoading(true)
+
+		try {
+			const produto: Produto = {
+				id: produtoId ? Number(produtoId) : 0,
+				titulo: data.titulo,
+				descricao: data.descricao,
+				preco: data.preco,
+				desconto: data.desconto,
+				foto: data.foto,
+				isbn10: data.isbn10,
+				isbn13: data.isbn13,
+				paginas: data.paginas,
+				idioma: data.idioma,
+				autores: selectedAutores,
+				categoria: {
+					id: data.categoria.id,
+					tipo: data.categoria.tipo || "",
+				},
+				editora: {
+					id: data.editora.id,
+					nome: data.editora.nome || "",
+				},
+			}
+
+			const formData = createProdutoFormData(produto, data.fotoFile || null)
+
+			// Adicionando o código para exibir o formData no console
+			console.log("FormData que será enviado:")
+			for (const pair of formData.entries()) {
+				console.log(pair[0] + ": " + pair[1])
+			}
+
+			const isEditing = Boolean(produtoId)
+			const url = "/produtos"
+
+			// Envia o FormData para a API
+			if (isEditing) {
+				await atualizar<FormData>(url, formData as FormData, token)
+				successHandlers.handleUpdate(produtoId || "")()
+			} else {
+				await cadastrar<FormData>(url, formData as FormData, token)
+				successHandlers.handleCreate()
+			}
+		} catch (error) {
+			ErrorHandlerService.handleError(error, {
+				errorMessage: "Erro ao salvar o produto!",
+				handleLogout,
+			})
+		} finally {
+			setIsLoading(false)
+		}
+	}
+
+	return {
+		register,
+		errors,
+		isLoading,
+		categorias,
+		editoras,
+		selectedAutores,
+		availableAutores,
+		setSelectedAutores,
+		handleCategoriaChange,
+		handleEditoraChange,
+		onSubmit: handleFormSubmit(onSubmit),
+		retornar,
+		formValues,
+		control,
+		setValue,
+	}
 }

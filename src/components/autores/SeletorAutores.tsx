@@ -1,55 +1,83 @@
-// SeletorAutores.tsx
-import { MagnifyingGlass, X } from "@phosphor-icons/react";
-import Autor from "../../models/Autor";
-import { useSeletorAutores } from "../../hooks/seletorautores/useSeletorAutores";
+import { X } from "@phosphor-icons/react"
+import Autor from "../../models/Autor"
+import { useSeletorAutores } from "../../hooks/seletorautores/useSeletorAutores"
+import SearchInput from "../ui/SearchInput"
 
-// Props para o componente de seleção de autores
 interface SeletorAutoresProps {
-  availableAutores: Autor[];
-  selectedAutores: Autor[];
-  setSelectedAutores: (autores: Autor[]) => void;
+  autoresDisponiveis: Autor[]
+  autoresSelecionados: Autor[]
+  setAutoresSelecionados: (autores: Autor[]) => void
   errors?: {
-    message?: string;
-  };
+    message?: string
+  }
 }
 
-function SeletorAutores({ 
-  availableAutores, 
-  selectedAutores, 
-  setSelectedAutores,
-  errors
+function SeletorAutores({
+  autoresDisponiveis,
+  autoresSelecionados,
+  setAutoresSelecionados,
+  errors,
 }: SeletorAutoresProps) {
-  // Usando o custom hook
   const {
     searchTerm,
     dropdownOpen,
     filteredAuthors,
     addAuthor,
     removeAuthor,
-    handleDropdownClick,
-    handleSearchChange
+    handleSearchChange,
+    setDropdownOpen
   } = useSeletorAutores({
-    availableAutores,
-    selectedAutores,
-    setSelectedAutores
-  });
+    autoresDisponiveis,
+    autoresSelecionados,
+    setAutoresSelecionados,
+  })
+
+  /**
+   * Converte a lista de autores selecionados em um array do tipo string
+   * exibe a lista somente se o dropdown estiver aberto
+   */
+  const autoresSugeridos = dropdownOpen && searchTerm.trim() !== "" 
+    ? filteredAuthors.map(author => author.nome)
+    : [];
   
+  /**
+   * Seleciona o autor da lista de sugestões, através do click do mouse
+   * Localiza se existe na lista de autores previamente filtrada (autores disponíveis)
+   * Se existir, adiciona na lista de autores selecionados (AddAuthor)
+   */
+  const handleSelecionarAutor = (suggestion: string) => {
+    const selectedAuthor = filteredAuthors.find(author => author.nome === suggestion);
+    if (selectedAuthor) {
+      addAuthor(selectedAuthor);
+    }
+  };
+
+  /**
+   * Manipulador de eventos que abre o dropdown ao clicar no input
+   * caso exista algum texto digitado
+   */
+  const handleInputClick = () => {
+    if (searchTerm.trim() !== "") {
+      setDropdownOpen(true);
+    }
+  };
+
   return (
     <div className="mb-6">
-      <h3 className="text-lg font-medium text-gray-800 mb-3">Autores</h3>
-      
+      <h3 className="text-lg font-medium text-gray-800 mb-3">Autores<span className="text-red-500">*</span></h3>
+
       {/* Área de autores selecionados - chips/tags */}
       <div className="flex flex-wrap gap-2 mb-4 min-h-12 p-2 border-2 border-slate-200 rounded bg-gray-50">
-        {selectedAutores.length === 0 ? (
+        {autoresSelecionados.length === 0 ? (
           <p className="text-gray-500 italic p-1">Nenhum autor selecionado</p>
         ) : (
-          selectedAutores.map(author => (
-            <div 
-              key={author.id} 
+          autoresSelecionados.map((author) => (
+            <div
+              key={author.id}
               className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full flex items-center"
             >
               <span>{author.nome}</span>
-              <button 
+              <button
                 type="button"
                 className="ml-2 text-indigo-600 hover:text-indigo-800 focus:outline-none"
                 onClick={() => removeAuthor(author.id)}
@@ -61,65 +89,29 @@ function SeletorAutores({
           ))
         )}
       </div>
-      
-      {/* Campo de busca e seleção com autocomplete */}
+
+      {/* Use SearchInput with controlled suggestions */}
       <div className="relative">
-        <div className="flex relative">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <MagnifyingGlass size={18} className="text-gray-500" />
-          </div>
-          <input
-            type="text"
-            placeholder="Buscar autor..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            onClick={handleDropdownClick}
-            className="w-full pl-10 border-2 border-slate-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            aria-label="Buscar autor"
-            aria-expanded={dropdownOpen}
-            aria-controls="authors-dropdown"
-          />
-        </div>
-        
-        {dropdownOpen && searchTerm && filteredAuthors.length > 0 && (
-          <div 
-            id="authors-dropdown"
-            className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
-            onClick={handleDropdownClick}
-          >
-            {filteredAuthors.map(author => (
-              <button
-                key={author.id}
-                type="button"
-                className="w-full text-left px-4 py-2 hover:bg-indigo-50 transition-colors duration-150"
-                onClick={() => addAuthor(author)}
-              >
-                {author.nome}
-              </button>
-            ))}
-          </div>
-        )}
-        
-        {dropdownOpen && searchTerm && filteredAuthors.length === 0 && (
-          <div 
-            className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg p-4 text-center text-gray-500"
-            onClick={handleDropdownClick}
-          >
-            Nenhum autor encontrado
-          </div>
-        )}
+        <SearchInput
+          value={searchTerm}
+          onChange={handleSearchChange}
+          onClick={handleInputClick}
+          placeholder="Buscar autor..."
+          suggestions={autoresSugeridos}
+          onSelectSuggestion={handleSelecionarAutor}
+          className="border-slate-700"
+        />
       </div>
-      
+
       {/* Mensagens de ajuda e erro */}
       <p className="mt-2 text-sm text-gray-600">
-        Digite para buscar e selecionar autores. Clique no X para remover um autor selecionado.
+        Digite para buscar e selecionar autores. Clique no X para remover um autor
+        selecionado.
       </p>
-      
-      {errors?.message && (
-        <p className="text-red-500 text-sm mt-1">{errors.message}</p>
-      )}
+
+      {errors?.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
     </div>
-  );
+  )
 }
 
-export default SeletorAutores;
+export default SeletorAutores

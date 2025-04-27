@@ -8,7 +8,7 @@ import PatternField from "../../components/ui/PatternField"
 import PercentField from "../../components/ui/PercentField"
 import { useFormProduto } from "../../hooks/produtos/formproduto/useFormProduto"
 import SeletorAutores from "../../components/autores/SeletorAutores"
-
+import TextArea from "../../components/ui/TextArea"
 
 function FormProduto() {
 	const { id } = useParams<{ id: string }>()
@@ -62,6 +62,9 @@ function FormProduto() {
 									square={true}
 									camera={false}
 									label="Capa do Livro"
+									allowedTypes={["jpg", "jpeg", "png", "webp"]}
+									maxFileSize={5000000}
+									showFileInfo={true}
 								/>
 								{errors.foto && (
 									<p className="text-red-500 text-sm mt-2 text-center">
@@ -80,8 +83,23 @@ function FormProduto() {
 										id="titulo"
 										label="Título"
 										placeholder="Insira o título do Livro"
+										required
 										error={errors.titulo?.message}
 										{...register("titulo")}
+									/>
+								</div>
+
+								{/* Descricao - ocupa linha inteira */}
+								<div className="md:col-span-2">
+									<TextArea
+										id="descricao"
+										label="Descrição"
+										placeholder="Insira a descrição do Livro"
+										maxLength={5000}
+										showCharacterCount={true}
+										required
+										error={errors.descricao?.message}
+										{...register("descricao")}
 									/>
 								</div>
 
@@ -112,6 +130,7 @@ function FormProduto() {
 									id="isbn10"
 									name="isbn10"
 									label="ISBN-10"
+									required
 									control={control}
 									error={errors.isbn10?.message}
 									pattern="###-#-#####-#"
@@ -124,11 +143,30 @@ function FormProduto() {
 									id="isbn13"
 									name="isbn13"
 									label="ISBN-13"
+									required
 									control={control}
 									error={errors.isbn13?.message}
 									pattern="###-#-#####-####"
 									placeholder="000-0-00000-0000"
 									helperText="Formato: 000-0-00000-0000"
+								/>
+
+								{/* Número de Páginas */}
+								<InputField
+									id="paginas"
+									label="Número de páginas"
+									placeholder="Insira o nº de páginas do Livro"
+									error={errors.paginas?.message}
+									{...register("paginas")}
+								/>
+
+								{/* Idioma */}
+								<InputField
+									id="idioma"
+									label="Idioma"
+									placeholder="Insira o Idioma do Livro"
+									error={errors.idioma?.message}
+									{...register("idioma")}
 								/>
 
 								{/* Categoria */}
@@ -159,9 +197,9 @@ function FormProduto() {
 							{/* Seção de Autores */}
 							<div className="mb-6">
 								<SeletorAutores
-									availableAutores={availableAutores}
-									selectedAutores={selectedAutores}
-									setSelectedAutores={setSelectedAutores}
+									autoresDisponiveis={availableAutores}
+									autoresSelecionados={selectedAutores}
+									setAutoresSelecionados={setSelectedAutores}
 									errors={errors.autores}
 								/>
 							</div>
@@ -188,7 +226,6 @@ function FormProduto() {
 						>
 							Cancelar
 						</Button>
-
 					</div>
 				</form>
 			</div>

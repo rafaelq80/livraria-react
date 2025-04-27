@@ -62,7 +62,7 @@ export const DropdownMenu = ({ title, icon, to, children }: DropdownMenuProps) =
       {to ? (
         <Link
           to={to}
-          className="hover:bg-indigo-500 cursor-pointer flex items-center gap-2 p-2 rounded-md transition-colors"
+          className="cursor-pointer flex items-center gap-2 p-2 rounded-md transition-colors"
         >
           {icon && <span className="flex-shrink-0">{icon}</span>}
           {title && (
@@ -73,7 +73,7 @@ export const DropdownMenu = ({ title, icon, to, children }: DropdownMenuProps) =
         </Link>
       ) : (
         <button
-          className="hover:bg-indigo-500 cursor-pointer flex items-center gap-2 p-2 rounded-md transition-colors"
+          className="cursor-pointer flex items-center gap-2 p-2 rounded-md transition-colors"
           onClick={toggleMenu}
         >
           {icon && <span className="flex-shrink-0">{icon}</span>}

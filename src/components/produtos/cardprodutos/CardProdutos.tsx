@@ -9,8 +9,7 @@ interface CardProdutoProps {
 }
 
 function CardProdutos({ produto }: CardProdutoProps) {
-	
-  const { isAuthenticated, isAdmin } = useAuth()
+	const { isAuthenticated, isAdmin } = useAuth()
 
 	return (
 		<div className="flex flex-col rounded-lg overflow-hidden justify-between bg-white my-4 hover:shadow-lg shadow-md">
@@ -18,7 +17,7 @@ function CardProdutos({ produto }: CardProdutoProps) {
 			<div className="flex justify-end items-center pt-2 pr-2">
 				{isAuthenticated && isAdmin && (
 					<>
-						<Link to={`/atualizarproduto/${produto.id}`}>
+						<Link to={`/editarproduto/${produto.id}`}>
 							<Pencil size={24} className="mr-1 hover:fill-teal-700" />
 						</Link>
 						<Link to={`/deletarproduto/${produto.id}`}>
@@ -44,13 +43,15 @@ function CardProdutos({ produto }: CardProdutoProps) {
 
 			{/* Detalhes do produto */}
 			<div className="flex flex-col justify-start items-center py-2 h-full">
-				<Link to={`/produtodetalhes/${produto.id}`}>
-					<img
-						src={produto.foto}
-						alt={produto.titulo}
-						className="mt-1 w-40 h-auto m-2 object-cover rounded-lg"
-					/>
-				</Link>
+				<div className="min-h-[40vh] flex justify-center items-center">
+					<Link to={`/produtodetalhe/${produto.id}`}>
+						<img
+							src={produto.foto}
+							alt={produto.titulo}
+							className="mt-1 w-40 h-auto m-2 object-cover rounded-lg"
+						/>
+					</Link>
+				</div>
 				<div className="p-4 min-h-[25vh] flex flex-col justify-between">
 					<p className="py-2 text-sm text-center uppercase">{produto.titulo}</p>
 					<h3 className="py-1 text-xl text-center font-bold uppercase">
