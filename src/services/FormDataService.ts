@@ -1,5 +1,8 @@
-import Produto from '../models/Produto'
-import Usuario from '../models/Usuario'
+import Produto from "../produto/models/Produto"
+import Usuario from "../usuario/models/Usuario"
+import CreateUsuario from "../usuario/dtos/CriarUsuarioDto"
+import UpdateUsuario from "../usuario/dtos/AtualizarUsuarioDto"
+import CriarProdutoDto from "../produto/dtos/CriarProdutoDto"
 
 type StringConvertible = string | number | boolean | Date
 
@@ -9,6 +12,16 @@ type FormDataCompatible<T> = Partial<{
 	[K in keyof T]: FormDataValue
 }>
 
+function getFormDataValue(value: FormDataValue): string | Blob | File {
+	if (value instanceof File || value instanceof Blob) {
+		return value
+	}
+	if (typeof value === 'object' && value !== null) {
+		return JSON.stringify(value)
+	}
+	return String(value)
+}
+
 /**
  * Função genérica para criar FormData a partir de um objeto
  */
@@ -17,8 +30,7 @@ export function createFormData<T extends FormDataCompatible<T>>(data: T): FormDa
 
 	Object.entries(data).forEach(([key, value]) => {
 		if (value !== null && value !== undefined) {
-			// Adiciona um valor para a chave como um arquivo ou como uma string
-			formData.append(key, value instanceof File || value instanceof Blob ? value : String(value))
+			formData.append(key, getFormDataValue(value as FormDataValue))
 		}
 	})
 
@@ -27,50 +39,64 @@ export function createFormData<T extends FormDataCompatible<T>>(data: T): FormDa
 
 /** 
  * Função Específica para criar FormData do tipo Usuario
+ * Aceita Usuario, CreateUsuario ou UpdateUsuario
  **/ 
-export function createUsuarioFormData(user: Usuario, foto: File | null) {
-    // Usar a função genérica para simplificar
-    const formData = createFormData({
-        id: user.id,
-        nome: user.nome,
-        usuario: user.usuario,
-        senha: user.senha,
-        roles: JSON.stringify(user.roles)
+export function criarUsuarioFormData(
+	usuario: Usuario | CreateUsuario | UpdateUsuario, 
+	fotoFile: File | null
+) {
+	 // Usar a função genérica para simplificar
+	 const formData = createFormData({
+        ...(('id' in usuario) && { id: usuario.id }),
+        nome: usuario.nome,
+        usuario: usuario.usuario,
+        senha: usuario.senha,
     })
-    
-    // Adicionar a foto apenas uma vez, de acordo com sua disponibilidade
-    if (foto) {
-        formData.append("foto", foto)
-    } else if (user.foto) {
-        formData.append("foto", user.foto)
-    }
+	
+	// Adicionar os roles como entradas individuais
+	usuario.roles.forEach((role, index) => {
+		formData.append(`roles[${index}][id]`, role.id.toString())
+	})
+	
+	// Adicionar a foto apenas uma vez, de acordo com sua disponibilidade
+	if (fotoFile) {
+		formData.append("fotoFile", fotoFile)
+	} else if (usuario.foto) {
+		formData.append("foto", usuario.foto)
+	}
 
-    return formData
+	return formData
 }
 
 /** 
  * Função Específica para criar FormData do tipo Produto
+ * Aceita Produto, CriarProdutoDto ou AtualizarProdutoDto
  **/ 
-export function createProdutoFormData(produto: Produto, foto: File | null) {
+export function criarProdutoFormData(
+    produto: Produto | CriarProdutoDto | (CriarProdutoDto & { id: number }), 
+    fotoFile: File | null
+) {
     // Usar a função genérica para simplificar
     const formData = createFormData({
-        id: produto.id,
+        ...(('id' in produto) && { id: produto.id }),
         titulo: produto.titulo,
-        descricao: produto.descricao,
-        preco: produto.preco,
+        sinopse: produto.sinopse,
+        preco: produto.preco.toFixed(2), // Garante que o preço seja enviado como string com 2 casas decimais
         desconto: produto.desconto,
         isbn10: produto.isbn10,
         isbn13: produto.isbn13,
         paginas: produto.paginas,
+        edicao: produto.edicao,
         idioma: produto.idioma,
-        categoria: JSON.stringify(produto.categoria),
-        editora: JSON.stringify(produto.editora),
-        autores: JSON.stringify(produto.autores)
+        anoPublicacao: produto.anoPublicacao,
+        categoria: JSON.stringify({ id: produto.categoria.id }),
+        editora: JSON.stringify({ id: produto.editora.id }),
+        autores: JSON.stringify(produto.autores.map(autor => ({ id: autor.id })))
     })
     
     // Adicionar a foto apenas uma vez, de acordo com sua disponibilidade
-    if (foto) {
-        formData.append("foto", foto)
+    if (fotoFile) {
+        formData.append("fotoFile", fotoFile)
     } else if (produto.foto) {
         formData.append("foto", produto.foto)
     }

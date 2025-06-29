@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import Role from "../models/Role";
-import { useAuth } from "../store/AuthStore";
+import { useAuth } from "../shared/store/AuthStore";
 import { ToastAlerta } from "../utils/ToastAlerta";
 
 interface PrivateRouteProps {
   allowedRoles: Role[];
 }
 
-function PrivateRoute({ allowedRoles }: PrivateRouteProps) {
+function PrivateRoute({ allowedRoles }: Readonly<PrivateRouteProps>) {
   const { usuario, isAuthenticated } = useAuth();
 
   useEffect(() => {

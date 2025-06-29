@@ -2,32 +2,36 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import "./App.css"
-import Role from "./models/Role"
-import ListarAutores from "./pages/autores"
-import FormAutor from "./pages/autores/FormAutor"
-import ListarCategorias from "./pages/categorias"
-import FormCategoria from "./pages/categorias/FormCategoria"
-import ListarEditoras from "./pages/editoras"
-import FormEditora from "./pages/editoras/FormEditora"
+
+
 import Home from "./pages/home/Home"
-import Login from "./pages/login/Login"
-import IndexProdutos from "./pages/produtos"
-import FormProduto from "./pages/produtos/FormProduto"
-import ListarProdutos from "./pages/produtos/ListarProdutos"
-import ListarProdutosPorNome from "./pages/produtos/ListarProdutosPorTitulo"
-import AtualizarSenha from "./pages/recuperarsenha/AtualizarSenha"
-import RecuperarSenha from "./pages/recuperarsenha/RecuperarSenha"
-import ListarRoles from "./pages/roles"
-import FormRole from "./pages/roles/FormRole"
-import CadastrarUsuario from "./pages/usuarios/FormUsuario"
-import ListarUsuarios from "./pages/usuarios/index"
-import Perfil from "./pages/usuarios/Perfil"
+
+import ListarProdutos from "./produto/pages/ListarProdutos"
+import Role from "./role/models/Role"
+import Footer from "./templates/components/footer/Footer"
+import Navbar from "./templates/components/navbar/Navbar"
+import Forbidden from "./templates/pages/Forbidden"
+import NotFound from "./templates/pages/NotFound"
+import Login from "./security/pages/Login"
 import PrivateRoute from "./routes/PrivateRoute"
-import Footer from "./templates/footer/Footer"
-import Navbar from "./templates/navbar/Navbar"
-import Forbidden from "./templates/status/Forbidden"
-import NotFound from "./templates/status/NotFound"
-import ProdutoDetalhe from "./pages/produtos/ProdutoDetalhe"
+import CadastrarUsuario from "./usuario/pages/FormUsuario"
+import ListarUsuarios from "./usuario/pages"
+import Perfil from "./usuario/pages/Perfil"
+import ListarAutores from "./autor/pages"
+import FormAutor from "./autor/pages/FormAutor"
+import Carrinho from "./carrinho/Carrinho"
+import ListarCategorias from "./categoria/pages"
+import FormCategoria from "./categoria/pages/FormCategoria"
+import ListarEditoras from "./editora/pages"
+import FormEditora from "./editora/pages/FormEditora"
+import IndexProdutos from "./produto/pages"
+import FormProduto from "./produto/pages/FormProduto"
+import ProdutoDetalhe from "./produto/pages/ProdutoDetalhe"
+import ListarRoles from "./role/pages"
+import FormRole from "./role/pages/FormRole"
+import AtualizarSenha from "./security/pages/AtualizarSenha"
+import RecuperarSenha from "./security/pages/RecuperarSenha"
+import ListarProdutosPorTitulo from "./produto/pages/ListarProdutosPorTitulo"
 
 function App() {
 	const adminRole: Role = {
@@ -55,16 +59,18 @@ function App() {
 						<Route path="/login" element={<Login />} />
 						<Route path="/cadastro" element={<CadastrarUsuario />} />
 						<Route path="/produtos" element={<ListarProdutos />} />
-						<Route path="/consultarnome/:titulo" element={<ListarProdutosPorNome />} />
+						<Route path="/consultarnome/:titulo" element={<ListarProdutosPorTitulo />} />
 						<Route path="/recuperarsenha" element={<RecuperarSenha />} />
 						<Route path="/atualizarsenha" element={<AtualizarSenha />} />
 						<Route path="/produtodetalhe/:id" element={<ProdutoDetalhe />} />
+						<Route path="/carrinho" element={<Carrinho />} />
 
-						<Route element={<PrivateRoute allowedRoles={[adminRole]} />}>
+						 <Route element={<PrivateRoute allowedRoles={[adminRole]} />}>
+
+						 	<Route path="/usuarios" element={<ListarUsuarios />} />
 							<Route path="/listarprodutos" element={<IndexProdutos />} />
 							<Route path="/cadastrarproduto" element={<FormProduto />} />
 							<Route path="/editarproduto/:id" element={<FormProduto />} />
-							<Route path="/usuarios" element={<ListarUsuarios />} />
 							<Route path="/roles" element={<ListarRoles />} />
 							<Route path="/cadastrarrole" element={<FormRole />} />
 							<Route path="/editarrole/:id" element={<FormRole />} />
@@ -82,7 +88,7 @@ function App() {
 						<Route element={<PrivateRoute allowedRoles={[adminRole, userRole]} />}>
 							<Route path="/editarusuario/:id" element={<CadastrarUsuario />} />
 							<Route path="/perfil" element={<Perfil />} />
-						</Route>
+						</Route> 
 					</Routes>
 				</div>
 				<Footer />

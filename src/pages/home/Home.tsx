@@ -1,5 +1,5 @@
-import Carrossel from "../../components/carrossel/Carrossel"
-import ListarProdutos from "../produtos/ListarProdutos"
+import Carrossel from "../../shared/components/carrossel/Carrossel"
+import ListarProdutos from "../../produto/pages/ListarProdutos"
 
 function Home() {
 	return (
