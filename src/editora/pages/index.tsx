@@ -1,5 +1,5 @@
-import { PageLoadingSpinner } from "../../shared/components/loading"
 import DataTable from "../../shared/components/datatable/DataTable"
+import { StrictContainerLoadingSpinner } from "../../shared/components/loading"
 import { useListarEditoras } from "../hooks/useListarEditoras"
 import { createEditoraColumns } from "./EditoraColumns"
 
@@ -10,7 +10,7 @@ function ListarEditoras() {
 	return (
 		<div className="p-4">
 			{isLoading ? (
-				<PageLoadingSpinner text="Carregando editoras..." />
+				<StrictContainerLoadingSpinner />
 			) : (
 				<div>
 					<DataTable

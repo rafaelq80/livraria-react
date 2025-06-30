@@ -1,7 +1,7 @@
 import DataTable from "../../shared/components/datatable/DataTable"
-import { createCategoriaColumns } from "./CategoriaColumns"
+import { StrictContainerLoadingSpinner } from "../../shared/components/loading"
 import { useListarCategorias } from "../hooks/useListarCategorias"
-import { PageLoadingSpinner } from "../../shared/components/loading"
+import { createCategoriaColumns } from "./CategoriaColumns"
 
 function ListarCategorias() {
 	const { categorias, isLoading, isAdmin, navigate, recarregarCategorias } = useListarCategorias()
@@ -10,7 +10,7 @@ function ListarCategorias() {
 	return (
 		<div className="p-4">
 			{isLoading ? (
-				<PageLoadingSpinner text="Carregando categorias..." />
+				<StrictContainerLoadingSpinner />
 			) : (
 				<div>
 					<DataTable

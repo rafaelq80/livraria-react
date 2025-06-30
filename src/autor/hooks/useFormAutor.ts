@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
 import { useNavigate, useParams } from "react-router-dom"
 import { atualizar, cadastrar, listar } from "../../services/AxiosService"
 import { ErrorHandlerService } from "../../services/ErrorHandlerService"
@@ -10,6 +9,7 @@ import { AutorSchemaType, autorSchema } from "../validations/AutorSchema"
 import Autor from "../models/Autor"
 import CriarAutorDto from "../dtos/criarautor.dto"
 import AtualizarAutorDto from "../dtos/atualizarautor.dto"
+import { useSanitizedForm } from "../../shared/hooks/sanitized/useSanitizedForm"
 
 export function useFormAutor() {
 	const navigate = useNavigate()
@@ -20,12 +20,17 @@ export function useFormAutor() {
 	const [isLoading, setIsLoading] = useState(false)
 	const [isFormLoading, setIsFormLoading] = useState(true)
 
-	const form = useForm<AutorSchemaType>({
+	const form = useSanitizedForm<AutorSchemaType>({
 		resolver: zodResolver(autorSchema),
 		defaultValues: {
 			nome: "",
 			nacionalidade: "",
 		},
+	}, {
+		sanitizeStrings: true,
+		sanitizeNumbers: false,
+		sanitizeEmails: false,
+		sanitizeNames: true,
 	})
 
 	const {

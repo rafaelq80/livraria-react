@@ -32,6 +32,7 @@ import FormRole from "./role/pages/FormRole"
 import AtualizarSenha from "./security/pages/AtualizarSenha"
 import RecuperarSenha from "./security/pages/RecuperarSenha"
 import ListarProdutosPorTitulo from "./produto/pages/ListarProdutosPorTitulo"
+import { TooltipProvider } from "@radix-ui/react-tooltip"
 
 function App() {
 	const adminRole: Role = {
@@ -49,50 +50,52 @@ function App() {
 	return (
 		<>
 			<ToastContainer />
-			<BrowserRouter>
-				<Navbar />
-				<div className="md:min-h-[80vh] bg-slate-200">
-					<Routes>
-						<Route path="/" element={<Home />} />
-						<Route path="*" element={<NotFound />} />
-						<Route path="/forbidden" element={<Forbidden />} />
-						<Route path="/login" element={<Login />} />
-						<Route path="/cadastro" element={<CadastrarUsuario />} />
-						<Route path="/produtos" element={<ListarProdutos />} />
-						<Route path="/consultarnome/:titulo" element={<ListarProdutosPorTitulo />} />
-						<Route path="/recuperarsenha" element={<RecuperarSenha />} />
-						<Route path="/atualizarsenha" element={<AtualizarSenha />} />
-						<Route path="/produtodetalhe/:id" element={<ProdutoDetalhe />} />
-						<Route path="/carrinho" element={<Carrinho />} />
+			<TooltipProvider>
+				<BrowserRouter>
+					<Navbar />
+					<div className="md:min-h-[80vh] bg-slate-200">
+						<Routes>
+							<Route path="/" element={<Home />} />
+							<Route path="*" element={<NotFound />} />
+							<Route path="/forbidden" element={<Forbidden />} />
+							<Route path="/login" element={<Login />} />
+							<Route path="/cadastro" element={<CadastrarUsuario />} />
+							<Route path="/produtos" element={<ListarProdutos />} />
+							<Route path="/consultarnome/:titulo" element={<ListarProdutosPorTitulo />} />
+							<Route path="/recuperarsenha" element={<RecuperarSenha />} />
+							<Route path="/atualizarsenha" element={<AtualizarSenha />} />
+							<Route path="/produtodetalhe/:id" element={<ProdutoDetalhe />} />
+							<Route path="/carrinho" element={<Carrinho />} />
 
-						 <Route element={<PrivateRoute allowedRoles={[adminRole]} />}>
+							<Route element={<PrivateRoute allowedRoles={[adminRole]} />}>
 
-						 	<Route path="/usuarios" element={<ListarUsuarios />} />
-							<Route path="/listarprodutos" element={<IndexProdutos />} />
-							<Route path="/cadastrarproduto" element={<FormProduto />} />
-							<Route path="/editarproduto/:id" element={<FormProduto />} />
-							<Route path="/roles" element={<ListarRoles />} />
-							<Route path="/cadastrarrole" element={<FormRole />} />
-							<Route path="/editarrole/:id" element={<FormRole />} />
-							<Route path="/categorias" element={<ListarCategorias />} />
-							<Route path="/cadastrarcategoria" element={<FormCategoria />} />
-							<Route path="/editarcategoria/:id" element={<FormCategoria />} />
-							<Route path="/editoras" element={<ListarEditoras />} />
-							<Route path="/cadastrareditora" element={<FormEditora />} />
-							<Route path="/editareditora/:id" element={<FormEditora />} />
-							<Route path="/autores" element={<ListarAutores />} />
-							<Route path="/cadastrarautor" element={<FormAutor />} />
-							<Route path="/editarautor/:id" element={<FormAutor />} />
-						</Route>
+								<Route path="/usuarios" element={<ListarUsuarios />} />
+								<Route path="/listarprodutos" element={<IndexProdutos />} />
+								<Route path="/cadastrarproduto" element={<FormProduto />} />
+								<Route path="/editarproduto/:id" element={<FormProduto />} />
+								<Route path="/roles" element={<ListarRoles />} />
+								<Route path="/cadastrarrole" element={<FormRole />} />
+								<Route path="/editarrole/:id" element={<FormRole />} />
+								<Route path="/categorias" element={<ListarCategorias />} />
+								<Route path="/cadastrarcategoria" element={<FormCategoria />} />
+								<Route path="/editarcategoria/:id" element={<FormCategoria />} />
+								<Route path="/editoras" element={<ListarEditoras />} />
+								<Route path="/cadastrareditora" element={<FormEditora />} />
+								<Route path="/editareditora/:id" element={<FormEditora />} />
+								<Route path="/autores" element={<ListarAutores />} />
+								<Route path="/cadastrarautor" element={<FormAutor />} />
+								<Route path="/editarautor/:id" element={<FormAutor />} />
+							</Route>
 
-						<Route element={<PrivateRoute allowedRoles={[adminRole, userRole]} />}>
-							<Route path="/editarusuario/:id" element={<CadastrarUsuario />} />
-							<Route path="/perfil" element={<Perfil />} />
-						</Route> 
-					</Routes>
-				</div>
-				<Footer />
-			</BrowserRouter>
+							<Route element={<PrivateRoute allowedRoles={[adminRole, userRole]} />}>
+								<Route path="/editarusuario/:id" element={<CadastrarUsuario />} />
+								<Route path="/perfil" element={<Perfil />} />
+							</Route> 
+						</Routes>
+					</div>
+					<Footer />
+				</BrowserRouter>
+			</TooltipProvider>
 		</>
 	)
 }

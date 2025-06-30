@@ -1,7 +1,7 @@
 import { TrashIcon } from "@phosphor-icons/react";
 import { ReactNode, useState } from "react";
-import DeleteConfirmationModal from "./DeleteConfirmationModal";
-import Button from "../ui/Button";
+import DeleteConfirmationModal from "./DeleteModal";
+import { TooltipWrapper } from "../tooltipbutton/TooltipButton";
 
 /**
  * Interface que define as propriedades do componente de botão de exclusão
@@ -34,6 +34,9 @@ interface DeleteButtonProps<T> {
   
   /** Indica se o botão está desabilitado */
   disabled?: boolean;
+
+  /** Tooltip label para exibir tooltip nativo */
+  tooltipLabel?: string;
 }
 
 /**
@@ -45,6 +48,7 @@ interface DeleteButtonProps<T> {
  * - Tratamento de erros
  * - Callback de sucesso
  * - Personalização completa de textos e estilos
+ * - Suporte nativo a tooltip
  */
 function DeleteButton<T>({
   item,
@@ -52,13 +56,14 @@ function DeleteButton<T>({
   onDeleteSuccess,
   buttonLabel = "Excluir",
   buttonIcon = <TrashIcon size={32} className="h-5 w-5" />,
-  buttonClassName = "text-red-500 hover:text-red-700 cursor-pointer rounded-full p-1",
+  buttonClassName = "text-red-500 cursor-pointer rounded-full p-1 focus:outline-none focus:ring-0 focus:shadow-none hover:bg-transparent",
   modalTitle = "Confirmar exclusão",
   itemName,
   message,
   confirmButtonText = "Excluir",
   cancelButtonText = "Cancelar",
-  disabled = false
+  disabled = false,
+  tooltipLabel
 }: Readonly<DeleteButtonProps<T>>) {
   // Estado para controlar o modal e o carregamento
   const [modalState, setModalState] = useState<{ isOpen: boolean, isLoading: boolean }>({
@@ -93,21 +98,29 @@ function DeleteButton<T>({
     }
   };
 
+  const button = (
+    <button
+      onClick={handleOpenModal}
+      className={buttonClassName}
+      aria-label={buttonLabel}
+      disabled={disabled}
+      {...(!tooltipLabel ? { title: buttonLabel } : {})}
+      type="button"
+    >
+      {buttonIcon}
+    </button>
+  );
+
   return (
     <>
-      {/* Botão de exclusão customizável */}
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={handleOpenModal}
-        className={buttonClassName}
-        aria-label={buttonLabel}
-        disabled={disabled}
-        title={buttonLabel}
-        type="button"
-      >
-        {buttonIcon}
-      </Button>
+      {/* Botão de exclusão customizável, agora com suporte a tooltip nativo */}
+      {tooltipLabel ? (
+        <TooltipWrapper label={tooltipLabel}>
+          {button}
+        </TooltipWrapper>
+      ) : (
+        button
+      )}
 
       {/* Modal de confirmação integrado */}
       <DeleteConfirmationModal

@@ -15,7 +15,7 @@ export const useListarUsuarios = () => {
 	const buscarUsuarios = async () => {
 		setIsLoading(true)
 		try {
-			const resposta = await listar<Usuario[]>("/usuarios")
+			const resposta = await listar<Usuario[]>("/usuarios/all")
 			setUsuarios(ensureArrayResponse<Usuario>(resposta))
 		} catch (error) {
 			ErrorHandlerService.handleError(error, { handleLogout })

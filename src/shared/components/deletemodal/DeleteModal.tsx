@@ -2,6 +2,7 @@ import { ReactNode, memo, useCallback } from "react"
 import Popup from "reactjs-popup"
 import "reactjs-popup/dist/index.css"
 import Button from "../ui/Button"
+import { QuestionIcon, XIcon } from "@phosphor-icons/react"
 
 /**
  * Interface que define as propriedades do modal de confirmação de exclusão
@@ -32,8 +33,8 @@ interface DeleteConfirmationModalProps {
 // Estilos externalizados para evitar recriações em cada renderização
 // Melhora a performance evitando recálculos desnecessários
 const overlayStyle = {
-	backgroundColor: "rgba(0, 0, 0, 0.6)",
-	backdropFilter: "blur(2px)",
+	backgroundColor: "rgba(0, 0, 0, 0.4)",
+	backdropFilter: "blur(4px)",
 	zIndex: 1000,
 }
 
@@ -60,7 +61,7 @@ const arrowStyle = { display: "none" }
  * - Acessibilidade
  * - Otimização de performance com memo
  */
-const DeleteConfirmationModal = memo(
+const DeleteModal = memo(
 	({
 		isOpen,
 		onClose,
@@ -85,17 +86,27 @@ const DeleteConfirmationModal = memo(
 		// Cria a mensagem padrão se itemName for fornecido e message não for
 		// Fornece uma experiência consistente com o nome do item
 		const defaultMessage = itemName ? (
-			<p className="text-gray-700">
-				Tem certeza que deseja excluir {itemName}? <span className="font-semibold block mt-2 text-red-600">
+			<div className="space-y-3">
+				<p className="text-gray-700 flex items-center gap-3">
+					<QuestionIcon size={44} className="text-indigo-600 shrink-0" weight="fill" />
+					<span>
+						Tem certeza que deseja excluir <span className="font-medium">{itemName}</span>?
+					</span>
+				</p>
+				<p className="text-sm text-red-600 bg-red-50 p-2 rounded-md border border-red-100">
 					Esta ação não pode ser desfeita.
-				</span>
-			</p>
+				</p>
+			</div>
 		) : (
-			<p className="text-gray-700">
-				Tem certeza que deseja excluir este item? <span className="font-semibold block mt-2 text-red-600">
+			<div className="space-y-3">
+				<p className="text-gray-700 flex items-center gap-3">
+					<QuestionIcon size={28} className="text-indigo-600 shrink-0" weight="fill" />
+					<span>Tem certeza que deseja excluir este item?</span>
+				</p>
+				<p className="text-sm text-red-600 bg-red-50 p-2 rounded-md border border-red-100">
 					Esta ação não pode ser desfeita.
-				</span>
-			</p>
+				</p>
+			</div>
 		)
 
 		// Usa a mensagem customizada se fornecida, senão usa a padrão
@@ -115,32 +126,36 @@ const DeleteConfirmationModal = memo(
 				arrowStyle={arrowStyle}
 			>
 				{/* Container principal do modal */}
-				<div className="bg-white rounded-lg shadow-xl p-6 max-w-md mx-auto animate-fadeIn">
+				<div className="bg-white rounded-xl shadow-2xl p-6 max-w-md mx-auto w-11/12 transform transition-all duration-300 ease-in-out">
 					{/* Cabeçalho com título e botão de fechar */}
-					<div className="flex justify-between items-center mb-4 border-b pb-2">
-						<h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+					<div className="flex justify-between items-center mb-6">
+						<h3 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+							{title}
+						</h3>
 						<button
-							className="text-gray-500 hover:text-gray-700 text-xl font-bold focus:outline-none"
+							className="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-full"
 							onClick={onClose}
 							aria-label="Fechar"
 							type="button"
 						>
-							&times;
+							<XIcon size={20} weight="bold" />
 						</button>
 					</div>
 					
 					{/* Área da mensagem */}
-					<div className="mb-6 text-gray-600">{displayMessage}</div>
+					<div className="mb-8">{displayMessage}</div>
 					
 					{/* Área dos botões de ação */}
-					<div className="flex justify-end space-x-3">
+					<div className="flex justify-end gap-3">
 						{/* Botão de cancelamento */}
 						<Button
-							variant="secondary"
+							variant="outline"
 							size="md"
 							onClick={onClose}
 							disabled={isLoading}
 							type="button"
+							className="min-w-[100px]"
+							aria-label={cancelButtonText || "Cancelar"}
 						>
 							{cancelButtonText}
 						</Button>
@@ -153,6 +168,8 @@ const DeleteConfirmationModal = memo(
 							onClick={handleConfirm}
 							disabled={isLoading}
 							type="button"
+							className="min-w-[100px]"
+							aria-label={confirmButtonText || "Excluir"}
 						>
 							{confirmButtonText}
 						</Button>
@@ -174,4 +191,4 @@ const DeleteConfirmationModal = memo(
 	}
 )
 
-export default DeleteConfirmationModal
+export default DeleteModal

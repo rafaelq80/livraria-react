@@ -12,6 +12,7 @@
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
     "@phosphor-icons/react": "^2.1.10",
+    "@radix-ui/react-tooltip": "^1.2.7",
     "@tailwindcss/vite": "^4.1.10",
     "@tanstack/react-table": "^8.21.3",
     "@types/lodash": "^4.17.18",

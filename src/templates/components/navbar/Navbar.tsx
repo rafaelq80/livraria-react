@@ -1,4 +1,4 @@
-import { List, X } from "@phosphor-icons/react"
+import { ListIcon, XIcon } from "@phosphor-icons/react"
 import { Link } from "react-router-dom"
 import { useSearchBar } from "../../hooks/searchbar/useSearchBar"
 import DesktopMenu from "./desktopmenu/DesktopMenu"
@@ -83,9 +83,9 @@ function Navbar() {
 							onClick={toggleMobileMenu}
 						>
 							{mobileMenuOpen ? (
-								<X size={28} weight="bold" />
+								<XIcon size={28} weight="bold" />
 							) : (
-								<List size={28} weight="bold" />
+								<ListIcon size={28} weight="bold" />
 							)}
 						</button>
 					</div>

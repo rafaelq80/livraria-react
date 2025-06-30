@@ -9,4 +9,4 @@
 export { default as DeleteButton } from './DeleteButton';
 
 // Modal de confirmação de exclusão reutilizável
-export { default as DeleteConfirmationModal } from './DeleteConfirmationModal'; 
+export { default as DeleteConfirmationModal } from './DeleteModal'; 

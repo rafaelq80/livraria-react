@@ -45,6 +45,7 @@ function FormAutor() {
 										size="full"
 										className="md:w-1/2 lg:w-1/2"
 										onClick={retornar}
+										aria-label="Cancelar"
 									>
 										Cancelar
 									</Button>
@@ -54,6 +55,7 @@ function FormAutor() {
 										isLoading={isLoading}
 										size="full"
 										className="md:w-1/2 lg:w-1/2"
+										aria-label={id !== undefined ? "Atualizar" : "Cadastrar"}
 									>
 										{id !== undefined ? "Atualizar" : "Cadastrar"}
 									</Button>

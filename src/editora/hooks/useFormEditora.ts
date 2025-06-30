@@ -8,15 +8,16 @@ import { useAuth } from "../../shared/store/AuthStore"
 import { editoraSchema, EditoraSchemaType } from "../validations/EditoraSchema"
 import { useSanitizedForm } from "../../shared/hooks/sanitized/useSanitizedForm"
 import Editora from "../models/Editora"
+import CriarEditoraDto from "../dtos/CriarEditoraDto"
+import AtualizarEditoraDto from "../dtos/AtualizarEditoraDto"
 
 export function useFormEditora() {
 	const navigate = useNavigate()
-	const { usuario, handleLogout } = useAuth()
-	const token = usuario.token
-
+	const { handleLogout } = useAuth()
 	const { id } = useParams<{ id: string }>()
 
 	const [isLoading, setIsLoading] = useState(false)
+	const [isFormLoading, setIsFormLoading] = useState(true)
 
 	const form = useSanitizedForm<EditoraSchemaType>({
 		resolver: zodResolver(editoraSchema),
@@ -36,7 +37,6 @@ export function useFormEditora() {
 		control,
 		formState: { errors },
 		reset,
-		setValue,
 	} = form
 
 	// Configurando os tratadores de sucesso para operações CRUD
@@ -49,20 +49,28 @@ export function useFormEditora() {
 		handleLogout,
 	})
 
-	const fetchEditoraData = async () => {
-		if (!id) return
-
-		try {
-			const resposta = await listar<Editora>(`/editoras/${id}`)
-			setValue("nome", resposta.nome)
-		} catch (error) {
-			ErrorHandlerService.handleError(error, { handleLogout })
-		}
-	}
-
 	useEffect(() => {
-		fetchEditoraData()
-	}, [id, token])
+		const loadEditoraData = async () => {
+			if (!id) {
+				setIsFormLoading(false)
+				return
+			}
+
+			try {
+				const resposta = await listar<{ data: Editora }>(`/editoras/${id}`)
+				const editora = resposta.data
+				reset({
+					nome: editora.nome,
+				})
+			} catch (error) {
+				ErrorHandlerService.handleError(error, { handleLogout })
+			} finally {
+				setIsFormLoading(false)
+			}
+		}
+
+		loadEditoraData()
+	}, [id, reset, handleLogout])
 
 	const retornar = () => {
 		navigate("/editoras")
@@ -71,17 +79,22 @@ export function useFormEditora() {
 	const onSubmit = async (data: EditoraSchemaType) => {
 		setIsLoading(true)
 		try {
-			const editora: Editora = {
-				id: id ? Number(id) : 0,
-				nome: data.nome,
+			if (id) {
+				// Atualização
+				const editora: AtualizarEditoraDto = {
+					id: Number(id),
+					nome: data.nome,
+				}
+				await atualizar(`/editoras`, editora)
+				successHandlers.handleUpdate(id)()
+			} else {
+				// Cadastro
+				const editora: CriarEditoraDto = {
+					nome: data.nome,
+				}
+				await cadastrar(`/editoras`, editora)
+				successHandlers.handleCreate()
 			}
-			
-			const acao = id ? atualizar : cadastrar
-			const onSuccess = id ? successHandlers.handleUpdate(id) : successHandlers.handleCreate
-
-			await acao(`/editoras`, editora)
-			onSuccess()
-
 		} catch (error) {
 			ErrorHandlerService.handleError(error, {
 				errorMessage: "Erro ao salvar a editora!",
@@ -94,6 +107,7 @@ export function useFormEditora() {
 	return {
 		id,
 		isLoading,
+		isFormLoading,
 		register,
 		handleSubmit,
 		control,

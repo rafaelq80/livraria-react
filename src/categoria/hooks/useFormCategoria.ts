@@ -1,23 +1,23 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
+import { useSanitizedForm } from "../../shared/hooks/sanitized/useSanitizedForm"
 import { useNavigate, useParams } from "react-router-dom"
-
 import { atualizar, cadastrar, listar } from "../../services/AxiosService"
 import { ErrorHandlerService } from "../../services/ErrorHandlerService"
 import { SuccessHandlerService } from "../../services/SuccessHandlerService"
 import { useAuth } from "../../shared/store/AuthStore"
 import { CategoriaSchemaType, categoriaSchema } from "../validations/CategoriaSchema"
-import { useSanitizedForm } from "../../shared/hooks/sanitized/useSanitizedForm"
 import Categoria from "../models/Categoria"
+import CriarCategoriaDto from "../dtos/CriarCategoriaDto"
+import AtualizarCategoriaDto from "../dtos/AtualizarCategoriaDto"
 
 export function useFormCategoria() {
 	const navigate = useNavigate()
-	const { usuario, handleLogout } = useAuth()
-	const token = usuario.token
-	
+	const { handleLogout } = useAuth()
 	const { id } = useParams<{ id: string }>()
 
 	const [isLoading, setIsLoading] = useState(false)
+	const [isFormLoading, setIsFormLoading] = useState(true)
 
 	const form = useSanitizedForm<CategoriaSchemaType>({
 		resolver: zodResolver(categoriaSchema),
@@ -37,10 +37,8 @@ export function useFormCategoria() {
 		control,
 		formState: { errors },
 		reset,
-		setValue,
 	} = form
 
-	// Configurando os tratadores de sucesso para operações CRUD
 	const successHandlers = SuccessHandlerService.createCrudHandlers("Categoria", {
 		navigate,
 		redirectTo: "/categorias",
@@ -50,20 +48,26 @@ export function useFormCategoria() {
 		handleLogout,
 	})
 
-	const fetchCategoriaData = async () => {
-		if (!id) return
-
-		try {
-			const resposta = await listar<Categoria>(`/categorias/${id}`)
-			setValue("tipo", resposta.tipo)
-		} catch (error) {
-			ErrorHandlerService.handleError(error, { handleLogout })
-		}
-	}
-
 	useEffect(() => {
-		fetchCategoriaData()
-	}, [id, token])
+		const loadCategoriaData = async () => {
+			if (!id) {
+				setIsFormLoading(false)
+				return
+			}
+			try {
+				const resposta = await listar<{ data: Categoria }>(`/categorias/${id}`)
+				const categoria = resposta.data
+				reset({
+					tipo: categoria.tipo,
+				})
+			} catch (error) {
+				ErrorHandlerService.handleError(error, { handleLogout })
+			} finally {
+				setIsFormLoading(false)
+			}
+		}
+		loadCategoriaData()
+	}, [id, reset, handleLogout])
 
 	const retornar = () => {
 		navigate("/categorias")
@@ -72,17 +76,20 @@ export function useFormCategoria() {
 	const onSubmit = async (data: CategoriaSchemaType) => {
 		setIsLoading(true)
 		try {
-			const categoria: Categoria = {
-				id: id ? Number(id) : 0,
-				tipo: data.tipo,
+			if (id) {
+				const atualizarCategoria: AtualizarCategoriaDto = {
+					id: Number(id),
+					tipo: data.tipo,
+				}
+				await atualizar(`/categorias`, atualizarCategoria)
+				successHandlers.handleUpdate(id)()
+			} else {
+				const criarCategoria: CriarCategoriaDto = {
+					tipo: data.tipo,
+				}
+				await cadastrar(`/categorias`, criarCategoria)
+				successHandlers.handleCreate()
 			}
-			
-			const acao = id ? atualizar : cadastrar
-			const onSuccess = id ? successHandlers.handleUpdate(id) : successHandlers.handleCreate
-
-			await acao(`/categorias`, categoria)
-			onSuccess()
-
 		} catch (error) {
 			ErrorHandlerService.handleError(error, {
 				errorMessage: "Erro ao salvar a categoria!",
@@ -95,6 +102,7 @@ export function useFormCategoria() {
 	return {
 		id,
 		isLoading,
+		isFormLoading,
 		register,
 		handleSubmit,
 		control,
