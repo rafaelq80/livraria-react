@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { listar } from "../../services/AxiosService"
-import { ErrorHandlerService } from "../../services/ErrorHandlerService"
+import { ErrorHandlerService } from "../../shared/handlers/ErrorHandlerService"
 import Button from "../../shared/components/ui/Button"
 import Produto from "../models/Produto"
 import { BookOpenIcon, ThumbsUpIcon, ShoppingCartIcon, TruckIcon, CreditCardIcon, ArrowsClockwiseIcon, InfoIcon, GiftIcon, BarcodeIcon, BuildingOfficeIcon, StarIcon, NumberSquareOneIcon, GlobeHemisphereWestIcon } from "@phosphor-icons/react"

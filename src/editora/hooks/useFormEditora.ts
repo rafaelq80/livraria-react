@@ -2,8 +2,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { atualizar, cadastrar, listar } from "../../services/AxiosService"
-import { ErrorHandlerService } from "../../services/ErrorHandlerService"
-import { SuccessHandlerService } from "../../services/SuccessHandlerService"
+import { ErrorHandlerService } from "../../shared/handlers/ErrorHandlerService"
+import { SuccessHandlerService } from "../../shared/handlers/SuccessHandlerService"
 import { useAuth } from "../../shared/store/AuthStore"
 import { editoraSchema, EditoraSchemaType } from "../validations/EditoraSchema"
 import { useSanitizedForm } from "../../shared/hooks/sanitized/useSanitizedForm"
@@ -40,7 +40,7 @@ export function useFormEditora() {
 	} = form
 
 	// Configurando os tratadores de sucesso para operações CRUD
-	const successHandlers = SuccessHandlerService.createCrudHandlers("Editora", {
+	const successHandlers = SuccessHandlerService.createCrudHandlers("editora", {
 		navigate,
 		redirectTo: "/editoras",
 		resetForm: () => {

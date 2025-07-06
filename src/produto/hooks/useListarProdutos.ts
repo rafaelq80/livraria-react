@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom"
 import Produto from "../models/Produto"
 import { listar, ensureArrayResponse } from "../../services/AxiosService"
 import { useAuth } from "../../shared/store/AuthStore"
-import { ToastAlerta } from "../../utils/ToastAlerta"
-
+import { ErrorHandlerService } from "../../shared/handlers/ErrorHandlerService"
+import messages from '../../shared/constants/messages';
 
 export const useListarProdutos = () => {
 
@@ -21,8 +21,9 @@ export const useListarProdutos = () => {
             const resposta = await listar<Produto[]>("/produtos")
             setProdutos(ensureArrayResponse<Produto>(resposta))
         } catch (error: unknown) {
-            console.error("Erro ao buscar produtos: ", error)
-            ToastAlerta("Erro ao Listar Produtos", 'error')
+            ErrorHandlerService.handleError(error, {
+                errorMessage: messages.produto.loadError
+            })
             setProdutos([]) // Garante que produtos seja um array vazio em caso de erro
         } finally {
             setIsLoading(false)

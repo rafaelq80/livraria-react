@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { listar, ensureArrayResponse } from "../../services/AxiosService"
-import { ErrorHandlerService } from "../../services/ErrorHandlerService"
+import { ErrorHandlerService } from "../../shared/handlers/ErrorHandlerService"
 import { useAuth } from "../../shared/store/AuthStore"
 import Role from "../models/Role"
+import messages from '../../shared/constants/messages';
 
 export const useListarRoles = () => {
 	const navigate = useNavigate()
@@ -19,7 +20,10 @@ export const useListarRoles = () => {
 			const resposta = await listar<Role[]>("/roles")
 			setRoles(ensureArrayResponse<Role>(resposta))
 		} catch (error) {
-			ErrorHandlerService.handleError(error, { handleLogout })
+			ErrorHandlerService.handleError(error, { 
+				errorMessage: messages.role.loadError,
+				handleLogout 
+			})
 			setRoles([]) // Garante que roles seja um array vazio em caso de erro
 		} finally {
 			setIsLoading(false)

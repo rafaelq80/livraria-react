@@ -2,9 +2,9 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 
 import { atualizar, cadastrar, listar } from "../../services/AxiosService"
-import { ErrorHandlerService } from "../../services/ErrorHandlerService"
-import { criarUsuarioFormData } from "../../services/FormDataService"
-import { SuccessHandlerService } from "../../services/SuccessHandlerService"
+import { ErrorHandlerService } from "../../shared/handlers/ErrorHandlerService"
+import { criarUsuarioFormData } from "../../shared/services/FormDataService"
+import { SuccessHandlerService } from "../../shared/handlers/SuccessHandlerService"
 
 import { useAuth } from "../../shared/store/AuthStore"
 import { UsuarioSchemaType } from "../validations/UsuarioSchema"
@@ -36,7 +36,7 @@ export function useCadastrarUsuario(isPerfil?: boolean) {
     navigate("/login")
   }
 
-  const successHandlers = SuccessHandlerService.createCrudHandlers("Usuário", {
+  const successHandlers = SuccessHandlerService.createCrudHandlers("usuario", {
     navigate,
     redirectTo: "/login",
     resetForm: () => {

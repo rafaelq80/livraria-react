@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import Role from "../models/Role";
 import { useAuth } from "../shared/store/AuthStore";
-import { ToastAlerta } from "../utils/ToastAlerta";
+import { ToastAlerta } from "../shared/utils/ToastAlerta";
+import messages from "../shared/constants/messages";
+import Role from "../role/models/Role";
 
 interface PrivateRouteProps {
   allowedRoles: Role[];
@@ -13,7 +14,7 @@ function PrivateRoute({ allowedRoles }: Readonly<PrivateRouteProps>) {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      ToastAlerta("Você precisa estar logado!", "info");
+      		ToastAlerta(messages.auth.loginRequired, "info");
     }
   }, [isAuthenticated]);
 

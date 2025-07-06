@@ -1,7 +1,7 @@
 import { BookOpenIcon, PencilIcon, ShoppingCartIcon, TrashIcon } from "@phosphor-icons/react"
 import { Link } from "react-router-dom"
 import { useAuth } from "../../../shared/store/AuthStore"
-import { formatarMoeda } from "../../../utils/FormatarMoeda"
+import { formatarMoeda } from "../../../shared/utils/FormatarMoeda"
 import Produto from "../../models/Produto"
 
 interface CardProdutoProps {

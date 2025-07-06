@@ -3,9 +3,9 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import Produto from "../models/Produto"
 import { listar, atualizar, cadastrar } from "../../services/AxiosService"
-import { criarProdutoFormData } from "../../services/FormDataService"
-import { ErrorHandlerService } from "../../services/ErrorHandlerService"
-import { SuccessHandlerService } from "../../services/SuccessHandlerService"
+import { criarProdutoFormData } from "../../shared/services/FormDataService"
+import { ErrorHandlerService } from "../../shared/handlers/ErrorHandlerService"
+import { SuccessHandlerService } from "../../shared/handlers/SuccessHandlerService"
 import { ProdutoSchemaType, produtoSchema } from "../validations/ProdutoSchema"
 import { useAuth } from "../../shared/store/AuthStore"
 import { useSelecionarAutores } from "./useSelecionarAutores"
@@ -77,7 +77,7 @@ export function useFormProduto(produtoId?: string) {
 	// Handlers de sucesso para operações CRUD - Memoizado
 	const successHandlers = useMemo(
 		() =>
-			SuccessHandlerService.createCrudHandlers<Produto>("Produto", {
+			SuccessHandlerService.createCrudHandlers<Produto>("produto", {
 				navigate,
 				redirectTo: "/",
 				resetForm: () => {

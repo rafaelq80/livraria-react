@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ensureArrayResponse, listar } from "../../services/AxiosService";
-import { ToastAlerta } from "../../utils/ToastAlerta";
+import { ErrorHandlerService } from "../../shared/handlers/ErrorHandlerService";
+import messages from '../../shared/constants/messages';
 import Produto from "../models/Produto";
 
 
@@ -19,8 +20,9 @@ export function useListarProdutosPorTitulo() {
       const resposta = await listar<Produto[]>("/produtos");
       setProdutos(ensureArrayResponse<Produto>(resposta));
     } catch (error) {
-      console.error("Erro ao carregar produtos: ", error);
-      ToastAlerta("Erro ao carregar produtos!", "erro");
+      ErrorHandlerService.handleError(error, {
+        errorMessage: messages.produto.loadError
+      });
       setProdutos([]); // Garante que produtos seja um array vazio em caso de erro
     } finally {
       setIsLoading(false);

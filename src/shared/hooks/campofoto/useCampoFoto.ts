@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useRef, useState, useCallback } from "react";
-import { ImageService } from "../../../services/ImageService";
-import { ErrorHandlerService } from "../../../services/ErrorHandlerService";
+import { ImageService } from "../../services/ImageService";
+import { ErrorHandlerService } from "../../handlers/ErrorHandlerService";
 import { Path, PathValue, UseFormSetValue } from "react-hook-form";
 import { WithFotoFile } from "../../types/CampoFotoTypes";
 

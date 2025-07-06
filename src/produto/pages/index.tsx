@@ -2,6 +2,7 @@ import DataTable from "../../shared/components/datatable/DataTable"
 import { PageLoadingSpinner } from "../../shared/components/loading"
 import { useListarProdutos } from "../hooks/useListarProdutos"
 import { createProdutoColumns } from "./ProdutoColumns"
+import messages from "../../shared/constants/messages"
 
 function IndexProdutos() {
 	const { produtos, isLoading, navigate, isAdmin } = useListarProdutos()
@@ -20,6 +21,8 @@ function IndexProdutos() {
 						onAddNew={() => navigate("/cadastrarproduto")}
 						columnSpans={["col-span-1", "col-span-4", "col-span-3", "col-span-3", "col-span-1",]}
 						isAdmin={isAdmin}
+						emptyMessage={messages.produto.emptyList}
+						forbiddenMessage={messages.global.forbidden}
 					/>
 				</div>
 			)}

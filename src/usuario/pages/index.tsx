@@ -2,6 +2,7 @@ import DataTable from "../../shared/components/datatable/DataTable"
 import { createUsuarioColumns } from "./UsuarioColumns"
 import { useListarUsuarios } from "../hooks/useListarUsuarios"
 import { PageLoadingSpinner } from "../../shared/components/loading"
+import messages from "../../shared/constants/messages"
 
 function ListarUsuarios() {
 	const { usuarios, isLoading, isAdmin, navigate } = useListarUsuarios()
@@ -10,14 +11,6 @@ function ListarUsuarios() {
 	const renderContent = () => {
 		if (isLoading) {
 			return <PageLoadingSpinner text="Carregando usuários..." />
-		}
-
-		if (usuarios.length === 0) {
-			return (
-				<div className="text-center text-gray-500 mt-6">
-					<p className="text-lg">Nenhum Usuario encontrado.</p>
-				</div>
-			)
 		}
 
 		return (
@@ -35,6 +28,8 @@ function ListarUsuarios() {
 						"col-span-1",
 					]}
 					isAdmin={isAdmin}
+					emptyMessage={messages.usuario.emptyList}
+					forbiddenMessage={messages.global.forbidden}
 				/>
 			</div>
 		)

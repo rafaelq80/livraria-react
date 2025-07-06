@@ -3,14 +3,25 @@ import { useEffect, useState } from "react"
 import { useSanitizedForm } from "../../shared/hooks/sanitized/useSanitizedForm"
 import { useNavigate, useParams } from "react-router-dom"
 import { atualizar, cadastrar, listar } from "../../services/AxiosService"
-import { ErrorHandlerService } from "../../services/ErrorHandlerService"
-import { SuccessHandlerService } from "../../services/SuccessHandlerService"
+import { ErrorHandlerService } from "../../shared/handlers/ErrorHandlerService"
+import { SuccessHandlerService } from "../../shared/handlers/SuccessHandlerService"
 import { useAuth } from "../../shared/store/AuthStore"
 import { CategoriaSchemaType, categoriaSchema } from "../validations/CategoriaSchema"
 import Categoria from "../models/Categoria"
 import CriarCategoriaDto from "../dtos/CriarCategoriaDto"
 import AtualizarCategoriaDto from "../dtos/AtualizarCategoriaDto"
+import messages from '../../shared/constants/messages';
 
+/**
+ * Hook para gerenciar formulário de categoria (criar/editar).
+ *
+ * Funcionalidades:
+ * - Gerencia estado do formulário com validação Zod
+ * - Carrega dados da categoria para edição
+ * - Submete formulário para criar ou atualizar
+ * - Integra tratamento de erro e sucesso padronizado
+ * - Sanitiza dados de entrada automaticamente
+ */
 export function useFormCategoria() {
 	const navigate = useNavigate()
 	const { handleLogout } = useAuth()
@@ -19,6 +30,7 @@ export function useFormCategoria() {
 	const [isLoading, setIsLoading] = useState(false)
 	const [isFormLoading, setIsFormLoading] = useState(true)
 
+	// Configuração do formulário com sanitização
 	const form = useSanitizedForm<CategoriaSchemaType>({
 		resolver: zodResolver(categoriaSchema),
 		defaultValues: {
@@ -39,7 +51,8 @@ export function useFormCategoria() {
 		reset,
 	} = form
 
-	const successHandlers = SuccessHandlerService.createCrudHandlers("Categoria", {
+	// Handlers padronizados para operações CRUD
+	const successHandlers = SuccessHandlerService.createCrudHandlers("categoria", {
 		navigate,
 		redirectTo: "/categorias",
 		resetForm: () => {
@@ -48,6 +61,7 @@ export function useFormCategoria() {
 		handleLogout,
 	})
 
+	// Carrega dados da categoria para edição
 	useEffect(() => {
 		const loadCategoriaData = async () => {
 			if (!id) {
@@ -60,8 +74,11 @@ export function useFormCategoria() {
 				reset({
 					tipo: categoria.tipo,
 				})
-			} catch (error) {
-				ErrorHandlerService.handleError(error, { handleLogout })
+			} catch (error: unknown) {
+				ErrorHandlerService.handleError(error, { 
+					errorMessage: messages.categoria.loadError,
+					handleLogout 
+				})
 			} finally {
 				setIsFormLoading(false)
 			}
@@ -69,14 +86,21 @@ export function useFormCategoria() {
 		loadCategoriaData()
 	}, [id, reset, handleLogout])
 
+	/**
+	 * Navega de volta para a listagem de categorias
+	 */
 	const retornar = () => {
 		navigate("/categorias")
 	}
 
+	/**
+	 * Submete o formulário para criar ou atualizar categoria
+	 */
 	const onSubmit = async (data: CategoriaSchemaType) => {
 		setIsLoading(true)
 		try {
 			if (id) {
+				// Atualiza categoria existente
 				const atualizarCategoria: AtualizarCategoriaDto = {
 					id: Number(id),
 					tipo: data.tipo,
@@ -84,15 +108,16 @@ export function useFormCategoria() {
 				await atualizar(`/categorias`, atualizarCategoria)
 				successHandlers.handleUpdate(id)()
 			} else {
+				// Cria nova categoria
 				const criarCategoria: CriarCategoriaDto = {
 					tipo: data.tipo,
 				}
 				await cadastrar(`/categorias`, criarCategoria)
 				successHandlers.handleCreate()
 			}
-		} catch (error) {
+		} catch (error: unknown) {
 			ErrorHandlerService.handleError(error, {
-				errorMessage: "Erro ao salvar a categoria!",
+				errorMessage: messages.categoria.saveError,
 			})
 		} finally {
 			setIsLoading(false)

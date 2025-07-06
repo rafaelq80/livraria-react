@@ -14,7 +14,8 @@ import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import Produto from "../produto/models/Produto"
 import { listar } from "../services/AxiosService"
-import { ErrorHandlerService } from "../services/ErrorHandlerService"
+import { ErrorHandlerService } from "../shared/handlers/ErrorHandlerService"
+import messages from "../shared/constants/messages"
 import Button from "../shared/components/ui/Button"
 
 interface CartItem {
@@ -70,8 +71,9 @@ function Carrinho({ onCheckout, onRemoveItem, onUpdateQuantity }: Readonly<Carri
 
 			setItensCarrinho(itens)
 		} catch (error) {
-			console.error("Erro ao buscar itens do carrinho:", error)
-			ErrorHandlerService.handleError(error)
+			ErrorHandlerService.handleError(error, {
+				errorMessage: messages.carrinho.loadError
+			})
 			setItensCarrinho([]) // Garante que itensCarrinho seja um array vazio em caso de erro
 		} finally {
 			setCarregando(false)

@@ -1,5 +1,5 @@
 import { useForm, UseFormProps, FieldValues } from 'react-hook-form';
-import { sanitizeString, sanitizeNumber, sanitizeEmail, sanitizeProperName } from '../../../utils/SanitizeUtils';
+import { sanitizeString, sanitizeNumber, sanitizeEmail, sanitizeProperName } from '../../utils/SanitizeUtils';
 
 /**
  * Interface que define as opções de sanitização disponíveis

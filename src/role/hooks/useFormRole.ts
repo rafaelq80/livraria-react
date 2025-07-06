@@ -3,8 +3,8 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 
 import { atualizar, cadastrar, listar } from "../../services/AxiosService"
-import { ErrorHandlerService } from "../../services/ErrorHandlerService"
-import { SuccessHandlerService } from "../../services/SuccessHandlerService"
+import { ErrorHandlerService } from "../../shared/handlers/ErrorHandlerService"
+import { SuccessHandlerService } from "../../shared/handlers/SuccessHandlerService"
 import { useSanitizedForm } from "../../shared/hooks/sanitized/useSanitizedForm"
 import { useAuth } from "../../shared/store/AuthStore"
 import AtualizarRoleDto from "../dtos/AtualizarRoleDto"
@@ -42,7 +42,7 @@ export function useFormRole() {
 	} = form
 
 	// Configurando os tratadores de sucesso para operações CRUD
-	const successHandlers = SuccessHandlerService.createCrudHandlers("Role", {
+	const successHandlers = SuccessHandlerService.createCrudHandlers("role", {
 		navigate,
 		redirectTo: "/roles",
 		resetForm: () => {

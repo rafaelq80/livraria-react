@@ -1,8 +1,8 @@
-import Produto from "../produto/models/Produto"
-import Usuario from "../usuario/models/Usuario"
-import CreateUsuario from "../usuario/dtos/CriarUsuarioDto"
-import UpdateUsuario from "../usuario/dtos/AtualizarUsuarioDto"
-import CriarProdutoDto from "../produto/dtos/CriarProdutoDto"
+import Produto from "../../produto/models/Produto"
+import Usuario from "../../usuario/models/Usuario"
+import CreateUsuario from "../../usuario/dtos/CriarUsuarioDto"
+import UpdateUsuario from "../../usuario/dtos/AtualizarUsuarioDto"
+import CriarProdutoDto from "../../produto/dtos/CriarProdutoDto"
 
 type StringConvertible = string | number | boolean | Date
 

@@ -68,7 +68,7 @@ const DeleteModal = memo(
 		onConfirm,
 		title,
 		itemName,
-		message,
+		// message,
 		confirmButtonText = "Excluir",
 		cancelButtonText = "Cancelar",
 		isLoading = false,
@@ -85,32 +85,7 @@ const DeleteModal = memo(
 
 		// Cria a mensagem padrão se itemName for fornecido e message não for
 		// Fornece uma experiência consistente com o nome do item
-		const defaultMessage = itemName ? (
-			<div className="space-y-3">
-				<p className="text-gray-700 flex items-center gap-3">
-					<QuestionIcon size={44} className="text-indigo-600 shrink-0" weight="fill" />
-					<span>
-						Tem certeza que deseja excluir <span className="font-medium">{itemName}</span>?
-					</span>
-				</p>
-				<p className="text-sm text-red-600 bg-red-50 p-2 rounded-md border border-red-100">
-					Esta ação não pode ser desfeita.
-				</p>
-			</div>
-		) : (
-			<div className="space-y-3">
-				<p className="text-gray-700 flex items-center gap-3">
-					<QuestionIcon size={28} className="text-indigo-600 shrink-0" weight="fill" />
-					<span>Tem certeza que deseja excluir este item?</span>
-				</p>
-				<p className="text-sm text-red-600 bg-red-50 p-2 rounded-md border border-red-100">
-					Esta ação não pode ser desfeita.
-				</p>
-			</div>
-		)
-
-		// Usa a mensagem customizada se fornecida, senão usa a padrão
-		const displayMessage = message || defaultMessage
+		// (Removido: defaultMessage não é mais usado)
 
 		return (
 			<Popup
@@ -126,10 +101,15 @@ const DeleteModal = memo(
 				arrowStyle={arrowStyle}
 			>
 				{/* Container principal do modal */}
-				<div className="bg-white rounded-xl shadow-2xl p-6 max-w-md mx-auto w-11/12 transform transition-all duration-300 ease-in-out">
+				<div
+					role="dialog"
+					aria-modal="true"
+					aria-labelledby="delete-modal-title"
+					className="bg-white rounded-xl shadow-2xl p-6 max-w-md mx-auto w-11/12 transform transition-all duration-300 ease-in-out"
+				>
 					{/* Cabeçalho com título e botão de fechar */}
 					<div className="flex justify-between items-center mb-6">
-						<h3 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+						<h3 id="delete-modal-title" className="text-xl font-semibold text-gray-800 flex items-center gap-2">
 							{title}
 						</h3>
 						<button
@@ -143,7 +123,31 @@ const DeleteModal = memo(
 					</div>
 					
 					{/* Área da mensagem */}
-					<div className="mb-8">{displayMessage}</div>
+					<div className="mb-8">
+						{itemName ? (
+							<div className="space-y-3">
+								<p className="text-gray-700 flex items-center gap-3">
+									<QuestionIcon size={44} className="text-indigo-600 shrink-0" weight="fill" />
+									<span>
+										Tem certeza que deseja excluir <span className="font-medium">{itemName}</span>?
+									</span>
+								</p>
+								<p role="alert" className="text-sm text-red-600 bg-red-50 p-2 rounded-md border border-red-100">
+									Esta ação não pode ser desfeita.
+								</p>
+							</div>
+						) : (
+							<div className="space-y-3">
+								<p className="text-gray-700 flex items-center gap-3">
+									<QuestionIcon size={28} className="text-indigo-600 shrink-0" weight="fill" />
+									<span>Tem certeza que deseja excluir este item?</span>
+								</p>
+								<p role="alert" className="text-sm text-red-600 bg-red-50 p-2 rounded-md border border-red-100">
+									Esta ação não pode ser desfeita.
+								</p>
+							</div>
+						)}
+					</div>
 					
 					{/* Área dos botões de ação */}
 					<div className="flex justify-end gap-3">

@@ -6,6 +6,12 @@ import { useDeleteCategoria } from "../hooks/useDeleteCategoria";
 import Categoria from "../models/Categoria";
 import { TooltipButton } from "../../shared/components/tooltipbutton/TooltipButton";
 
+/**
+ * Cria as colunas para a tabela de categorias
+ * 
+ * @param onCategoriaDeleted - Callback executado após exclusão bem-sucedida
+ * @returns Array de definições de colunas para o DataTable
+ */
 export function createCategoriaColumns(onCategoriaDeleted?: () => void): ColumnDef<Categoria>[] {
   const navigate = useNavigate();
 
@@ -27,6 +33,7 @@ export function createCategoriaColumns(onCategoriaDeleted?: () => void): ColumnD
         
         return (
           <div className="flex justify-center items-center gap-2">
+            {/* Botão de editar categoria */}
             <TooltipButton
               label="Editar categoria"
               onClick={() => navigate(`/editarcategoria/${categoria.id}`)}
@@ -35,6 +42,8 @@ export function createCategoriaColumns(onCategoriaDeleted?: () => void): ColumnD
             >
               <PencilIcon size={32} className="h-5 w-5 text-blue-500" />
             </TooltipButton>
+            
+            {/* Botão de excluir categoria */}
             <TooltipButton label="Excluir categoria" aria-label="Excluir categoria">
               <DeleteButton<Categoria>
                 item={categoria}

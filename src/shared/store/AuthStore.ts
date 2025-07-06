@@ -1,7 +1,8 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import { default as ResponseUsuarioLogin, default as UsuarioAutenticado } from "../../security/types/ResponseUsuarioLogin"
-import { ToastAlerta } from "../../utils/ToastAlerta"
+import { ToastAlerta } from "../utils/ToastAlerta"
+import messages from "../constants/messages"
 import Role from "../../role/models/Role";
 import UsuarioLogin from "../../security/models/UsuarioLogin";
 import { login } from "../../services/AuthService";
@@ -91,10 +92,10 @@ export const useAuthStore = create<AuthState>()(
                     // Salva o token no localStorage para o interceptor do Axios
                     localStorage.setItem('token', resposta.token.replace('Bearer ', ''))
 
-                    ToastAlerta("Usuário autenticado com sucesso!", "sucesso")
+                    ToastAlerta(messages.auth.loginSuccess, "sucesso")
                 } catch (error: unknown) {
                     console.error("Erro no login: ", error)
-                    ToastAlerta("Dados do Usuário inconsistentes!", "erro")
+                    ToastAlerta(messages.auth.loginError, "erro")
                     
                     // Reseta o estado em caso de erro
                     set({

@@ -30,6 +30,10 @@ export interface DataTableProps<TData = unknown> {
   pageSize?: number
   /** Indica se o usuário é administrador (controla permissões) */
   isAdmin?: boolean
+  /** Mensagem exibida quando não há dados (para usuários admin) */
+  emptyMessage?: string
+  /** Mensagem exibida quando usuário não tem permissão */
+  forbiddenMessage?: string
 }
 
 /**
@@ -49,7 +53,9 @@ function DataTable<TData = unknown>({
   onAddNew,
   columnSpans,
   pageSize = 5,
-  isAdmin = false
+  isAdmin = false,
+  emptyMessage,
+  forbiddenMessage = 'Você não tem permissão de acesso!'
 }: Readonly<DataTableProps<TData>>) {
   // Estado para controlar a ordenação das colunas
   const [sorting, setSorting] = useState<SortingState>([])
@@ -124,7 +130,7 @@ function DataTable<TData = unknown>({
         // Mensagem para quando não houver registros
         // Diferencia entre usuário sem permissão e tabela vazia
         <div className="min-h-[50vh] py-8 text-xl md:text-2xl text-center text-gray-800">
-          {isAdmin ? `Não foi encontrado(a) nenhum(a) ${title}!` : 'Você não tem permissão de acesso!'}
+          {isAdmin ? (emptyMessage ?? `Não foi encontrado(a) nenhum(a) ${title}!`) : forbiddenMessage}
         </div>
       )}
     </div>
